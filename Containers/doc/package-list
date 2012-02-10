@@ -1,0 +1,7 @@
+net.varkhan.base.containers
+net.varkhan.base.containers.array
+net.varkhan.base.containers.list
+net.varkhan.base.containers.map
+net.varkhan.base.containers.queue
+net.varkhan.base.containers.set
+net.varkhan.base.containers.type

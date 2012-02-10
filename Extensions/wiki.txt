@@ -1,0 +1,110 @@
+{{ClassHead|com.yoono.lang.Reflect|Reflection tools|Reflexive object structure examination, and heap monitoring tools.|module=yoono-commons}}
+__TOC__
+
+
+= Overview =
+
+This class offers a collection of static methods for reflexive object analysis.
+
+
+
+= Documentation =
+
+
+The various '''''getSize''''' methods, that apply on primitive types or arbitrary objects, return the heap size occupied by that type, or the object and all of its referred content. On object, this is computed by reflexively traversing all non-static fields of the object, and taking their respective heap sizes (computed recursively) into account. Multiple references of a given object instance are only accounted for once.
+
+
+The '''''seeFields''''' method provides a similar recursive way of traversing an object's fields, and their references, to perform arbitrary computation. Multiple references to a given instance are also detected, though the decision of processing them once or multiple times is deferred to the user.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{ClassHead|com.yoono.lang.XEnum|Extensible Enum type|An Enum-like mecanism whose constants can be extended through inheritance.|module=yoono-commons}}
+__TOC__
+
+
+= Overview =
+
+An ''Enum type'' is an abstract class that extends '''XEnum''', and calls the following
+static code at the very end of the class definition (replacing THISCLASS by
+the actual Enum type class name):
+
+<code java>
+      public static final XEnum.Type<THISCLASS> instance = XEnum.instance(THISCLASS.class);
+</code>
+
+
+= Documentation =
+
+Each Enum constant is a '''public''' '''static''' '''final''' field,
+whose type is the Enum type, and initialized using an adequate constructor
+(either defined in the Enum type, or a subclass of the Enum type).
+
+Static fields thus defined must be marked as Enum constants with the
+`@EnumConstant` annotation, using the pattern:
+<code java>
+      @EnumConstant()
+      public static final THISCLASS constant = new THISCLASS() {};
+</code>
+
+If abstract methods need to be defined or non-abstract methods need to be
+overridden, on a per-constant basis, their definition should be provided
+inline, following the pattern:
+<code java>
+      @EnumConstant
+      public static final THISCLASS special = new THISCLASS() {
+           public ... abstract_method(...) { ... }
+      };
+      // ...
+
+      public abstract ... abstract_method(...);
+</code>
+
+To provide Enum-like `valueOf` and `values` static methods, use the ''XEnum'' static methods of the same name, with the target ''XEnum'' class as first argument:
+
+<code java>
+     XEnum.valueOf(THISCLASS.class,name);
+
+     XEnum.values(THISCLASS.class);
+</code>
+
+
+= IDE Shortcuts =
+
+== ''IntelliJ IDEA'' ==
+
+<u>''Adding a shortcut to create a new '''XEnum''' class''</u>
+
+Go to <u>File</u> > <u>Settings</u> > <u>File Templates</u>, on the [<u>Templates</u>] tab, and click [<u>+</u>], then fill the fields:
+
+:<u>Name</u>: XEnum <br>
+:<u>Extension</u>: java <br>
+<code java>
+package ${PACKAGE_NAME};
+
+import com.yoono.lang.XEnum;
+
+#parse("File Header.java")
+public class ${Class_Name} <E extends ${Class_Name}<? super E>> extends #if(${Extends_XEnum} != "") ${Extends_XEnum}<E> #else XEnum<E> #end{
+
+    public static transient final XEnum.Type<${Class_Name}> instance = XEnum.instance(${Class_Name}.class);
+}
+</code>
+

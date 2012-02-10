@@ -1,0 +1,7 @@
+net.varkhan.base.management.health
+net.varkhan.base.management.logging
+net.varkhan.base.management.metric
+net.varkhan.base.management.monitor
+net.varkhan.base.management.monitor.derived
+net.varkhan.base.management.monitor.primitive
+net.varkhan.base.management.report

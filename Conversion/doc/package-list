@@ -1,0 +1,3 @@
+net.varkhan.base.conversion.serializer
+net.varkhan.base.conversion.serializer.primitives
+net.varkhan.base.conversion.serializer.record
