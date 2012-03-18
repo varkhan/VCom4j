@@ -63,6 +63,25 @@ public class CharArrays {
     }
 
     /**
+     * Indicates whether two CharSequence are equal.
+     *
+     * @param seq1 the first array
+     * @param seq2 the second array
+     *
+     * @return {@code true} iff the CharSequences are either both {@code null} or
+     *         have the same number of characters, and the same characters in the
+     *         same positions
+     */
+    public static boolean equals(CharSequence seq1, CharSequence seq2) {
+        if(seq1==null) return seq2==null;
+        if(seq1.length()!=seq2.length()) return false;
+        for(int i=0;i<seq1.length();i++) {
+            if(seq1.charAt(i)!=seq2.charAt(i)) return false;
+        }
+        return true;
+    }
+
+    /**
      * Returns the position of the first occurrence of an array as a subsequence
      * of an other array.
      *
@@ -1973,7 +1992,6 @@ public class CharArrays {
      * @param fmt the format defining how the arguments should be written to the buffer
      * @param var the variadic array of arguments
      *
-     * @throws IOException if appending to the buffer produced an I/O error
      * @see {@link #format(Appendable, CharSequence, Object...)} for a complete description of syntax of the format sequence
      */
     public static void format(StringBuilder buf, CharSequence fmt, Object... var) {
@@ -1994,7 +2012,6 @@ public class CharArrays {
      *
      * @return the formatted string
      *
-     * @throws IOException if appending to the buffer produced an I/O error
      * @see {@link #format(Appendable, CharSequence, Object...)} for a complete description of syntax of the format sequence
      */
     public static String format(CharSequence fmt, Object... var) {
