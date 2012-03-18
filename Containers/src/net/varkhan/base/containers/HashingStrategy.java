@@ -72,11 +72,8 @@ public interface HashingStrategy<Type> extends Serializable {
 
         public long hash(Object o) { return o==null ? 0 : o.hashCode(); }
 
-        ;
-
         public boolean equal(Object o1, Object o2) { return (o1==null&&o2==null)||(o1!=null&&o2!=null&&o1.equals(o2)); }
 
-        ;
     };
 
     /**
@@ -87,10 +84,7 @@ public interface HashingStrategy<Type> extends Serializable {
 
         public long hash(Object o) { return System.identityHashCode(o); }
 
-        ;
-
         public boolean equal(Object o1, Object o2) { return o1==o2; }
 
-        ;
     };
 }

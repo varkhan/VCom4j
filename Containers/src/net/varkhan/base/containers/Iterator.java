@@ -75,7 +75,7 @@ public interface Iterator<Type> extends java.util.Iterator<Type> {
         public boolean hasNext() { return false; }
         public Type next() { return null; }
         public void remove() { }
-    };
+    }
 
 
     /**

@@ -4,6 +4,8 @@
 package net.varkhan.base.containers.array;
 
 import net.varkhan.base.containers.*;
+import net.varkhan.base.containers.map.ArrayOpenHashMap;
+import net.varkhan.base.containers.map.Map;
 
 import java.lang.reflect.Array;
 import java.util.Comparator;
@@ -90,6 +92,7 @@ public class Arrays {
      * of an other array.
      *
      * @param array the array
+     * @param pos   the starting point in the array
      * @param sub   the subsequence to find
      * @param <T>   the element type
      *
@@ -107,9 +110,7 @@ public class Arrays {
                 T a=array[pos+i];
                 T s=sub[i];
                 if(a==s) continue;
-                if((a==null&&s!=null)
-                   ||(a!=null&&s==null)
-                   ||!a.equals(s)
+                if((a==null)||(s==null)||!a.equals(s)
                         ) {
                     pos++;
                     continue match;
@@ -326,7 +327,7 @@ public class Arrays {
      * Returns a segment of an array.
      *
      * @param array the source array
-     * @param beg   the begining position of the segment, inclusive
+     * @param beg   the beginning position of the segment, inclusive
      * @param end   the ending position of the segment, exclusive
      * @param <T>   the element type
      *
@@ -352,8 +353,8 @@ public class Arrays {
     /**
      * Returns an immutable container backed by an array.
      *
-     * @param values the array of values for the container
-     * @param <T> the type of the values
+     * @param values the array of values
+     * @param <T>    the type of the values
      * @return a container holding the elements of the array, in order
      */
     public static <T> Container<T> container(final T... values) {
@@ -363,9 +364,9 @@ public class Arrays {
             public Iterator<? extends T> iterator() {
                 return new Iterator<T>() {
                     private volatile int pos = 0;
-                    public boolean hasNext() { return pos<values.length; }
+                    public boolean hasNext() { return values!=null&&pos<values.length; }
                     public T next() {
-                        if(pos>=values.length) throw new NoSuchElementException();
+                        if(values==null||pos>=values.length) throw new NoSuchElementException();
                         return values[pos++];
                     }
                     public void remove() { throw new UnsupportedOperationException(); }
@@ -383,4 +384,22 @@ public class Arrays {
         };
     }
 
+    /**
+     * Returns an array of alternating keys and values as a map.
+     *
+     * @param values the array of keys and values
+     * @param <K>    the type of the keys
+     * @param <V>    the type of the values
+     * @return a map associating the object at even indexes in the array to the immediately following (odd index) element
+     */
+    @SuppressWarnings({ "unchecked" })
+    public static <K,V> Map<K,V> mapping(final Object... values) {
+        ArrayOpenHashMap<K,V> map = new ArrayOpenHashMap<K,V>();
+        if(values==null) return map;
+        if((values.length&1)!=0) throw new IllegalArgumentException("Key/Value array must be of even size");
+        for(int i=0; i<values.length; i+=2) {
+            map.add((K) values[i],(V) values[i+1]);
+        }
+        return map;
+    }
 }
