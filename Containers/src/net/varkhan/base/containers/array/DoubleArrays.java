@@ -3,10 +3,7 @@
  */
 package net.varkhan.base.containers.array;
 
-import net.varkhan.base.containers.Container;
-import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.type.DoubleContainer;
-import net.varkhan.base.containers.type.DoubleVisitable;
 
 import java.util.NoSuchElementException;
 

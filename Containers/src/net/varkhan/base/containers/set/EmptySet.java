@@ -1,7 +1,6 @@
 package net.varkhan.base.containers.set;
 
 import net.varkhan.base.containers.Iterator;
-import net.varkhan.base.containers.Visitable;
 
 
 /**

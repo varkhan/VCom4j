@@ -3,7 +3,8 @@
  */
 package net.varkhan.base.containers.array;
 
-import net.varkhan.base.containers.*;
+import net.varkhan.base.containers.Container;
+import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
 import net.varkhan.base.containers.map.Map;
 

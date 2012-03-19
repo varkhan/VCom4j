@@ -5,7 +5,6 @@ package net.varkhan.base.containers.map;
 
 import net.varkhan.base.containers.Container;
 import net.varkhan.base.containers.Iterator;
-import net.varkhan.base.containers.Visitable;
 import net.varkhan.base.containers.type.LongContainer;
 
 

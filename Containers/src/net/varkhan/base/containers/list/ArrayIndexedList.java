@@ -59,7 +59,7 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
      **/
 
     /**
-     * Creates a new ArraykIndexedList, specifying the reallocation strategy.
+     * Creates a new ArrayIndexedList, specifying the reallocation strategy.
      *
      * @param growthfact the node reference storage growth factor
      */
@@ -70,7 +70,7 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
     }
 
     /**
-     * Creates a new ArraykIndexedList.
+     * Creates a new ArrayIndexedList.
      */
     public ArrayIndexedList() {
         this(1.5);
@@ -108,7 +108,7 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
     }
 
     /**
-     * Builds an BlockIndexedList from an array.
+     * Builds an ArrayIndexedList from an array.
      *
      * @param array the array to copy
      */

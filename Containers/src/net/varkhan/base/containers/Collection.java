@@ -29,7 +29,7 @@ public interface Collection<Type> extends Container<Type> {
     /**
      * Returns the number of elements in this container.
      *
-     * @return the number of elements stored in this list
+     * @return the number of elements stored in this container
      */
     public long size();
 

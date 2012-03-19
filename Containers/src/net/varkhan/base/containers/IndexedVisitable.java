@@ -3,9 +3,6 @@
  */
 package net.varkhan.base.containers;
 
-import net.varkhan.base.containers.Visitable.Visitor;
-
-
 /**
  * <b>Applies a visitor to a subset of the objects in an indexed container.</b>
  * <p/>
