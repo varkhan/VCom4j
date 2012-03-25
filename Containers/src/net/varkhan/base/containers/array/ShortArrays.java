@@ -218,7 +218,7 @@ public class ShortArrays {
         int l=array.length;
         if(beg<0 || beg>end || end>=l) throw new IndexOutOfBoundsException();
         short[] subary=new short[end-beg];
-        System.arraycopy(array, beg, subary, 0, end-beg);
+        if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
     }
 

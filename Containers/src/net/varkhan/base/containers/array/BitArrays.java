@@ -245,7 +245,7 @@ public class BitArrays {
     private static final byte[] byteRSB=new byte[256];
 
     static {
-        byteRSB[0]=-1;
+        byteRSB[0]=(byte)-1;
         for(int i=1;i<256;i++) {
             byte c=0;
             while((i&(1<<c))==0) c++;

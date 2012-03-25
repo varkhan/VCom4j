@@ -223,7 +223,7 @@ public class LongArrays {
         int l=array.length;
         if(beg<0 || beg>end || end>=l) throw new IndexOutOfBoundsException();
         long[] subary=new long[end-beg];
-        System.arraycopy(array, beg, subary, 0, end-beg);
+        if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
     }
 

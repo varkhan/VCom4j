@@ -342,7 +342,7 @@ public class Arrays {
         T[] subary=((Object) array.getClass()==(Object) Object[].class)
                    ? (T[]) new Object[end-beg]
                    : (T[]) Array.newInstance(array.getClass().getComponentType(), end-beg);
-        System.arraycopy(array, beg, subary, 0, end-beg);
+        if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
     }
 

@@ -52,7 +52,7 @@ public class Xml {
         else {
             out.append('>');
             writeText(out, txt);
-            out.append('<').append(tag).append('/').append('>');
+            out.append('<').append('/').append(tag).append('>');
         }
     }
 
