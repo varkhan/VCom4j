@@ -28,7 +28,7 @@ public abstract class TransformFunctional<A,C> implements Functional<A,C> {
 
     public static <A, C> TransformFunctional<A, C> log(Functional<A,C> func) {
         return new TransformFunctional<A,C>(func) {
-            public double value(A arg, C ctx) { return Math.log(func.invoke(arg, ctx)); }
+            public double invoke(A arg, C ctx) { return Math.log(func.invoke(arg, ctx)); }
         };
     }
 

@@ -105,7 +105,7 @@ public class Xml {
         if(tag==null) throw new NullPointerException("Element names must not be null");
         if(!isValidElmtName(tag))
             throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
-        out.append('<').append(tag).append('/').append('>');
+        out.append('<').append('/').append(tag).append('>');
     }
 
     /**
