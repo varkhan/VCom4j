@@ -221,7 +221,7 @@ public class FloatArrays {
      */
     public static float[] subarray(float[] array, int beg, int end) {
         int l=array.length;
-        if(beg<0 || beg>end || end>=l) throw new IndexOutOfBoundsException();
+        if(beg<0 || beg>end || end>l) throw new IndexOutOfBoundsException();
         float[] subary=new float[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;

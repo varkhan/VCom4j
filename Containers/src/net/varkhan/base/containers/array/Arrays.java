@@ -337,7 +337,7 @@ public class Arrays {
      */
     public static <T> T[] subarray(T[] array, int beg, int end) {
         int l=array.length;
-        if(beg<0 || beg>end || end>=l) throw new IndexOutOfBoundsException();
+        if(beg<0 || beg>end || end>l) throw new IndexOutOfBoundsException();
         @SuppressWarnings("unchecked")
         T[] subary=((Object) array.getClass()==(Object) Object[].class)
                    ? (T[]) new Object[end-beg]

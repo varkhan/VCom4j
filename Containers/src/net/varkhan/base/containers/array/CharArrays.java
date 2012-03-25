@@ -237,7 +237,7 @@ public class CharArrays {
      */
     public static char[] subarray(char[] array, int beg, int end) {
         int l=array.length;
-        if(beg<0 || beg>end || end>=l) throw new IndexOutOfBoundsException();
+        if(beg<0 || beg>end || end>l) throw new IndexOutOfBoundsException();
         char[] subary=new char[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
