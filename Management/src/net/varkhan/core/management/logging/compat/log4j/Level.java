@@ -24,42 +24,49 @@ public class Level implements Serializable {
     public static final int DEBUG_INT = 5;
     public static final int TRACE_INT = 6;
 
+    public static final String FATAL_STR = "FATAL";
+    public static final String ERROR_STR = "ERROR";
+    public static final String WARN_STR  = "WARN";
+    public static final String INFO_STR  = "INFO";
+    public static final String DEBUG_STR = "DEBUG";
+    public static final String TRACE_STR = "TRACE";
+
     /**
      * The {@code FATAL} level designates very severe error
      * events that will presumably lead the application to abort.
      */
-    public static final Level FATAL = new Level(FATAL_INT, "FATAL", 0);
+    public static final Level FATAL = new Level(FATAL_INT, FATAL_STR, 0);
 
     /**
      * The {@code ERROR} level designates error events that
      * might still allow the application to continue running.
      */
-    public static final Level ERROR = new Level(ERROR_INT, "ERROR", 3);
+    public static final Level ERROR = new Level(ERROR_INT, ERROR_STR, 3);
 
     /**
      * The {@code WARN} level designates potentially harmful situations.
      */
-    public static final Level WARN  = new Level(WARN_INT, "WARN",  4);
+    public static final Level WARN  = new Level(WARN_INT, WARN_STR,  4);
 
     /**
      * The {@code INFO} level designates informational messages
      * that highlight the progress of the application at coarse-grained
      * level.
      */
-    public static final Level INFO  = new Level(INFO_INT, "INFO",  6);
+    public static final Level INFO  = new Level(INFO_INT, INFO_STR,  6);
 
     /**
      * The {@code DEBUG} Level designates fine-grained
      * informational events that are most useful to debug an
      * application.
      */
-    public static final Level DEBUG = new Level(DEBUG_INT, "DEBUG", 7);
+    public static final Level DEBUG = new Level(DEBUG_INT, DEBUG_STR, 7);
 
     /**
      * The {@code TRACE} Level designates finer-grained
      * informational events than the <code>DEBUG</code level.
      */
-    public static final Level TRACE = new Level(TRACE_INT, "TRACE", 7);
+    public static final Level TRACE = new Level(TRACE_INT, TRACE_STR, 7);
 
     /**
      * Serialization version id.
@@ -89,7 +96,7 @@ public class Level implements Serializable {
      * conversion fails, then this method returns {@link #DEBUG}.
      */
     public static Level toLevel(int val) {
-        return (Level) toLevel(val, Level.DEBUG);
+        return toLevel(val, Level.DEBUG);
     }
 
     /**
@@ -99,8 +106,8 @@ public class Level implements Serializable {
     public static Level toLevel(int val, Level defaultLevel) {
         switch(val) {
             case DEBUG_INT: return Level.DEBUG;
-            case INFO_INT: return Level.INFO;
-            case WARN_INT: return Level.WARN;
+            case INFO_INT:  return Level.INFO;
+            case WARN_INT:  return Level.WARN;
             case ERROR_INT: return Level.ERROR;
             case FATAL_INT: return Level.FATAL;
             case TRACE_INT: return Level.TRACE;
@@ -116,14 +123,23 @@ public class Level implements Serializable {
     public static Level toLevel(String str, Level defaultLevel) {
         if(str == null) return defaultLevel;
 
-        if("DEBUG".equalsIgnoreCase(str)) return Level.DEBUG;
-        if("INFO" .equalsIgnoreCase(str))  return Level.INFO;
-        if("WARN" .equalsIgnoreCase(str))  return Level.WARN;
-        if("ERROR".equalsIgnoreCase(str)) return Level.ERROR;
-        if("FATAL".equalsIgnoreCase(str)) return Level.FATAL;
-        if("TRACE".equalsIgnoreCase(str)) return Level.TRACE;
+        if(DEBUG_STR.equalsIgnoreCase(str)) return Level.DEBUG;
+        if(INFO_STR.equalsIgnoreCase(str))  return Level.INFO;
+        if(WARN_STR.equalsIgnoreCase(str))  return Level.WARN;
+        if(ERROR_STR.equalsIgnoreCase(str)) return Level.ERROR;
+        if(FATAL_STR.equalsIgnoreCase(str)) return Level.FATAL;
+        if(TRACE_STR.equalsIgnoreCase(str)) return Level.TRACE;
         return defaultLevel;
     }
+
+    public static String[] levelStrings() {
+        return new String[] { FATAL_STR, ERROR_STR, WARN_STR, INFO_STR, DEBUG_STR, TRACE_STR };
+    }
+
+    public static int[] levelIntegers() {
+        return new int[] { FATAL_INT, ERROR_INT, WARN_INT, INFO_INT, DEBUG_INT, TRACE_INT };
+    }
+
 
     /**
      * Custom deserialization of Level.

@@ -11,7 +11,7 @@ import java.util.Collection;
  * @date 1/22/11
  * @time 10:40 PM
  */
-public interface StateReport<L,S extends State<L,S>> extends StateMonitor<L,S> {
+public interface StateReport<L extends Level,S extends State<L,S>> extends StateAware<L,S> {
 
     public S state();
 

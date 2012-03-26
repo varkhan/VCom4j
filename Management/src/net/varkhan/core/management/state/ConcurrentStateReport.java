@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @date 1/22/11
  * @time 10:57 PM
  */
-public class ConcurrentStateReport<L,S extends State<L,S>> implements StateReport<L,S> {
+public class ConcurrentStateReport<L extends Level,S extends State<L,S>> implements StateReport<L,S> {
     protected final Collection<StateCheck<L,S>> checks = new CopyOnWriteArrayList<StateCheck<L,S>>();
     protected final S initial;
     protected final long period;
@@ -99,7 +99,7 @@ public class ConcurrentStateReport<L,S extends State<L,S>> implements StateRepor
      * @date 1/22/11
      * @time 10:43 PM
      */
-    public static class ConcurrentStateCheck<L,S extends State<L,S>> extends WrapperStateCheck<L,S> implements StateCheck<L,S> {
+    public static class ConcurrentStateCheck<L extends Level,S extends State<L,S>> extends WrapperStateCheck<L,S> implements StateCheck<L,S> {
 
         protected final AtomicReference<Update<S>> update = new AtomicReference<Update<S>>(null);
 

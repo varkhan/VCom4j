@@ -42,6 +42,13 @@ public class SimpleLogResolver<T> implements LogResolver<T> {
         return cfg.isLevelEnabled(ctx, key, lev);
     }
 
+    public Iterable<String> contexts() {
+        return cfg.contexts();
+    }
+
+    public Iterable<Level> levels(String ctx) {
+        return cfg.levels(ctx);
+    }
 
     public static class SimpleLogger<T> implements Logger<T> {
 

@@ -30,7 +30,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the specified level including
+     * Log a message object with the specified level including
      * the stack trace of the {@link Throwable} {@code t} passed as
      * parameter.
      *
@@ -46,7 +46,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#FATAL FATAL} Level.
+     * Log a message object with the {@link Level#FATAL FATAL} Level.
      *
      * <p>This method first checks if this category is {@code FATAL} enabled by
      * comparing the level of this category with {@link Level#FATAL FATAL} Level.
@@ -66,7 +66,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#FATAL FATAL} level including
+     * Log a message object with the {@link Level#FATAL FATAL} level including
      * the stack trace of the {@link Throwable} {@code t} passed as
      * parameter.
      *
@@ -90,7 +90,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#ERROR ERROR} Level.
+     * Log a message object with the {@link Level#ERROR ERROR} Level.
      *
      * <p>This method first checks if this category is {@code ERROR} enabled by
      * comparing the level of this category with {@link Level#ERROR ERROR} Level.
@@ -108,7 +108,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#ERROR ERROR} level including
+     * Log a message object with the {@link Level#ERROR ERROR} level including
      * the stack trace of the {@link Throwable} {@code t} passed as
      * parameter.
      *
@@ -132,7 +132,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#WARN WARN} Level.
+     * Log a message object with the {@link Level#WARN WARN} Level.
      *
      * <p> This method first checks if this category is {@code WARN} enabled by
      * comparing the level of this category with {@link Level#WARN WARN} Level.
@@ -151,7 +151,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#WARN WARN} level including
+     * Log a message object with the {@link Level#WARN WARN} level including
      * the stack trace of the {@link Throwable} {@code t} passed as
      * parameter.
      *
@@ -174,7 +174,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#INFO INFO} Level.
+     * Log a message object with the {@link Level#INFO INFO} Level.
      *
      * <p>This method first checks if this category is {@code INFO} enabled by
      * comparing the level of this category with {@link Level#INFO INFO} Level.
@@ -193,7 +193,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#INFO INFO} level including
+     * Log a message object with the {@link Level#INFO INFO} level including
      * the stack trace of the {@link Throwable} {@code t} passed as
      * parameter.
      *
@@ -244,7 +244,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#DEBUG DEBUG} level.
+     * Log a message object with the {@link Level#DEBUG DEBUG} level.
      *
      * <p>This method first checks if this category is {@code DEBUG} enabled by
      * comparing the level of this category with the {@link Level#DEBUG DEBUG}
@@ -264,7 +264,7 @@ public class Log {
 
 
     /**
-     * LogMapper a message object with the {@link Level#DEBUG DEBUG} level including
+     * Log a message object with the {@link Level#DEBUG DEBUG} level including
      * the stack trace of the {@link Throwable} {@code t} passed as
      * parameter.
      *
@@ -289,7 +289,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#TRACE TRACE} level.
+     * Log a message object with the {@link Level#TRACE TRACE} level.
      *
      * @param message the message object to log.
      * @see #debug(Object) for an explanation of the logic applied.
@@ -300,7 +300,7 @@ public class Log {
     }
 
     /**
-     * LogMapper a message object with the {@link Level#TRACE TRACE} level including
+     * Log a message object with the {@link Level#TRACE TRACE} level including
      * the stack trace of the {@link Throwable}{@code t} passed as parameter.
      *
      * <p>

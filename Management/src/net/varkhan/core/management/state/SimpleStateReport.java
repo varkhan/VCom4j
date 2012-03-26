@@ -13,7 +13,7 @@ import java.util.Collections;
  * @date 1/22/11
  * @time 10:49 PM
  */
-public class SimpleStateReport<L,S extends State<L,S>> implements StateReport<L,S> {
+public class SimpleStateReport<L extends Level,S extends State<L,S>> implements StateReport<L,S> {
 
     protected final Collection<StateCheck<L,S>> checks = new ArrayList<StateCheck<L,S>>();
     protected final S initial;

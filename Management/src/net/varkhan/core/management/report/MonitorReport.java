@@ -22,4 +22,6 @@ public interface MonitorReport<M extends Monitor<?>> {
 
     public M get(String name);
 
+    public Iterable<String> names();
+
 }

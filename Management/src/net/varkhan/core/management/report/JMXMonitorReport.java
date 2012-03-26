@@ -148,9 +148,10 @@ public class JMXMonitorReport<M extends Monitor<?>> implements DynamicMBean, Mon
                     return;
                 }
                 catch(Exception e) {
-                    // ignore, get out of the sync block and remove the entry
+                    // ignore for now, get out of the sync block and remove the entry
                 }
             }
+            // If we were not able to add this monitor to the MBean server
             monitors.remove(name);
         }
     }
@@ -166,11 +167,17 @@ public class JMXMonitorReport<M extends Monitor<?>> implements DynamicMBean, Mon
                     return;
                 }
             }
+            // If we were able to remove this monitor from the MBean server
             monitors.remove(name);
         }
     }
 
     public M get(String name) { return monitors.get(name); }
+
+    @Override
+    public Iterable<String> names() {
+        return monitors.keySet();
+    }
 
 
     public Object getAttribute(String attribute)

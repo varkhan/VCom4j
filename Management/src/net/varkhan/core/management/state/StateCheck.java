@@ -8,7 +8,7 @@ package net.varkhan.core.management.state;
  * @date 1/22/11
  * @time 10:34 PM
  */
-public interface StateCheck<L,S extends State<L,S>> extends StateMonitor<L,S> {
+public interface StateCheck<L extends Level,S extends State<L,S>> extends StateAware<L,S> {
 
     public String name();
 

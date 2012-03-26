@@ -1,5 +1,8 @@
 package net.varkhan.core.management.state;
 
+import net.varkhan.core.management.logging.compat.log4j.Log;
+import net.varkhan.core.management.logging.compat.log4j.LogManager;
+
 import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.util.Collection;
@@ -14,12 +17,13 @@ import java.util.Hashtable;
  * @date 10/12/11
  * @time 12:23 PM
  */
-public class JMXStateReport<L,S extends State<L,S>> implements StateReport<L,S>, DynamicMBean {
+public class JMXStateReport<L extends Level,S extends State<L,S>> implements StateReport<L,S>, DynamicMBean {
+    private static final Log log = LogManager.getLogger(JMXStateReport.class);
 
     private final String[] path;
     private final StateReport<L,S> report;
 
-    public JMXStateReport(String[] path, StateReport<L,S> report) {
+    public JMXStateReport(StateReport<L,S> report, String... path) {
         this.path=path;
         this.report=report;
     }
@@ -29,12 +33,16 @@ public class JMXStateReport<L,S extends State<L,S>> implements StateReport<L,S>,
             try {
                 ManagementFactory.getPlatformMBeanServer().registerMBean(new JMXStateCheck<L,S>(check), getCheckMBeanName(check.name()));
             }
-            catch(Exception e) { /* ignore */ }
+            catch(Exception e) {
+                log.warn("Registering MBean for "+check.name()+" failed",e);
+            }
         }
         try {
             ManagementFactory.getPlatformMBeanServer().registerMBean(this,getReportMBeanName());
         }
-        catch(Exception e) { /* ignore */ }
+        catch(Exception e) {
+            log.warn("Registering MBean for report failed",e);
+        }
     }
 
     @Override
@@ -71,7 +79,7 @@ public class JMXStateReport<L,S extends State<L,S>> implements StateReport<L,S>,
         return ObjectName.getInstance(realm, objkeys);
     }
 
-    private static class JMXStateCheck<L,S extends State<L,S>> extends WrapperStateCheck<L,S> implements DynamicMBean {
+    private static class JMXStateCheck<L extends Level,S extends State<L,S>> extends WrapperStateCheck<L,S> implements DynamicMBean {
 
         private JMXStateCheck(StateCheck<L,S> hc) { super(hc); }
 

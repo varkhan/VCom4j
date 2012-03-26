@@ -19,8 +19,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="Functors" />
-    <orderEntry type="module" module-name="Containers" />
   </component>
 </module>
 

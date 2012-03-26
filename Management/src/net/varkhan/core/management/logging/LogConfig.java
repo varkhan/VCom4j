@@ -3,6 +3,9 @@
  */
 package net.varkhan.core.management.logging;
 
+import java.util.Iterator;
+
+
 /**
  * <b>A log handling configuration.</b>
  * <p/>
@@ -45,5 +48,32 @@ public interface LogConfig {
      * @return {@code true} iff logging for the severity level {@code lev} is enabled, for context {@code ctx} and key {@code key}
      */
     public boolean isLevelEnabled(String ctx, String key, int lev);
+
+    /**
+     * <b>A log level definition</b>.
+     */
+    public static interface Level {
+        /** @return the context name */
+        public String ctx();
+        /** @return the filter key */
+        public String key();
+        /** @return the severity level mask */
+        public long mask();
+    }
+
+    /**
+     * Iterate through known log contexts.
+     *
+     * @return an iterator over all log contexts
+     */
+    public Iterable<String> contexts();
+
+    /**
+     * Iterate through log level definitions for a given context.
+     *
+     * @param ctx the context name
+     * @return an iterator over all log levels defined for this context
+     */
+    public Iterable<Level> levels(String ctx);
 
 }

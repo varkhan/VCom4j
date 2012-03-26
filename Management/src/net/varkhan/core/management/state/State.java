@@ -10,7 +10,9 @@ package net.varkhan.core.management.state;
  * @date 1/22/11
  * @time 10:35 PM
  */
-public interface State<L, S extends State<L,S>> {
+public interface State<L extends Level, S extends State<L,S>> {
+
+    public String name();
 
     public S aggregate(S state, L level);
 

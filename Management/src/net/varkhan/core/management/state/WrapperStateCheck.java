@@ -8,7 +8,7 @@ package net.varkhan.core.management.state;
  * @date 1/22/11
  * @time 10:43 PM
  */
-public abstract class WrapperStateCheck<L,S extends State<L,S>> implements StateCheck<L,S> {
+public abstract class WrapperStateCheck<L extends Level,S extends State<L,S>> implements StateCheck<L,S> {
     protected final StateCheck<L,S> hc;
 
     protected WrapperStateCheck(StateCheck<L,S> hc) { this.hc=hc; }
