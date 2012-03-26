@@ -1,6 +1,7 @@
 package net.varkhan.pres.widget.dynamic;
 
 import net.varkhan.pres.format.HtmlFormatter;
+import net.varkhan.pres.format.XmlFormatter;
 import net.varkhan.pres.render.Renderer;
 
 import java.io.IOException;
@@ -53,11 +54,11 @@ public class PopupRenderer<F extends HtmlFormatter,L,I,P> implements Renderer<F,
 
     public void render(F fmt, L loc, I obj, P par) throws IOException {
         String id = getWidgetId(fmt, loc, obj, par);
-        fmt.div_(ATR_ID,"Widget_"+id,
+        fmt.div_(XmlFormatter.ATR_ID,"Widget_"+id,
                 "onMouseOver", "javascript: document.getElementById('Popup_"+id+"').style.display = 'block';",
                 "onMouseOut", "javascript: document.getElementById('Popup_"+id+"').style.display = 'none';"
                 );
-        fmt.div_(ATR_ID,"Popup_"+id,
+        fmt.div_(XmlFormatter.ATR_ID,"Popup_"+id,
                  ATR_CLASS,popupClass,
                  ATR_STYLE,"position: absolute; z-index: "+zindex+"; display:none;"+((popupStyle!=null)?" "+popupStyle:""),
                  "onMouseOver", "javascript: document.getElementById('Popup_"+id+"').style.display = 'block';",

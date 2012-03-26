@@ -8,10 +8,10 @@ package net.varkhan.pres.widget;
  * @date 1/12/11
  * @time 5:30 AM
  */
-public interface Widget<P> {
+public interface Widget<L,P> {
     public String id();
     public String name();
-    public String title();
-    public String desc();
-    public String link(P par);
+    public String title(L loc, P par);
+    public String desc(L loc, P par);
+    public String link(L loc, P par);
 }

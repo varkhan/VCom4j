@@ -8,6 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="VCom4j-Base-Containers" level="project" />
+    <orderEntry type="module" module-name="Conversion" />
   </component>
 </module>
 

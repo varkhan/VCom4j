@@ -1,6 +1,7 @@
 package net.varkhan.pres.format;
 
 import net.varkhan.base.containers.array.Arrays;
+import net.varkhan.base.conversion.formats.Xml;
 
 import java.io.IOException;
 
@@ -48,13 +49,13 @@ public class HtmlDocFormatter extends HtmlFormatter {
     public void open() throws IOException, IllegalStateException {
         super.open();
         writeXmlDoctype(this, TAG_HTML, "-//W3C//DTD XHTML 1.0 Transitional//EN", null, null);
-        writeElmtOpen(this, TAG_HTML);
-        writeElmtOpen(this, TAG_HEAD);
+        Xml.writeElmtOpen(this, TAG_HTML);
+        Xml.writeElmtOpen(this, TAG_HEAD);
         header();
         if(forceCloseTags) _all();
         else if(!opentags.isEmpty()) throw new IllegalStateException("Elements remains unclosed");
-        writeElmtClose(this, TAG_HEAD);
-        writeElmtOpen(this, TAG_BODY);
+        Xml.writeElmtClose(this, TAG_HEAD);
+        Xml.writeElmtOpen(this, TAG_BODY);
     }
 
     protected void header() throws IOException {
@@ -64,8 +65,8 @@ public class HtmlDocFormatter extends HtmlFormatter {
     }
 
     public void close() throws IOException, IllegalStateException {
-        writeElmtClose(this, TAG_BODY);
-        writeElmtClose(this, TAG_HTML);
+        Xml.writeElmtClose(this, TAG_BODY);
+        Xml.writeElmtClose(this, TAG_HTML);
         super.close();
     }
 }

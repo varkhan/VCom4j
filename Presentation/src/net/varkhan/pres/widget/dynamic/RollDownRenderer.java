@@ -1,8 +1,7 @@
 package net.varkhan.pres.widget.dynamic;
 
-import net.varkhan.base.containers.map.ArrayOpenHashMap;
-import net.varkhan.base.containers.map.Map;
 import net.varkhan.pres.format.HtmlFormatter;
+import net.varkhan.pres.format.XmlFormatter;
 import net.varkhan.pres.render.Renderer;
 
 import java.io.IOException;
@@ -105,11 +104,11 @@ public class RollDownRenderer<F extends HtmlFormatter,L,I,P> implements Renderer
     public void render(F fmt, L loc, I obj, P par) throws IOException {
         String handler = getEventHandler(fmt);
         String id = getWidgetId(fmt, loc, obj, par);
-        fmt.div_(ATR_ID, "Widget_"+id, ATR_STYLE, "text-align: top");
-        fmt.div_(ATR_ID, "Title_"+id, ATR_CLASS, titleClass, "onClick", "javascript: "+handler+"('"+id+"');");
+        fmt.div_(XmlFormatter.ATR_ID, "Widget_"+id, ATR_STYLE, "text-align: top");
+        fmt.div_(XmlFormatter.ATR_ID, "Title_"+id, ATR_CLASS, titleClass, "onClick", "javascript: "+handler+"('"+id+"');");
         title.render(fmt, loc, obj, par);
         fmt._div();
-        fmt.div_(ATR_ID, "Block_"+id, ATR_CLASS, blockClass, ATR_STYLE, "display:none;");
+        fmt.div_(XmlFormatter.ATR_ID, "Block_"+id, ATR_CLASS, blockClass, ATR_STYLE, "display:none;");
         block.render(fmt, loc, obj, par);
         fmt._div();
         fmt._div();

@@ -77,7 +77,7 @@ public class CheckedFormatter implements Formatter {
     public void close() throws IOException, IllegalStateException {
         if(closed) throw new IllegalStateException("Formatter is already closed");
         if(out instanceof Flushable) ((Flushable) out).flush();
-        if(out instanceof Closeable) ((Closeable) out).close();
+//        if(out instanceof Closeable) ((Closeable) out).close();
         closed=true;
     }
 }
