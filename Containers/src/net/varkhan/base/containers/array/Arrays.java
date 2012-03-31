@@ -298,6 +298,7 @@ public class Arrays {
             beg2++;
         }
         if(beg==len) return union;
+        @SuppressWarnings("unchecked")
         T[] copy = (((Object) ary1.getClass())==Object[].class)
                             ? (T[]) new Object[len]
                             : (T[]) Array.newInstance(ary1.getClass().getComponentType(), beg);
@@ -347,6 +348,7 @@ public class Arrays {
             beg2++;
         }
         if(beg==len) return union;
+        @SuppressWarnings("unchecked")
         T[] copy = (((Object) ary1.getClass())==Object[].class)
                             ? (T[]) new Object[len]
                             : (T[]) Array.newInstance(ary1.getClass().getComponentType(), beg);
@@ -387,6 +389,7 @@ public class Arrays {
             { if(beg==0||comp.compare(val1,last)>0) last = inter[beg++] = val1; beg1++; beg2++; }
         }
         if(beg==len) return inter;
+        @SuppressWarnings("unchecked")
         T[] copy = (((Object) ary1.getClass())==Object[].class)
                             ? (T[]) new Object[len]
                             : (T[]) Array.newInstance(ary1.getClass().getComponentType(), beg);
@@ -426,6 +429,7 @@ public class Arrays {
             { if(beg==0||val1.compareTo(last)>0) last = inter[beg++] = val1; beg1++; beg2++; }
         }
         if(beg==len) return inter;
+        @SuppressWarnings("unchecked")
         T[] copy = (((Object) ary1.getClass())==Object[].class)
                             ? (T[]) new Object[len]
                             : (T[]) Array.newInstance(ary1.getClass().getComponentType(), beg);
