@@ -101,7 +101,7 @@ public class FloatArrays {
     /**
      * Finds an object in a sorted array, in ascending order.
      *
-     * @param heap the sorted array
+     * @param ary  the sorted array
      * @param inf  the minimum index
      * @param sup  the maximum index
      * @param key  the value to search for
@@ -110,13 +110,13 @@ public class FloatArrays {
      *         where {@code inspos} is the index of the first value in the
      *         array bigger than {@code key}
      */
-    public static int searchHeapInc(float[] heap, int inf, int sup, float key) {
+    public static int searchInc(float[] ary, int inf, int sup, float key) {
         int min=inf;
         int max=sup-1;
 
         while(min<=max) {
             int med=(min+max)>>>1;
-            float medVal=heap[med];
+            float medVal=ary[med];
 
             if(medVal<key) min=med+1;
             else if(medVal>key) max=med-1;
@@ -128,7 +128,7 @@ public class FloatArrays {
     /**
      * Finds an object in a sorted array, in descending order.
      *
-     * @param heap the sorted array
+     * @param ary  the sorted array
      * @param inf  the minimum index
      * @param sup  the maximum index
      * @param key  the value to search for
@@ -137,19 +137,183 @@ public class FloatArrays {
      *         where {@code inspos} is the index of the first value in the
      *         array bigger than {@code key}
      */
-    public static int searchHeapDec(float[] heap, int inf, int sup, float key) {
+    public static int searchDec(float[] ary, int inf, int sup, float key) {
         int min=inf;
         int max=sup-1;
 
         while(min<=max) {
             int med=(min+max)>>>1;
-            float medVal=heap[med];
+            float medVal=ary[med];
 
             if(medVal<key) min=med+1;
             else if(medVal>key) max=med-1;
             else return med; // key found
         }
         return -(min+1);  // key not found.
+    }
+
+    /**
+     * Computes the union of segments in two sorted arrays, in ascending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the union of the two segments, with duplicates removed
+     */
+    public static float[] unionInc(float[] ary1, int beg1, int len1, float[] ary2, int beg2, int len2) {
+        int len = len1+len2;
+        float[] union = new float[len];
+        if(len==0) return union;
+        float last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            float val1 = ary1[beg1];
+            float val2 = ary2[beg2];
+            if(val1<val2) {
+                if(beg==0||last<val1) last = union[beg++] = val1;
+                beg1++;
+            } else
+            if(val1>val2) {
+                if(beg==0||last<val2) last = union[beg++] = val2;
+                beg2++;
+            } else {
+                if(beg==0||last<val1) last = union[beg++] = val1;
+                beg1++; beg2++;
+            }
+        }
+        while(beg1<len1) {
+            float val1 = ary1[beg1];
+            if(beg==0||last<val1) last = union[beg++] = val1;
+            beg1++;
+        }
+        while(beg2<len2) {
+            float val2 = ary2[beg2];
+            if(beg==0||last<val2) last = union[beg++] = val2;
+            beg2++;
+        }
+        if(beg>=len) return union;
+        float[] copy = new float[beg];
+        System.arraycopy(union, 0, copy, 0, beg);
+        return copy;
+    }
+
+    /**
+     * Computes the union of segments in two sorted arrays, in descending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the union of the two segments, with duplicates removed
+     */
+    public static float[] unionDec(float[] ary1, int beg1, int len1, float[] ary2, int beg2, int len2) {
+        int len = len1+len2;
+        float[] union = new float[len];
+        if(len==0) return union;
+        float last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            float val1 = ary1[beg1];
+            float val2 = ary2[beg2];
+            if(val1>val2) {
+                if(beg==0||last>val1) last = union[beg++] = val1;
+                beg1++;
+            } else
+            if(val1<val2) {
+                if(beg==0||last>val1) last = union[beg++] = val2;
+                beg2++;
+            } else {
+                if(beg==0||last>val1) last = union[beg++] = val1;
+                beg1++; beg2++;
+            }
+        }
+        while(beg1<len1) {
+            float val1 = ary1[beg1];
+            if(beg==0||last>val1) last = union[beg++] = val1;
+            beg1++;
+        }
+        while(beg2<len2) {
+            float val2 = ary2[beg2];
+            if(beg==0||last>val2) last = union[beg++] = val2;
+            beg2++;
+        }
+        if(beg>=len) return union;
+        float[] copy = new float[beg];
+        System.arraycopy(union, 0, copy, 0, beg);
+        return copy;
+    }
+
+    /**
+     * Computes the intersection of segments in two sorted arrays, in ascending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the intersection of the two segments, with duplicates removed
+     */
+    public static float[] interInc(float[] ary1, int beg1, int len1, float[] ary2, int beg2, int len2) {
+        int len = (len1>len2)?len1:len2;
+        float[] inter = new float[len];
+        if(len==0) return inter;
+        float last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            float val1 = ary1[beg1];
+            float val2 = ary2[beg2];
+            if(val1<val2) { beg1++; } else
+            if(val1>val2) { beg2++; } else
+            { if(beg==0||last<val1) last = inter[beg++] = val1; beg1++; beg2++; }
+        }
+        if(beg>=len) return inter;
+        float[] copy = new float[beg];
+        System.arraycopy(inter, 0, copy, 0, beg);
+        return copy;
+    }
+
+    /**
+     * Computes the intersection of segments in two sorted arrays, in descending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the intersection of the two segments, with duplicates removed
+     */
+    public static float[] interDec(float[] ary1, int beg1, int len1, float[] ary2, int beg2, int len2) {
+        int len = (len1>len2)?len1:len2;
+        float[] inter = new float[len];
+        if(len==0) return inter;
+        float last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            float val1 = ary1[beg1];
+            float val2 = ary2[beg2];
+            if(val1>val2) { beg1++; } else
+            if(val1<val2) { beg2++; } else
+            { if(beg==0||last>val1) last = inter[beg++] = val1; beg1++; beg2++; }
+        }
+        if(beg>=len) return inter;
+        float[] copy = new float[beg];
+        System.arraycopy(inter, 0, copy, 0, beg);
+        return copy;
     }
 
 

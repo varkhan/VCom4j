@@ -101,7 +101,7 @@ public class IntArrays {
     /**
      * Finds an object in a sorted array, in ascending order.
      *
-     * @param heap the sorted array
+     * @param ary  the sorted array
      * @param inf  the minimum index
      * @param sup  the maximum index
      * @param key  the value to search for
@@ -110,13 +110,13 @@ public class IntArrays {
      *         where {@code inspos} is the index of the first value in the
      *         array bigger than {@code key}
      */
-    public static int searchHeapInc(int[] heap, int inf, int sup, int key) {
+    public static int searchInc(int[] ary, int inf, int sup, int key) {
         int min=inf;
         int max=sup-1;
 
         while(min<=max) {
             int med=(min+max)>>>1;
-            int medVal=heap[med];
+            int medVal=ary[med];
 
             if(medVal<key) min=med+1;
             else if(medVal>key) max=med-1;
@@ -128,7 +128,7 @@ public class IntArrays {
     /**
      * Finds an object in a sorted array, in descending order.
      *
-     * @param heap the sorted array
+     * @param ary  the sorted array
      * @param inf  the minimum index
      * @param sup  the maximum index
      * @param key  the value to search for
@@ -137,19 +137,183 @@ public class IntArrays {
      *         where {@code inspos} is the index of the first value in the
      *         array bigger than {@code key}
      */
-    public static int searchHeapDec(int[] heap, int inf, int sup, int key) {
+    public static int searchDec(int[] ary, int inf, int sup, int key) {
         int min=inf;
         int max=sup-1;
 
         while(min<=max) {
             int med=(min+max)>>>1;
-            int medVal=heap[med];
+            int medVal=ary[med];
 
             if(medVal<key) min=med+1;
             else if(medVal>key) max=med-1;
             else return med; // key found
         }
         return -(min+1);  // key not found.
+    }
+
+    /**
+     * Computes the union of segments in two sorted arrays, in ascending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the union of the two segments, with duplicates removed
+     */
+    public static int[] unionInc(int[] ary1, int beg1, int len1, int[] ary2, int beg2, int len2) {
+        int len = len1+len2;
+        int[] union = new int[len];
+        if(len==0) return union;
+        int last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            int val1 = ary1[beg1];
+            int val2 = ary2[beg2];
+            if(val1<val2) {
+                if(beg==0||last<val1) last = union[beg++] = val1;
+                beg1++;
+            } else
+            if(val1>val2) {
+                if(beg==0||last<val2) last = union[beg++] = val2;
+                beg2++;
+            } else {
+                if(beg==0||last<val1) last = union[beg++] = val1;
+                beg1++; beg2++;
+            }
+        }
+        while(beg1<len1) {
+            int val1 = ary1[beg1];
+            if(beg==0||last<val1) last = union[beg++] = val1;
+            beg1++;
+        }
+        while(beg2<len2) {
+            int val2 = ary2[beg2];
+            if(beg==0||last<val2) last = union[beg++] = val2;
+            beg2++;
+        }
+        if(beg>=len) return union;
+        int[] copy = new int[beg];
+        System.arraycopy(union, 0, copy, 0, beg);
+        return copy;
+    }
+
+    /**
+     * Computes the union of segments in two sorted arrays, in descending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the union of the two segments, with duplicates removed
+     */
+    public static int[] unionDec(int[] ary1, int beg1, int len1, int[] ary2, int beg2, int len2) {
+        int len = len1+len2;
+        int[] union = new int[len];
+        if(len==0) return union;
+        int last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            int val1 = ary1[beg1];
+            int val2 = ary2[beg2];
+            if(val1>val2) {
+                if(beg==0||last>val1) last = union[beg++] = val1;
+                beg1++;
+            } else
+            if(val1<val2) {
+                if(beg==0||last>val1) last = union[beg++] = val2;
+                beg2++;
+            } else {
+                if(beg==0||last>val1) last = union[beg++] = val1;
+                beg1++; beg2++;
+            }
+        }
+        while(beg1<len1) {
+            int val1 = ary1[beg1];
+            if(beg==0||last>val1) last = union[beg++] = val1;
+            beg1++;
+        }
+        while(beg2<len2) {
+            int val2 = ary2[beg2];
+            if(beg==0||last>val2) last = union[beg++] = val2;
+            beg2++;
+        }
+        if(beg>=len) return union;
+        int[] copy = new int[beg];
+        System.arraycopy(union, 0, copy, 0, beg);
+        return copy;
+    }
+
+    /**
+     * Computes the intersection of segments in two sorted arrays, in ascending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the intersection of the two segments, with duplicates removed
+     */
+    public static int[] interInc(int[] ary1, int beg1, int len1, int[] ary2, int beg2, int len2) {
+        int len = (len1>len2)?len1:len2;
+        int[] inter = new int[len];
+        if(len==0) return inter;
+        int last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            int val1 = ary1[beg1];
+            int val2 = ary2[beg2];
+            if(val1<val2) { beg1++; } else
+            if(val1>val2) { beg2++; } else
+            { if(beg==0||last<val1) last = inter[beg++] = val1; beg1++; beg2++; }
+        }
+        if(beg>=len) return inter;
+        int[] copy = new int[beg];
+        System.arraycopy(inter, 0, copy, 0, beg);
+        return copy;
+    }
+
+    /**
+     * Computes the intersection of segments in two sorted arrays, in descending order.
+     *
+     * @param ary1 the first sorted array
+     * @param beg1 the start position of the first segment
+     * @param len1 the length of the first segment
+     * @param ary2 the second sorted array
+     * @param beg2 the start position of the second segment
+     * @param len2 the length of the second segment
+     * @return the intersection of the two segments, with duplicates removed
+     */
+    public static int[] interDec(int[] ary1, int beg1, int len1, int[] ary2, int beg2, int len2) {
+        int len = (len1>len2)?len1:len2;
+        int[] inter = new int[len];
+        if(len==0) return inter;
+        int last = 0;
+        len1+=beg1;
+        len2+=beg2;
+        int beg=0;
+        while(beg1<len1 && beg2<len2) {
+            int val1 = ary1[beg1];
+            int val2 = ary2[beg2];
+            if(val1>val2) { beg1++; } else
+            if(val1<val2) { beg2++; } else
+            { if(beg==0||last>val1) last = inter[beg++] = val1; beg1++; beg2++; }
+        }
+        if(beg>=len) return inter;
+        int[] copy = new int[beg];
+        System.arraycopy(inter, 0, copy, 0, beg);
+        return copy;
     }
 
 
