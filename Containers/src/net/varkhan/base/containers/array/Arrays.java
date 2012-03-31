@@ -592,9 +592,9 @@ public class Arrays {
         if((values.length&1)!=0) throw new IllegalArgumentException("Key/Value array must be of even size");
         for(int i=0; i<values.length; i+=2) {
             Object key=values[i];
-            if(!kclass.isAssignableFrom(key.getClass())) throw new IllegalArgumentException("Invalid key type at "+i);
+            if(key!=null && !kclass.isAssignableFrom(key.getClass())) throw new IllegalArgumentException("Invalid key type at "+i);
             Object val=values[i+1];
-            if(!vclass.isAssignableFrom(val.getClass())) throw new IllegalArgumentException("Invalid value type at "+(i+1));
+            if(val!=null && !vclass.isAssignableFrom(val.getClass())) throw new IllegalArgumentException("Invalid value type at "+(i+1));
             map.add((K) key,(V) val);
         }
         return map;
