@@ -112,7 +112,7 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
      *
      * @param array the array to copy
      */
-    public ArrayIndexedList(Type[] array) {
+    public ArrayIndexedList(Type... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Type obj=array[id];

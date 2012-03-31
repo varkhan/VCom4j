@@ -123,7 +123,7 @@ public class BlockIndexedDoubleList extends AbstractBlockIndexedList implements 
      *
      * @param array the array to copy
      */
-    public <N extends Number> BlockIndexedDoubleList(N[] array) {
+    public <N extends Number> BlockIndexedDoubleList(N... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Number obj=array[id];
@@ -138,7 +138,7 @@ public class BlockIndexedDoubleList extends AbstractBlockIndexedList implements 
      *
      * @param array the array to copy
      */
-    public BlockIndexedDoubleList(double[] array) {
+    public BlockIndexedDoubleList(double... array) {
         this();
         for(int id=0;id<array.length;id++) {
             double val=array[id];

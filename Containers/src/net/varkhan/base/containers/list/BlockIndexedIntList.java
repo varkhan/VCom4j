@@ -51,7 +51,7 @@ public class BlockIndexedIntList extends AbstractBlockIndexedList implements Ind
      **/
 
     /**
-     * Creates a new BlockIndexedList, specifying the reallocation strategy.
+     * Creates a new BlockIndexedIntList, specifying the reallocation strategy.
      *
      * @param blockshift the node reference storage block size 2-logarithm
      * @param growthfact the node reference storage growth factor
@@ -61,7 +61,7 @@ public class BlockIndexedIntList extends AbstractBlockIndexedList implements Ind
     }
 
     /**
-     * Creates a new BlockIndexedList.
+     * Creates a new BlockIndexedIntList.
      */
     public BlockIndexedIntList() {
         this(10, 1.5);
@@ -123,7 +123,7 @@ public class BlockIndexedIntList extends AbstractBlockIndexedList implements Ind
      *
      * @param array the array to copy
      */
-    public <N extends Number> BlockIndexedIntList(N[] array) {
+    public <N extends Number> BlockIndexedIntList(N... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Number obj=array[id];
@@ -138,7 +138,7 @@ public class BlockIndexedIntList extends AbstractBlockIndexedList implements Ind
      *
      * @param array the array to copy
      */
-    public BlockIndexedIntList(int[] array) {
+    public BlockIndexedIntList(int... array) {
         this();
         for(int id=0;id<array.length;id++) {
             int val=array[id];

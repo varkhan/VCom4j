@@ -53,7 +53,7 @@ public class SparseIndexedDoubleList extends AbstractSparseIndexedList implement
      **/
 
     /**
-     * Creates a new SparseIndexedList, specifying the reallocation strategy.
+     * Creates a new SparseIndexedDoubleList, specifying the reallocation strategy.
      *
      * @param blockshift the node reference storage block size 2-logarithm
      * @param growthfact the node reference storage growth factor
@@ -63,7 +63,7 @@ public class SparseIndexedDoubleList extends AbstractSparseIndexedList implement
     }
 
     /**
-     * Creates a new SparseIndexedList
+     * Creates a new SparseIndexedDoubleList
      */
     public SparseIndexedDoubleList() {
         this(10, 1.5);
@@ -125,7 +125,7 @@ public class SparseIndexedDoubleList extends AbstractSparseIndexedList implement
      *
      * @param array the array to copy
      */
-    public <N extends Number> SparseIndexedDoubleList(N[] array) {
+    public <N extends Number> SparseIndexedDoubleList(N... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Number obj=array[id];
@@ -140,7 +140,7 @@ public class SparseIndexedDoubleList extends AbstractSparseIndexedList implement
      *
      * @param array the array to copy
      */
-    public SparseIndexedDoubleList(double[] array) {
+    public SparseIndexedDoubleList(double... array) {
         this();
         for(int id=0;id<array.length;id++) {
             double val=array[id];

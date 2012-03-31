@@ -61,7 +61,7 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
      **/
 
     /**
-     * Creates a new ArraykIndexedList, specifying the reallocation strategy.
+     * Creates a new ArrayIndexedLongList, specifying the reallocation strategy.
      *
      * @param growthfact the node reference storage growth factor
      */
@@ -72,7 +72,7 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
     }
 
     /**
-     * Creates a new ArraykIndexedList.
+     * Creates a new ArrayIndexedLongList.
      */
     public ArrayIndexedLongList() {
         this(1.5);
@@ -110,11 +110,26 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
     }
 
     /**
-     * Builds an BlockIndexedList from an array.
+     * Builds an ArrayIndexedLongList from an array of numbers.
      *
      * @param array the array to copy
      */
-    public ArrayIndexedLongList(long[] array) {
+    public <N extends Number> ArrayIndexedLongList(N... array) {
+        this();
+        for(int id=0;id<array.length;id++) {
+            Number obj=array[id];
+            if(obj==null) continue;
+            long val=obj.longValue();
+            if(val!=defVal) set(id, val);
+        }
+    }
+
+    /**
+     * Builds an ArrayIndexedLongList from an array.
+     *
+     * @param array the array to copy
+     */
+    public ArrayIndexedLongList(long... array) {
         this();
         for(int id=0;id<array.length;id++) {
             long obj=array[id];

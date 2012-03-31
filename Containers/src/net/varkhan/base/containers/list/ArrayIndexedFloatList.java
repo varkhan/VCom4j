@@ -61,7 +61,7 @@ public class ArrayIndexedFloatList implements IndexedFloatList, Externalizable, 
      **/
 
     /**
-     * Creates a new ArraykIndexedList, specifying the reallocation strategy.
+     * Creates a new ArrayIndexedFloatList, specifying the reallocation strategy.
      *
      * @param growthfact the node reference storage growth factor
      */
@@ -72,7 +72,7 @@ public class ArrayIndexedFloatList implements IndexedFloatList, Externalizable, 
     }
 
     /**
-     * Creates a new ArraykIndexedList.
+     * Creates a new ArrayIndexedFloatList.
      */
     public ArrayIndexedFloatList() {
         this(1.5);
@@ -110,11 +110,26 @@ public class ArrayIndexedFloatList implements IndexedFloatList, Externalizable, 
     }
 
     /**
-     * Builds an BlockIndexedList from an array.
+     * Builds an ArrayIndexedFloatList from an array of numbers.
      *
      * @param array the array to copy
      */
-    public ArrayIndexedFloatList(float[] array) {
+    public <N extends Number> ArrayIndexedFloatList(N... array) {
+        this();
+        for(int id=0;id<array.length;id++) {
+            Number obj=array[id];
+            if(obj==null) continue;
+            float val=obj.floatValue();
+            if(val!=defVal) set(id, val);
+        }
+    }
+
+    /**
+     * Builds an ArrayIndexedFloatList from an array.
+     *
+     * @param array the array to copy
+     */
+    public ArrayIndexedFloatList(float... array) {
         this();
         for(int id=0;id<array.length;id++) {
             float obj=array[id];

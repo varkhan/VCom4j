@@ -54,7 +54,7 @@ public class SparseIndexedIntList extends AbstractSparseIndexedList implements I
      **/
 
     /**
-     * Creates a new SparseIndexedList, specifying the reallocation strategy.
+     * Creates a new SparseIndexedIntList, specifying the reallocation strategy.
      *
      * @param blockshift the node reference storage block size 2-logarithm
      * @param growthfact the node reference storage growth factor
@@ -64,7 +64,7 @@ public class SparseIndexedIntList extends AbstractSparseIndexedList implements I
     }
 
     /**
-     * Creates a new SparseIndexedList
+     * Creates a new SparseIndexedIntList
      */
     public SparseIndexedIntList() {
         this(10, 1.5);
@@ -126,7 +126,7 @@ public class SparseIndexedIntList extends AbstractSparseIndexedList implements I
      *
      * @param array the array to copy
      */
-    public <N extends Number> SparseIndexedIntList(N[] array) {
+    public <N extends Number> SparseIndexedIntList(N... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Number obj=array[id];
@@ -141,7 +141,7 @@ public class SparseIndexedIntList extends AbstractSparseIndexedList implements I
      *
      * @param array the array to copy
      */
-    public SparseIndexedIntList(int[] array) {
+    public SparseIndexedIntList(int... array) {
         this();
         for(int id=0;id<array.length;id++) {
             int val=array[id];

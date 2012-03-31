@@ -15,15 +15,6 @@ import java.sql.Array;
  */
 public class ArraysTest extends TestCase {
 
-    public void testIsMember() throws Exception {
-        assertTrue("isMember(null,1,2,3,null)",Arrays.isMember(null,1,2,3,null));
-        assertTrue("isMember(null,null,2,3,4)", Arrays.isMember(null, null, 2, 3, 4));
-        assertFalse("isMember(null,1,2,3,4)", Arrays.isMember(null, 1, 2, 3, 4));
-        assertTrue("isMember(1,1,2,3,null)", Arrays.isMember(1, 1, 2, 3, null));
-        assertFalse("isMember(4,1,2,3,null)", Arrays.isMember(4, 1, 2, 3, null));
-        assertTrue("isMember(4,1,2,3,4)", Arrays.isMember(4, 1, 2, 3, 4));
-    }
-
     public void testEquals() throws Exception {
         assertTrue("equals([1,2,3,\"f\"],[1,2,3,\"f\"])",Arrays.equals(new Object[]{1, 2, 3, "f"}, new Object[]{1, 2, 3, "f"}));
         assertFalse("equals([1,2,3,\"f\"],[5,2,3,\"f\"])", Arrays.equals(new Object[] { 1, 2, 3, "f" }, new Object[] { 5, 2, 3, "f" }));
@@ -32,14 +23,23 @@ public class ArraysTest extends TestCase {
     }
 
     public void testIndexOf() throws Exception {
+        assertEquals("isMember(null,1,2,3,null)", 3, Arrays.indexOf(null,1,2,3,null));
+        assertEquals("isMember(null,null,2,3,4)", 0, Arrays.indexOf(null, null, 2, 3, 4));
+        assertEquals("isMember(null,1,2,3,4)", -1, Arrays.indexOf(null, 1, 2, 3, 4));
+        assertEquals("isMember(1,1,2,3,null)", 0, Arrays.indexOf(1, 1, 2, 3, null));
+        assertEquals("isMember(4,1,2,3,null)", -1, Arrays.indexOf(4, 1, 2, 3, null));
+        assertEquals("isMember(4,1,2,3,4)", 3, Arrays.indexOf(4, 1, 2, 3, 4));
+    }
+
+    public void testArrayIndexOf() throws Exception {
 
     }
 
-    public void testSearchHeap() throws Exception {
+    public void testSearch() throws Exception {
 
     }
 
-    public void testInsertHeap() throws Exception {
+    public void testInsert() throws Exception {
 
     }
 

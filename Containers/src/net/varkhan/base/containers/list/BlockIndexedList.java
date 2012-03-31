@@ -103,7 +103,7 @@ public class BlockIndexedList<Type> extends AbstractBlockIndexedList implements 
      *
      * @param array the array to copy
      */
-    public BlockIndexedList(Type[] array) {
+    public BlockIndexedList(Type... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Type obj=array[id];

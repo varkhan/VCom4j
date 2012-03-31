@@ -93,7 +93,7 @@ public class ArrayList<Type> implements List<Type> {
      *
      * @param array the array to copy
      */
-    public ArrayList(Type[] array) {
+    public ArrayList(Type... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Type obj=array[id];

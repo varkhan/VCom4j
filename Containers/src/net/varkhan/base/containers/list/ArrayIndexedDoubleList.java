@@ -61,7 +61,7 @@ public class ArrayIndexedDoubleList implements IndexedDoubleList, Externalizable
      **/
 
     /**
-     * Creates a new ArraykIndexedList, specifying the reallocation strategy.
+     * Creates a new ArrayIndexedDoubleList, specifying the reallocation strategy.
      *
      * @param growthfact the node reference storage growth factor
      */
@@ -72,7 +72,7 @@ public class ArrayIndexedDoubleList implements IndexedDoubleList, Externalizable
     }
 
     /**
-     * Creates a new ArraykIndexedList.
+     * Creates a new ArrayIndexedDoubleList.
      */
     public ArrayIndexedDoubleList() {
         this(1.5);
@@ -110,11 +110,26 @@ public class ArrayIndexedDoubleList implements IndexedDoubleList, Externalizable
     }
 
     /**
-     * Builds an BlockIndexedList from an array.
+     * Builds an ArrayIndexedDoubleList from an array of numbers.
      *
      * @param array the array to copy
      */
-    public ArrayIndexedDoubleList(double[] array) {
+    public <N extends Number> ArrayIndexedDoubleList(N... array) {
+        this();
+        for(int id=0;id<array.length;id++) {
+            Number obj=array[id];
+            if(obj==null) continue;
+            double val=obj.doubleValue();
+            if(val!=defVal) set(id, val);
+        }
+    }
+
+    /**
+     * Builds an ArrayIndexedDoubleList from an array.
+     *
+     * @param array the array to copy
+     */
+    public ArrayIndexedDoubleList(double... array) {
         this();
         for(int id=0;id<array.length;id++) {
             double obj=array[id];

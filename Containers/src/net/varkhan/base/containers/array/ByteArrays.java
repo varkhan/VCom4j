@@ -27,20 +27,6 @@ public class ByteArrays {
      **/
 
     /**
-     * Indicates whether a value is contained in a byte array.
-     *
-     * @param item  the value to search for
-     * @param array the array to search
-     *
-     * @return {@literal true} if {@code array} contains {@code item}
-     */
-    public static boolean isMember(byte item, byte[] array) {
-        if(array==null) return false;
-        for(byte elem : array) if(item==elem) return true;
-        return false;
-    }
-
-    /**
      * Indicates whether two byte arrays are equal.
      *
      * @param array1 the first array
@@ -60,10 +46,27 @@ public class ByteArrays {
     }
 
     /**
+     * Returns the position of the first occurrence of a value inside an array.
+     *
+     * @param item  the value to search for
+     * @param array the array to search
+     *
+     * @return {@literal -1} if {@code item} was not found in {@code array},
+     * the position of the first element of the array equal to {@code item}
+     */
+    public static int indexOf(byte item, byte... array) {
+        if(array==null) return -1;
+        final int length = array.length;
+        for(int i=0;i<length;i++) if(item==array[i]) return i;
+        return -1;
+    }
+
+    /**
      * Returns the position of the first occurrence of an array as a subsequence
      * of an other array.
      *
      * @param array the array
+     * @param pos   the starting point in the array
      * @param sub   the subsequence to find
      *
      * @return the smallest index {@code idx} greater than {@code pos} such that

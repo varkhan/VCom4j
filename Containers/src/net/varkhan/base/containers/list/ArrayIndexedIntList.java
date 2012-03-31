@@ -61,7 +61,7 @@ public class ArrayIndexedIntList implements IndexedIntList, Externalizable, Clon
      **/
 
     /**
-     * Creates a new ArraykIndexedList, specifying the reallocation strategy.
+     * Creates a new ArrayIndexedIntList, specifying the reallocation strategy.
      *
      * @param growthfact the node reference storage growth factor
      */
@@ -72,7 +72,7 @@ public class ArrayIndexedIntList implements IndexedIntList, Externalizable, Clon
     }
 
     /**
-     * Creates a new ArraykIndexedList.
+     * Creates a new ArrayIndexedIntList.
      */
     public ArrayIndexedIntList() {
         this(1.5);
@@ -110,11 +110,26 @@ public class ArrayIndexedIntList implements IndexedIntList, Externalizable, Clon
     }
 
     /**
-     * Builds an BlockIndexedList from an array.
+     * Builds an ArrayIndexedIntList from an array of numbers.
      *
      * @param array the array to copy
      */
-    public ArrayIndexedIntList(int[] array) {
+    public <N extends Number> ArrayIndexedIntList(N... array) {
+        this();
+        for(int id=0;id<array.length;id++) {
+            Number obj=array[id];
+            if(obj==null) continue;
+            int val=obj.intValue();
+            if(val!=defVal) set(id, val);
+        }
+    }
+
+    /**
+     * Builds an ArrayIndexedIntList from an array.
+     *
+     * @param array the array to copy
+     */
+    public ArrayIndexedIntList(int... array) {
         this();
         for(int id=0;id<array.length;id++) {
             int obj=array[id];

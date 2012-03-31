@@ -51,7 +51,7 @@ public class BlockIndexedFloatList extends AbstractBlockIndexedList implements I
      **/
 
     /**
-     * Creates a new BlockIndexedList, specifying the reallocation strategy.
+     * Creates a new BlockIndexedFloatList, specifying the reallocation strategy.
      *
      * @param blockshift the node reference storage block size 2-logarithm
      * @param growthfact the node reference storage growth factor
@@ -61,7 +61,7 @@ public class BlockIndexedFloatList extends AbstractBlockIndexedList implements I
     }
 
     /**
-     * Creates a new BlockIndexedList.
+     * Creates a new BlockIndexedFloatList.
      */
     public BlockIndexedFloatList() {
         this(10, 1.5);
@@ -123,7 +123,7 @@ public class BlockIndexedFloatList extends AbstractBlockIndexedList implements I
      *
      * @param array the array to copy
      */
-    public <N extends Number> BlockIndexedFloatList(N[] array) {
+    public <N extends Number> BlockIndexedFloatList(N... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Number obj=array[id];
@@ -138,7 +138,7 @@ public class BlockIndexedFloatList extends AbstractBlockIndexedList implements I
      *
      * @param array the array to copy
      */
-    public BlockIndexedFloatList(float[] array) {
+    public BlockIndexedFloatList(float... array) {
         this();
         for(int id=0;id<array.length;id++) {
             float val=array[id];

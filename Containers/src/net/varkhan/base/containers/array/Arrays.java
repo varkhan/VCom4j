@@ -5,6 +5,7 @@ package net.varkhan.base.containers.array;
 
 import net.varkhan.base.containers.Container;
 import net.varkhan.base.containers.Iterator;
+import net.varkhan.base.containers.list.List;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
 import net.varkhan.base.containers.map.Map;
 
@@ -38,34 +39,6 @@ public class Arrays {
      **/
 
     /**
-     * Indicates whether an object is contained in an array,
-     * using the standard {@link #equals} method if the object
-     * to find is not {@literal null}, or comparing to {@literal null}
-     * otherwise.
-     *
-     * @param item  the object to search for
-     * @param array the array to search
-     * @param <T>   the element type
-     *
-     * @return {@literal true} if {@code array} contains an object equal to {@code item}
-     */
-    public static <T> boolean isMember(T item, T... array) {
-        if(array==null) return false;
-        if(item==null) {
-            for(T elem : array) {
-                if(elem==null) return true;
-            }
-            return false;
-        }
-        else {
-            for(T elem : array) {
-                if(item.equals(elem)) return true;
-            }
-            return false;
-        }
-    }
-
-    /**
      * Indicates whether two byte arrays are equal.
      *
      * @param array1 the first array
@@ -86,6 +59,33 @@ public class Arrays {
             if(!array1[i].equals(array2[i])) return false;
         }
         return true;
+    }
+
+    /**
+     * Returns the position of the first occurrence of an object inside an array.
+     *
+     * @param item  the object to search for
+     * @param array the array to search
+     * @param <T>   the element type
+     *
+     * @return {@literal -1} if {@code item} was not found in {@code array},
+     * the position of the first element of the array for which {@code item}.{@link Object#equals(Object) equals}() is true.
+     */
+    public static <T> int indexOf(T item, T... array) {
+        if(array==null) return -1;
+        final int length=array.length;
+        if(item==null) {
+            for(int i=0;i<length;i++) {
+                if(array[i]==null) return i;
+            }
+            return -1;
+        }
+        else {
+            for(int i=0;i<length;i++) {
+                if(item.equals(array[i])) return i;
+            }
+            return -1;
+        }
     }
 
     /**
@@ -535,16 +535,23 @@ public class Arrays {
      **/
 
     /**
-     * Returns an immutable container backed by an array.
+     * Returns an immutable list backed by an array.
      *
      * @param values the array of values
      * @param <T>    the type of the values
-     * @return a container holding the elements of the array, in order
+     * @return a list holding the elements of the array, in order
      */
-    public static <T> Container<T> container(final T... values) {
-        return new Container<T>() {
-            public long size() { return values==null?0:values.length; }
-            public boolean isEmpty() { return values==null||values.length==0; }
+    public static <T> List<T> asList(final T... values) {
+        return new List<T>() {
+            private T[] array = values;
+            public long size() { return array==null?0:array.length; }
+            public boolean isEmpty() { return array==null||array.length==0; }
+            public void clear() { }
+            public boolean add(T elt) { return false; }
+            public T get(long idx) { return array[(int) idx]; }
+            public boolean set(long idx, T elt) { return false; }
+            public boolean del(long idx) { return false; }
+            public boolean del(T elt) { return false; }
             public Iterator<? extends T> iterator() {
                 return new Iterator<T>() {
                     private volatile int pos = 0;
@@ -577,7 +584,7 @@ public class Arrays {
      * @return a map associating the object at even indexes in the array to the immediately following (odd index) element
      */
     @SuppressWarnings({ "unchecked" })
-    public static <K,V> Map<K,V> mapping(final Object... values) {
+    public static <K,V> Map<K,V> asMap(final Object... values) {
         ArrayOpenHashMap<K,V> map = new ArrayOpenHashMap<K,V>();
         if(values==null) return map;
         if((values.length&1)!=0) throw new IllegalArgumentException("Key/Value array must be of even size");

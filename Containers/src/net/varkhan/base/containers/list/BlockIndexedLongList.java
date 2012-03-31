@@ -51,7 +51,7 @@ public class BlockIndexedLongList extends AbstractBlockIndexedList implements In
      **/
 
     /**
-     * Creates a new BlockIndexedList, specifying the reallocation strategy.
+     * Creates a new BlockIndexedLongList, specifying the reallocation strategy.
      *
      * @param blockshift the node reference storage block size 2-logarithm
      * @param growthfact the node reference storage growth factor
@@ -61,7 +61,7 @@ public class BlockIndexedLongList extends AbstractBlockIndexedList implements In
     }
 
     /**
-     * Creates a new BlockIndexedList.
+     * Creates a new BlockIndexedLongList.
      */
     public BlockIndexedLongList() {
         this(10, 1.5);
@@ -123,7 +123,7 @@ public class BlockIndexedLongList extends AbstractBlockIndexedList implements In
      *
      * @param array the array to copy
      */
-    public <N extends Number> BlockIndexedLongList(N[] array) {
+    public <N extends Number> BlockIndexedLongList(N... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Number obj=array[id];
@@ -138,7 +138,7 @@ public class BlockIndexedLongList extends AbstractBlockIndexedList implements In
      *
      * @param array the array to copy
      */
-    public BlockIndexedLongList(long[] array) {
+    public BlockIndexedLongList(long... array) {
         this();
         for(int id=0;id<array.length;id++) {
             long val=array[id];

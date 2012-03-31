@@ -104,7 +104,7 @@ public class SparseIndexedList<Type> extends AbstractSparseIndexedList implement
      *
      * @param array the array to copy
      */
-    public SparseIndexedList(Type[] array) {
+    public SparseIndexedList(Type... array) {
         this();
         for(int id=0;id<array.length;id++) {
             Type obj=array[id];
