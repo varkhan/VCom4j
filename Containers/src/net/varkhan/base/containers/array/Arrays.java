@@ -543,7 +543,7 @@ public class Arrays {
      */
     public static <T> List<T> asList(final T... values) {
         return new List<T>() {
-            private T[] array = values;
+            private T[] array = (values==null)?null:values.clone();
             public long size() { return array==null?0:array.length; }
             public boolean isEmpty() { return array==null||array.length==0; }
             public void clear() { }
@@ -555,17 +555,17 @@ public class Arrays {
             public Iterator<? extends T> iterator() {
                 return new Iterator<T>() {
                     private volatile int pos = 0;
-                    public boolean hasNext() { return values!=null&&pos<values.length; }
+                    public boolean hasNext() { return array!=null&&pos<array.length; }
                     public T next() {
-                        if(values==null||pos>=values.length) throw new NoSuchElementException();
-                        return values[pos++];
+                        if(array==null||pos>=array.length) throw new NoSuchElementException();
+                        return array[pos++];
                     }
                     public void remove() { throw new UnsupportedOperationException(); }
                 };
             }
             public <Par> long visit(Visitor<T,Par> vis, Par par) {
                 long ret = 0;
-                if(values!=null) for(T obj: values) {
+                if(array!=null) for(T obj: array) {
                     long r = vis.invoke(obj, par);
                     if(r<0) return ret;
                     ret += r;
@@ -578,19 +578,26 @@ public class Arrays {
     /**
      * Returns an array of alternating keys and values as a map.
      *
+     * @param kclass the class of the keys
+     * @param vclass the class of the values
      * @param values the array of keys and values
      * @param <K>    the type of the keys
      * @param <V>    the type of the values
      * @return a map associating the object at even indexes in the array to the immediately following (odd index) element
      */
     @SuppressWarnings({ "unchecked" })
-    public static <K,V> Map<K,V> asMap(final Object... values) {
+    public static <K,V> Map<K,V> asMap(final Class<K> kclass, final Class<V> vclass, final Object... values) {
         ArrayOpenHashMap<K,V> map = new ArrayOpenHashMap<K,V>();
         if(values==null) return map;
         if((values.length&1)!=0) throw new IllegalArgumentException("Key/Value array must be of even size");
         for(int i=0; i<values.length; i+=2) {
-            map.add((K) values[i],(V) values[i+1]);
+            Object key=values[i];
+            if(!kclass.isAssignableFrom(key.getClass())) throw new IllegalArgumentException("Invalid key type at "+i);
+            Object val=values[i+1];
+            if(!vclass.isAssignableFrom(val.getClass())) throw new IllegalArgumentException("Invalid value type at "+(i+1));
+            map.add((K) key,(V) val);
         }
         return map;
     }
+
 }
