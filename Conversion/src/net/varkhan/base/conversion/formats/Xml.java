@@ -42,7 +42,7 @@ public class Xml {
      *                                  { name, value } pair format, an attribute name is not a CharSequence, or is not
      *                                  a valid attribute (see {@link #isValidAttrName(CharSequence)})
      */
-    public static void writeElmt(Appendable out, String tag, CharSequence txt, Object[]... atr) throws IOException, NullPointerException, IllegalArgumentException {
+    public static <A extends Appendable> A writeElmt(A out, String tag, CharSequence txt, Object[]... atr) throws IOException, NullPointerException, IllegalArgumentException {
         if(tag==null) throw new NullPointerException("Element names must not be null");
         if(!isValidElmtName(tag))
             throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
@@ -54,6 +54,7 @@ public class Xml {
             writeText(out, txt);
             out.append('<').append('/').append(tag).append('>');
         }
+        return out;
     }
 
     /**
@@ -71,6 +72,9 @@ public class Xml {
      * @param out the output Appendable
      * @param tag the element name
      * @param atr the attributes arrays
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
      *
      * @throws java.io.IOException      if the output Appendable generated an exception
      * @throws NullPointerException     if the element name or an attribute name is {@literal null}
@@ -79,13 +83,14 @@ public class Xml {
      *                                  { name, value } pair format, an attribute name is not a CharSequence, or is not
      *                                  a valid attribute (see {@link #isValidAttrName(CharSequence)})
      */
-    public static void writeElmtOpen(Appendable out, String tag, Object[]... atr) throws IOException, NullPointerException, IllegalArgumentException {
+    public static <A extends Appendable> A writeElmtOpen(A out, String tag, Object[]... atr) throws IOException, NullPointerException, IllegalArgumentException {
         if(tag==null) throw new NullPointerException("Element names must not be null");
         if(!isValidElmtName(tag))
             throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
         out.append('<').append(tag);
         writeAttr(out, atr);
         out.append('>');
+        return out;
     }
 
     /**
@@ -95,17 +100,21 @@ public class Xml {
      *
      * @param out the output Appendable
      * @param tag the element name
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
      *
      * @throws java.io.IOException      if the output Appendable generated an exception
      * @throws NullPointerException     if the element name is {@literal null}
      * @throws IllegalArgumentException if the element name is not a valid element (see
      *                                  {@link #isValidElmtName(CharSequence)})
      */
-    public static void writeElmtClose(Appendable out, String tag) throws IOException, NullPointerException, IllegalArgumentException {
+    public static <A extends Appendable> A writeElmtClose(A out, String tag) throws IOException, NullPointerException, IllegalArgumentException {
         if(tag==null) throw new NullPointerException("Element names must not be null");
         if(!isValidElmtName(tag))
             throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
         out.append('<').append('/').append(tag).append('>');
+        return out;
     }
 
     /**
@@ -120,6 +129,9 @@ public class Xml {
      *
      * @param out the output Appendable
      * @param atr the attribute arrays
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
      *
      * @throws java.io.IOException      if the output Appendable generated an exception
      * @throws NullPointerException     if an attribute name is {@literal null}
@@ -127,7 +139,7 @@ public class Xml {
      *                                  { name, value } pair format, an attribute name is not a CharSequence, or is not
      *                                  a valid attribute (see {@link #isValidAttrName(CharSequence)})
      */
-    public static void writeAttr(Appendable out, Object[]... atr) throws IOException, NullPointerException, IllegalArgumentException {
+    public static <A extends Appendable> A writeAttr(A out, Object[]... atr) throws IOException, NullPointerException, IllegalArgumentException {
         if(atr!=null) for(Object[] at : atr) {
             if(at!=null) {
                 // Check that we have matched name = value pairs
@@ -158,6 +170,7 @@ public class Xml {
                 }
             }
         }
+        return out;
     }
 
     /**
@@ -165,14 +178,18 @@ public class Xml {
      *
      * @param out the output Appendable
      * @param txt the text of the comment
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
      *
      * @throws java.io.IOException if the output Appendable generated an exception
      */
-    public static void writeComm(Appendable out, CharSequence txt) throws IOException {
+    public static <A extends Appendable> A writeComm(A out, CharSequence txt) throws IOException {
         out.append("<!--");
         // Replace double-hyphen delimiters to something safe
         if(txt!=null) CharArrays.repl(out, txt, "--", "- -");
         out.append("-->");
+        return out;
     }
 
     /**
@@ -181,9 +198,11 @@ public class Xml {
      * @param out the output Appendable
      * @param txt the lines of text of the comment
      *
+     * @return the output Appendable (to facilitate chaining)
+     *
      * @throws java.io.IOException if the output Appendable generated an exception
      */
-    public static void writeComm(Appendable out, CharSequence[]... txt) throws IOException {
+    public static <A extends Appendable> A writeComm(A out, CharSequence[]... txt) throws IOException {
         out.append("<!--");
         if(txt!=null) for(CharSequence[] tt : txt) {
             if(tt!=null) for(CharSequence t : tt) {
@@ -195,6 +214,7 @@ public class Xml {
             }
         }
         out.append("-->");
+        return out;
     }
 
     public static final CharSequence[] XML_ENTITIES_CHARS=new CharSequence[] { "&", "<", ">", "\"" };
@@ -208,12 +228,16 @@ public class Xml {
      *
      * @param out the output Appendable
      * @param txt the text to escape
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
      *
      * @throws java.io.IOException if the output Appendable generated an exception
      */
-    public static void writeText(Appendable out, CharSequence txt) throws IOException {
+    public static <A extends Appendable> A writeText(A out, CharSequence txt) throws IOException {
         // Replace common entities
         if(txt!=null) CharArrays.repl(out, txt, XML_ENTITIES_CHARS, XML_ENTITIES_NAMES);
+        return out;
     }
 
     /**
@@ -224,10 +248,13 @@ public class Xml {
      *
      * @param out the output Appendable
      * @param txt the lines of text to escape
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
      *
      * @throws java.io.IOException if the output Appendable generated an exception
      */
-    public static void writeText(Appendable out, CharSequence[]... txt) throws IOException {
+    public static <A extends Appendable> A writeText(A out, CharSequence[]... txt) throws IOException {
         if(txt!=null) for(CharSequence[] tt : txt) {
             if(tt!=null) for(CharSequence t : tt) {
                 // Replace common entities
@@ -237,6 +264,7 @@ public class Xml {
                 }
             }
         }
+        return out;
     }
 
 

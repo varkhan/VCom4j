@@ -34,7 +34,12 @@ public class Json {
      **  JSON writing
      **/
 
-
+    /**
+     * Writes an object as a String.
+     *
+     * @param val the object to write
+     * @return a JSON string representation of thr object
+     */
     public static String toJson(Object val) {
         StringBuilder buf = new StringBuilder();
         try { writeObject(buf,val); }
@@ -47,10 +52,14 @@ public class Json {
      *
      * @param out the output Appendable
      * @param obj the object to write
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
      * @throws IOException if the output Appendable generated an exception
      */
     @SuppressWarnings("unchecked")
-    public static void writeObject(Appendable out, Object obj) throws IOException {
+    public static <A extends Appendable> A writeObject(A out, Object obj) throws IOException {
         if(obj==null) {
             writeNull(out);
         }
@@ -75,6 +84,11 @@ public class Json {
             writeList(out, (List<Object>) obj);
             out.append(']');
         }
+        else if(obj.getClass().isArray()) {
+            out.append('[');
+            writeArray(out, (Object[]) obj);
+            out.append(']');
+        }
         else if(obj instanceof java.util.Map) {
             out.append('{');
             writeMap(out, (java.util.Map<CharSequence,Object>) obj);
@@ -86,6 +100,7 @@ public class Json {
             out.append(']');
         }
         else throw new IllegalArgumentException("Cannot serialize object to JSON: unknown class "+obj.getClass().getCanonicalName());
+        return out;
     }
 
     /**
@@ -93,16 +108,21 @@ public class Json {
      *
      * @param out the output Appendable
      * @param map the map to write
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
      * @throws IOException if the output Appendable generated an exception
      */
-    public static void writeMap(Appendable out, java.util.Map<? extends CharSequence,Object> map) throws IOException {
+    public static <A extends Appendable> A writeMap(A out, java.util.Map<? extends CharSequence,?> map) throws IOException {
         @SuppressWarnings("unchecked")
         java.util.Iterator<java.util.Map.Entry<CharSequence, Object>> it = ((java.util.Map<CharSequence,Object>) map).entrySet().iterator();
         while(it.hasNext()) {
-            java.util.Map.Entry<CharSequence, Object> x = it.next();
+            java.util.Map.Entry<CharSequence, ?> x = it.next();
             writeField(out, x.getKey().toString(), x.getValue());
             if(it.hasNext()) out.append(',');
         }
+        return out;
     }
 
     /**
@@ -110,16 +130,21 @@ public class Json {
      *
      * @param out the output Appendable
      * @param map the map to write
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
      * @throws IOException if the output Appendable generated an exception
      */
-    public static void writeMap(Appendable out, Map<? extends CharSequence,Object> map) throws IOException {
+    public static <A extends Appendable> A writeMap(A out, Map<? extends CharSequence,?> map) throws IOException {
         @SuppressWarnings("unchecked")
         Iterator<? extends Map.Entry<CharSequence,Object>> it = ((Map<CharSequence,Object>) map).iterator();
         while(it.hasNext()) {
-            java.util.Map.Entry<CharSequence, Object> x = it.next();
+            java.util.Map.Entry<CharSequence, ?> x = it.next();
             writeField(out, x.getKey().toString(), x.getValue());
             if(it.hasNext()) out.append(',');
         }
+        return out;
     }
 
     /**
@@ -127,14 +152,39 @@ public class Json {
      *
      * @param out the output Appendable
      * @param lst the list to write
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
      * @throws IOException if the output Appendable generated an exception
      */
-    public static void writeList(Appendable out, java.util.List<Object> lst) throws IOException {
-        java.util.Iterator<Object> it = lst.iterator();
+    public static <A extends Appendable> A writeList(A out, java.util.List<?> lst) throws IOException {
+        java.util.Iterator<?> it = lst.iterator();
         while(it.hasNext()) {
             writeObject(out, it.next());
             if(it.hasNext()) out.append(',');
         }
+        return out;
+    }
+
+    /**
+     * Writes an array to an {@link Appendable}.
+     *
+     * @param out the output Appendable
+     * @param lst the variadic array to write
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
+     * @throws IOException if the output Appendable generated an exception
+     */
+    public static <A extends Appendable> A writeArray(A out, Object... lst) throws IOException {
+        final int len = lst.length;
+        for(int i=0;i<len;i++) {
+            if(i>0) out.append(',');
+            writeObject(out, lst[i]);
+        }
+        return out;
     }
 
     /**
@@ -142,24 +192,30 @@ public class Json {
      *
      * @param out the output Appendable
      * @param cnt the list to write
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
      * @throws IOException if the output Appendable generated an exception
      */
-    public static void writeList(Appendable out, List<Object> cnt) throws IOException {
-        Iterator<? extends Object> it = cnt.iterator();
+    public static <A extends Appendable> A writeList(A out, List<?> cnt) throws IOException {
+        Iterator<?> it = cnt.iterator();
         while(it.hasNext()) {
             writeObject(out, it.next());
             if(it.hasNext()) out.append(',');
         }
+        return out;
     }
 
-    public static void writeField(Appendable out, CharSequence key, Object val) throws IOException {
+    public static <A extends Appendable> A writeField(A out, CharSequence key, Object val) throws IOException {
         out.append('"');
         writeName(out, key);
         out.append('"').append(':');
         writeObject(out, val);
+        return out;
     }
 
-    public static void writeName(Appendable out, CharSequence str) throws IOException {
+    public static <A extends Appendable> A writeName(A out, CharSequence str) throws IOException {
         final int ls = str.length();
         for(int i=0;i<ls;i++) {
             char c = str.charAt(i);
@@ -172,9 +228,10 @@ public class Json {
                     break;
             }
         }
+        return out;
     }
 
-    public static void writeString(Appendable out, CharSequence str) throws IOException {
+    public static <A extends Appendable> A writeString(A out, CharSequence str) throws IOException {
         final int ls = str.length();
         for(int i=0;i<ls;i++) {
             char c= str.charAt(i);
@@ -192,24 +249,28 @@ public class Json {
                     break;
             }
         }
+        return out;
     }
 
-    public static void writeNumber(Appendable out, Number n) throws IOException {
+    public static <A extends Appendable> A writeNumber(A out, Number n) throws IOException {
         if(n.longValue()==n.doubleValue()) {
             out.append(Long.toString(n.longValue()));
         }
         else {
             out.append(Double.toString(n.doubleValue()));
         }
+        return out;
     }
 
-    public static void writeBoolean(Appendable out, boolean b) throws IOException {
+    public static <A extends Appendable> A writeBoolean(A out, boolean b) throws IOException {
         if(b) out.append(LITERAL_TRUE);
         else out.append(LITERAL_FALSE);
+        return out;
     }
 
-    public static void writeNull(Appendable out) throws IOException {
+    public static <A extends Appendable> A writeNull(A out) throws IOException {
         out.append(LITERAL_NULL);
+        return out;
     }
 
 
@@ -217,86 +278,146 @@ public class Json {
      **  JSON reading
      **/
 
-    public static Object readObject(Reader in) throws IOException {
-        int c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        return readObject(in,c);
+    /**
+     * State-aware wrapper for a reader and current char, needed to be able to read JSON types that do not have delimiters
+     */
+    protected static class Parser {
+        private final Reader in;
+        private int st = ' ';
+        private int ln = 0;
+        private int cn = 0;
+
+        public Parser(Reader in) {
+            this.in=in;
+        }
+
+        /**
+         * The last character read.
+         * @return the last character read, or -1 if EOS has been reached
+         */
+        public int last() { return st; }
+
+        /**
+         * Reads one character from the stream.
+         * @return the character read from the stream, or -1 if EOS has been reached
+         * @throws IOException if an I/O error occurred while reading from the stream
+         */
+        public int next() throws IOException {
+            st = in.read();
+            if(st=='\n') { ln++; cn=0; }
+            else if(st>=0) cn ++;
+            return st;
+        }
+
+        /**
+         * Reads and discards all whitespace characters until a non-whitespace character is reached
+         * @return the last (non-whitespace) character read from the stream, or -1 if EOS has been reached
+         * @throws IOException if an I/O error occurred while reading from the stream
+         */
+        public int skipWhitespace() throws IOException {
+            while(st>=0 && isWhiteSpace(st)) { next(); }
+            return st;
+        }
     }
 
-    private static Object readObject(Reader in, int c) throws IOException {
+    public static Object readObject(Reader in) throws IOException {
+        Parser p = new Parser(in);
+        p.skipWhitespace();
+        return readObject(p);
+    }
+
+    protected static Object readObject(Parser p) throws IOException {
+        int c=p.last();
         switch(c) {
-            case '{':
-                return readMap(in,c);
-            case '[':
-                return readList(in,c);
-            case '"':
-                return readString(in,c,c);
+            case '{': {
+                p.next();
+                Map<CharSequence,Object> obj=readMap(p, '"', ':', ',', '}');
+                c=p.last();
+                if(c!='}') throw new IOException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                p.next();
+                return obj;
+            }
+            case '[': {
+                p.next();
+                List<Object> obj=readList(p, ',', ']');
+                c=p.last();
+                if(c!=']') throw new IOException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                p.next();
+                return obj;
+            }
+            case '"': {
+                p.next();
+                String obj=readString(p, c);
+                c=p.last();
+                if(c!='"') throw new IOException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                p.next();
+                return obj;
+            }
             default:
-                return readLiteral(in,c);
+                return readLiteral(p);
         }
     }
 
     public static Number readNumber(Reader in) throws IOException {
-        int c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        return readNumber(in,c);
+        Parser p = new Parser(in);
+        p.skipWhitespace();
+        return readNumber(p);
     }
 
-    private static Number readNumber(Reader in, int c) throws IOException {
+    protected static Number readNumber(Parser p) throws IOException {
         StringBuilder buf = new StringBuilder();
         boolean isInteger = true;
         boolean isFloat = true;
+        int c = p.last();
         while(c>=0 && !isWhiteSpace(c)) {
             isInteger &= isValidIntegerChar(c);
             isFloat &= isValidNumberChar(c);
             buf.append((char)c);
-            c = in.read();
+            c = p.next();
         }
         if(isInteger) try {
             return Long.parseLong(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new IOException("Invalid number format",e);
+            throw new IOException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
         }
         if(isFloat) try {
             return Double.parseDouble(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new IOException("Invalid number format",e);
+            throw new IOException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
         }
-        throw new IOException("Invalid number "+buf);
+        throw new IOException("Invalid number at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
     }
 
     public static Boolean readBoolean(Reader in) throws IOException {
-        int c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        return readBoolean(in, c);
+        Parser p = new Parser(in);
+        p.skipWhitespace();
+        return readBoolean(p);
     }
 
-    private static Boolean readBoolean(Reader in, int c) throws IOException {
+    protected static Boolean readBoolean(Parser p) throws IOException {
         StringBuilder buf = new StringBuilder();
-        boolean isInteger = true;
-        boolean isFloat = true;
-        while(c>=0 && !isWhiteSpace(c)) {
-            isInteger &= isValidIntegerChar(c);
-            isFloat &= isValidNumberChar(c);
+        int c = p.last();
+        while(c>=0 && c>'a' && c<'z') {
             buf.append((char)c);
-            c = in.read();
+            c = p.next();
         }
         if(CharArrays.equals(buf,LITERAL_FALSE)) return false;
         if(CharArrays.equals(buf,LITERAL_TRUE)) return true;
-        throw new IOException("Invalid boolean "+buf);
+        throw new IOException("Invalid boolean at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
     }
 
-    private static Object readLiteral(Reader in, int c) throws IOException {
+    protected static Object readLiteral(Parser p) throws IOException {
         StringBuilder buf = new StringBuilder();
         boolean isInteger = true;
         boolean isFloat = true;
-        while(c>=0 && !isWhiteSpace(c)) {
+        int c = p.last();
+        while(c>=0 && !isWhiteSpace(c) && !isReservedChar(c)) {
             isInteger &= isValidIntegerChar(c);
             isFloat &= isValidNumberChar(c);
             buf.append((char)c);
-            c = in.read();
+            c = p.next();
         }
         if(CharArrays.equals(buf,LITERAL_NULL)) return null;
         if(CharArrays.equals(buf,LITERAL_FALSE)) return false;
@@ -305,33 +426,40 @@ public class Json {
             return Long.parseLong(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new IOException("Invalid number format",e);
+            throw new IOException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
         }
         if(isFloat) try {
             return Double.parseDouble(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new IOException("Invalid number format",e);
+            throw new IOException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
         }
-        throw new IOException("Invalid literal "+buf);
+        throw new IOException("Invalid literal at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
     }
 
     public static String readString(Reader in) throws IOException {
-        int c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        if(c!='"') throw new IOException("Invalid character sequence format");
+        Parser p = new Parser(in);
+        int c = p.skipWhitespace();
+        char t='"';
+        if(c!=t) throw new IOException("Invalid character sequence format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip leading "
-        return readString(in,in.read(),c);
+        p.next();
+        String obj=readString(p, t);
+        c=p.last();
+        if(c!=t) throw new IOException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        p.next();
+        return obj;
     }
 
-    private static String readString(Reader in, int c, int t) throws IOException {
+    protected static String readString(Parser p, int t) throws IOException {
         StringBuilder buf = new StringBuilder();
+        int c = p.last();
         // Read all characters until an unescaped terminator is found
         while(c>=0 && c!=t) {
             // Decode escape sequences
             if(c=='\\') {
-                c = in.read();
-                if(c<=0) throw new IOException("Unterminated string literal");
+                c = p.next();
+                if(c<=0) throw new IOException("Unterminated character escape");
                 switch(c) {
                     case '\\': buf.append('\\'); break;
                     case '\"': buf.append('\"'); break;
@@ -344,22 +472,22 @@ public class Json {
                     case 'u':
                         // Decode unicode escapes
                         int x = 0;
-                        c = in.read();
+                        c = p.next();
                         if(c<0) throw new IOException("Unterminated unicode escape");
                         int d = asHexDigit(c);
                         if(d<0) throw new IOException("Invalid unicode escape character "+(char)c);
                         x |= d<<12;
-                        c = in.read();
+                        c = p.next();
                         if(c<0) throw new IOException("Unterminated unicode escape");
                         d = asHexDigit(c);
                         if(d<0) throw new IOException("Invalid unicode escape character "+(char)c);
                         x |= d<<8;
-                        c = in.read();
+                        c = p.next();
                         if(c<0) throw new IOException("Unterminated unicode escape");
                         d = asHexDigit(c);
                         if(d<0) throw new IOException("Invalid unicode escape character "+(char)c);
                         x |= d<<4;
-                        c = in.read();
+                        c = p.next();
                         if(c<0) throw new IOException("Unterminated unicode escape");
                         d = asHexDigit(c);
                         if(d<0) throw new IOException("Invalid unicode escape character "+(char)c);
@@ -370,85 +498,109 @@ public class Json {
                 }
             }
             else buf.append((char)c);
-            c = in.read();
+            c = p.next();
         }
         return buf.toString();
     }
 
     public static List<Object> readList(Reader in) throws IOException {
-        int c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        if(c!='[') throw new IOException("Invalid list format");
+        Parser p = new Parser(in);
+        int c = p.skipWhitespace();
+        if(c!='[') throw new IOException("Invalid list format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip leading [
-        return readList(in,in.read());
+        p.next();
+        List<Object> obj=readList(p, ',', ']');
+        c=p.last();
+        if(c!=']') throw new IOException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        // Skip trailing ]
+        p.next();
+        return obj;
     }
 
-    private static List<Object> readList(Reader in, int c) throws IOException {
+    protected static List<Object> readList(Parser p, char r, char t) throws IOException {
         List<Object> lst = new ArrayList<Object>();
+        int c = p.last();
         // Read all objects until ] is found or the end of the stream is reached
         while(c>=0) {
             // Skip leading whitespace
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-            if(c==']') break;
-            Object val = readObject(in, c);
+            c = p.skipWhitespace();
+            if(c==t|| c<0) break;
+            Object val = readObject(p);
             lst.add(val);
             // Skip trailing whitespace
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
+            c = p.skipWhitespace();
             // Return on terminator
-            if(c==']') break;
+            if(c==t || c<0) break;
             // Validate and skip separator
-            else if(c==',') c = in.read();
-            else if(c<0) throw new IOException("Unterminated list");
-            else throw new IOException("Unexpected bare object in list");
+            else if(c==r) c = p.next();
+            else throw new IOException("Unexpected bare object in list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         }
         return lst;
     }
 
     public static Map<CharSequence,Object> readMap(Reader in) throws IOException {
-        int c = in.read();
-        if(c!='{') throw new IOException("Invalid map format");
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        return readMap(in,c);
+        Parser p = new Parser(in);
+        int c = p.skipWhitespace();
+        if(c!='{') throw new IOException("Invalid map format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        // Skip leading {
+        p.next();
+        Map<CharSequence,Object> obj=readMap(p, '"', ':', ',', '}');
+        c=p.last();
+        if(c!='}') throw new IOException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        // Skip trailing
+        p.next();
+        return obj;
     }
 
-    private static Map<CharSequence,Object> readMap(Reader in, int c) throws IOException {
+    protected static Map<CharSequence,Object> readMap(Parser p, char f, char k, char r, char t) throws IOException {
         Map<CharSequence,Object> map = new ArrayOpenHashMap<CharSequence,Object>();
+        int c = p.last();
         // Read all objects until } is found or the end of the stream is reached
         while(c>=0) {
             // Skip leading whitespace
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-            if(c=='}') break;
+            c = p.skipWhitespace();
+            // Return on terminator
+            if(c==t|| c<0) break;
             String key;
-            if(c=='"') key = readString(in, in.read(), c);
+            if(c==f) {
+                // Skip first quote
+                p.next();
+                key = readString(p, f);
+                c=p.last();
+                if(c!=f) throw new IOException("Unterminated field at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                // Skip last quote
+                p.next();
+            }
             else {
-                // Parse in raw field: sequence of non-whitespace, non-':' chars
+                // Parse in raw field: sequence of non-whitespace, non-reserved chars
                 StringBuilder buf = new StringBuilder();
-                while(c>=0 && !isWhiteSpace(c) && c!=':') { buf.append(c); c = in.read(); }
+                while(c>=0 && !isWhiteSpace(c) && !isReservedChar(c)) { buf.append((char)c); c = p.next(); }
                 key = buf.toString();
             }
             // Skip intermediary whitespace
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-            if(c!=':') throw new IOException("Unexpected bare object in map");
-            else if(c<0) throw new IOException("Unterminated map");
+            c = p.skipWhitespace();
+            if(c!=k) throw new IOException("Unexpected bare object in map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+            else if(c<0) throw new IOException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+            // Skip key separator
+            p.next();
             // Skip intermediary whitespace
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-            Object val = readObject(in,c);
+            p.skipWhitespace();
+            Object val = readObject(p);
             map.add(key, val);
             // Skip trailing whitespace
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
+            c = p.skipWhitespace();
             // Return on terminator
-            if(c=='}') break;
+            if(c==t|| c<0) break;
             // Validate and skip separator
-            else if(c==',') c = in.read();
-            else if(c<0) throw new IOException("Unterminated map");
-            else throw new IOException("Unexpected bare object in map");
+            else if(c==r) c = p.next();
+            else if(c<0) throw new IOException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+            else throw new IOException("Unexpected bare object in map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         }
         return map;
     }
 
     /**
      * Checks whether a character is white-space
-     * <p/>
      *
      * @param c the character to check
      * @return {@literal true} if the character is whitespace
@@ -458,25 +610,23 @@ public class Json {
     }
 
     /**
-     * Checks whether a character is a decimal digit.
-     * <p/>
+     * Converts a decimal digit to its corresponding numeric value.
      *
-     * @param c the character to check
-     * @return {@literal true} if the character is a decimal digit
+     * @param c the character to convert
+     * @return the decimal value of the character, or {@literal -1} if it is not a valid decimal digit
      */
-    private static int asDecDigit(int c) {
+    protected static int asDecDigit(int c) {
         if(c>='0' && c<='9') return c-'0';
         return -1;
     }
 
     /**
-     * Checks whether a character is an hexadecimal digit.
-     * <p/>
+     * Converts an hexadecimal digit to its corresponding numeric value.
      *
-     * @param c the character to check
-     * @return {@literal true} if the character is an hexadecimal digit
+     * @param c the character to convert
+     * @return the hexadecimal value of the character, or {@literal -1} if it is not a valid hexadecimal digit
      */
-    private static int asHexDigit(int c) {
+    protected static int asHexDigit(int c) {
         if(c>='0' && c<='9') return c-'0';
         if(c>='A' && c<='F') return c-'A'+10;
         if(c>='a' && c<='f') return c-'a'+10;
@@ -485,7 +635,6 @@ public class Json {
 
     /**
      * Checks whether a character is legal in the character representation of an integer number.
-     * <p/>
      *
      * @param c the character to check
      * @return {@literal true} if the character is legal in an integer number
@@ -496,13 +645,23 @@ public class Json {
 
     /**
      * Checks whether a character is legal in the character representation of a floating point number.
-     * <p/>
      *
      * @param c the character to check
      * @return {@literal true} if the character is legal in a floating point number
      */
     public static boolean isValidNumberChar(int c) {
-        return (c>='0' && c<='9') || c=='-'  || c=='+' || c=='.' || c=='e' || c=='E';
+        return (c>='0' && c<='9') || c=='-' || c=='+' || c=='.' || c=='e' || c=='E';
     }
+
+    /**
+     * Checks whether a character is a reserved JSON character.
+     *
+     * @param c the character to check
+     * @return {@literal true} if the character is one of ,:[]{}'"
+     */
+    public static boolean isReservedChar(int c) {
+        return c==',' || c==':' || c=='[' || c==']' || c=='{' || c=='}' || c=='\'' || c=='"';
+    }
+
 
 }
