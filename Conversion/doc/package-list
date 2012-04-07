@@ -1,3 +1,7 @@
+net.varkhan.base.conversion
+net.varkhan.base.conversion.character
+net.varkhan.base.conversion.formats
 net.varkhan.base.conversion.serializer
+net.varkhan.base.conversion.serializer.composite
 net.varkhan.base.conversion.serializer.primitives
 net.varkhan.base.conversion.serializer.record

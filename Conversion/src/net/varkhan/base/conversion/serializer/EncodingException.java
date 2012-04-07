@@ -15,13 +15,15 @@ public class EncodingException extends SerializationException {
     private static final long serialVersionUID=1L;
 
     /**
-     *
+     * Constructs a new encoding exception.
      */
     public EncodingException() {
         super();
     }
 
     /**
+     * Constructs a new encoding exception with the specified detail message and cause.
+     *
      * @param message the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
      * @param cause   the cause (which is saved for later retrieval by the {@link #getCause()} method).
      *                (A {@literal null} value is permitted, and indicates that the cause is nonexistent or unknown.)
@@ -31,6 +33,8 @@ public class EncodingException extends SerializationException {
     }
 
     /**
+     * Constructs a new encoding exception.
+     *
      * @param message the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
      */
     public EncodingException(String message) {
@@ -38,6 +42,8 @@ public class EncodingException extends SerializationException {
     }
 
     /**
+     * Constructs a new encoding exception.
+     *
      * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
      *              (A {@literal null} value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
