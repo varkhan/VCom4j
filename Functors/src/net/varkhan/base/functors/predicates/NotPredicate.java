@@ -11,16 +11,14 @@ import net.varkhan.base.functors.Predicate;
  * @date 2/11/12
  * @time 3:21 PM
  */
-public class NotPredicate<A,C> implements Predicate<A,C> {
-
-    private final Predicate<A,C> pred;
+public class NotPredicate<A,C> extends WrapperPredicate<A,C> {
 
     public NotPredicate(Predicate<A, C> pred) {
-        this.pred = pred;
+        super(pred);
     }
 
-    public boolean invoke(A and, C ctx) {
-        return !pred.invoke(and, ctx);
+    public boolean invoke(A arg, C ctx) {
+        return !pred.invoke(arg, ctx);
     }
 
 }

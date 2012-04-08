@@ -1,0 +1,5 @@
+net.varkhan.base.functors
+net.varkhan.base.functors.functionals
+net.varkhan.base.functors.mappers
+net.varkhan.base.functors.predicates
+net.varkhan.base.functors.reducers

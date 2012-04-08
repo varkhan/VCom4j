@@ -2,6 +2,9 @@ package net.varkhan.base.functors.predicates;
 
 import net.varkhan.base.functors.Predicate;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -15,7 +18,17 @@ import java.util.Set;
  */
 public class SetPredicate<A,C> implements Predicate<A,C> {
 
-    private final Set<A> set;
+    protected final Set<A> set;
+
+    public SetPredicate(A... vals) {
+        this.set = new HashSet<A>(vals.length);
+        for(A a: vals) this.set.add(a);
+    }
+
+    public SetPredicate(Iterator<A> vals) {
+        this.set = new HashSet<A>();
+        while(vals.hasNext()) this.set.add(vals.next());
+    }
 
     public SetPredicate(Set<A> set) {
         this.set = set;
