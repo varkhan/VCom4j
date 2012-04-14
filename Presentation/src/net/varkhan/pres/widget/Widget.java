@@ -13,5 +13,4 @@ public interface Widget<L,P> {
     public String name();
     public String title(L loc, P par);
     public String desc(L loc, P par);
-    public String link(L loc, P par);
 }

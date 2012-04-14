@@ -1,6 +1,10 @@
 package net.varkhan.pres.widget.page;
 
+import net.varkhan.pres.widget.Linked;
+import net.varkhan.pres.widget.Located;
 import net.varkhan.pres.widget.Widget;
+
+import java.util.Collection;
 
 
 /**
@@ -11,7 +15,7 @@ import net.varkhan.pres.widget.Widget;
  * @date 3/18/12
  * @time 8:02 PM
  */
-public abstract class ContainerWidget<L,P> extends AbstractWidget<L,P> implements Widget<L,P> {
+public abstract class ContainerWidget<L,P> extends AbstractWidget<L,P> implements Widget<L,P>, Linked<L,P>, Located<L,P> {
     protected final Widget<L,P> widget;
 
     public ContainerWidget(String id, Widget<L,P> widget) {
@@ -27,4 +31,20 @@ public abstract class ContainerWidget<L,P> extends AbstractWidget<L,P> implement
         return widget.desc(loc, par);
     }
 
+    @SuppressWarnings({ "unchecked" })
+    public Collection<String> getLinks(String type, L loc, P par) {
+        if(widget instanceof Linked) return ((Linked<L,P>) widget).getLinks(type, loc, par);
+        return null;
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    public void addLink(String type, String link, Object... args) {
+        if(widget instanceof Linked) ((Linked<L,P>) widget).addLink(type, link, args);
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    public String href(L loc, P par) {
+        if(widget instanceof Located) return ((Located) widget).href(loc,par);
+        return null;
+    }
 }

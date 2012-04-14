@@ -4,6 +4,7 @@ import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.array.Arrays;
 import net.varkhan.pres.format.HtmlFormatter;
 import net.varkhan.pres.format.XmlFormatter;
+import net.varkhan.pres.widget.Located;
 import net.varkhan.pres.widget.Widget;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import static net.varkhan.pres.format.HtmlFormatter.*;
  * @date 1/13/11
  * @time 9:23 PM
  */
-public class HMenuSelectorRenderer<W extends Widget<String[], P>,P> implements MenuSelectorRenderer<HtmlFormatter,W,P> {
+public class HMenuSelectorRenderer<W extends Widget<String[], P> & Located<String[], P>,P> implements MenuSelectorRenderer<HtmlFormatter,W,P> {
 
     public HMenuSelectorRenderer(Layout layout, MenuSelectorRenderer<HtmlFormatter,W,P> subrdr) {
         this.layout=layout;
@@ -33,36 +34,36 @@ public class HMenuSelectorRenderer<W extends Widget<String[], P>,P> implements M
 
     public Orientation orientation() { return Orientation.H; }
 
-    public static enum Layout {
+    public static enum Layout implements MenuSelectorRenderer.Layout {
         EXPANDED {
-            protected String[] itemAttr(String id, boolean selected) {
+            public String[] itemAttr(String id, boolean selected) {
                 return new String[] {};
             }
 
-            protected String[] subsAttr(String id, boolean selected) {
+            public String[] subsAttr(String id, boolean selected) {
                 return new String[] {};
             }
         },
         CASCADED {
-            protected String[] itemAttr(String id, boolean selected) {
+            public String[] itemAttr(String id, boolean selected) {
                 return new String[] {};
             }
 
-            protected String[] subsAttr(String id, boolean selected) {
+            public String[] subsAttr(String id, boolean selected) {
                 return new String[] {
                         ATR_STYLE,"display: "+(selected?"block":"none"),
                 };
             }
         },
         HOVER {
-            protected String[] itemAttr(String id, boolean selected) {
+            public String[] itemAttr(String id, boolean selected) {
                 return new String[] {
                         "onMouseOver","javascript: document.getElementById('MenuSubs_"+id+"').style.display = 'block';",
                         "onMouseOut", "javascript: document.getElementById('MenuSubs_"+id+"').style.display = 'none';",
                 };
             }
 
-            protected String[] subsAttr(String id, boolean selected) {
+            public String[] subsAttr(String id, boolean selected) {
                 return new String[] {
                         ATR_STYLE,"position: absolute; z-index: 1; display: none",
                         "onMouseOver","javascript: document.getElementById('MenuSubs_"+id+"').style.display = 'block';",
@@ -71,7 +72,7 @@ public class HMenuSelectorRenderer<W extends Widget<String[], P>,P> implements M
             }
         },
         CLICK {
-            protected String[] itemAttr(String id, boolean selected) {
+            public String[] itemAttr(String id, boolean selected) {
                 return new String[] {
                         ATR_STYLE,"display: inline",
                         "onClick","javascript: " +
@@ -81,16 +82,13 @@ public class HMenuSelectorRenderer<W extends Widget<String[], P>,P> implements M
                 };
             }
 
-            protected String[] subsAttr(String id, boolean selected) {
+            public String[] subsAttr(String id, boolean selected) {
                 return new String[] {
                         ATR_STYLE,"display: none",
                 };
             }
         },
         ;
-
-        protected abstract String[] itemAttr(String id, boolean selected);
-        protected abstract String[] subsAttr(String id, boolean selected);
 
     }
 
@@ -103,7 +101,7 @@ public class HMenuSelectorRenderer<W extends Widget<String[], P>,P> implements M
         Iterator<Menu.Item<W>> it = (Iterator<Menu.Item<W>>) obj.items().iterator();
         while(it.hasNext()) {
             Menu.Item<W> item=it.next();
-            boolean selected = loc!=null && loc.length>0 && item.id().equals(loc[0]);
+            boolean selected = (loc==null || loc.length==0)? item.id().length()==0:item.id().equals(loc[0]);
             fmt.td_(XmlFormatter.ATR_ID,"MenuBlock_"+item.id(),ATR_CLASS,"menu block"+(selected?" selected":""),"cellspacing","0","cellpadding","0");
             fmt.div_(new String[][]{ new String[]{XmlFormatter.ATR_ID,"MenuItem_"+item.id(),ATR_CLASS,"menu item"+(selected?" selected":"")},layout.itemAttr(item.id(),selected)});
             renderWidget(fmt, loc, item, par);
@@ -137,7 +135,7 @@ public class HMenuSelectorRenderer<W extends Widget<String[], P>,P> implements M
         sfmt.open();
         String[] sloc = Menu.NO_LOC;
         if(loc!=null && loc.length>0) sloc = Arrays.subarray(loc, 1, loc.length);
-        sfmt.a(obj.name(), obj.id(), obj.link(sloc,par), "title", obj.title(loc,par));
+        sfmt.a(obj.name(), obj.id(), obj.href(sloc, par), "title", obj.title(loc,par));
         sfmt.close();
         fmt.append("\n");
     }

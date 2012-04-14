@@ -54,6 +54,12 @@ public class HtmlFormatter extends XmlFormatter {
 
     public void setBaseUrl(String baseUrl) { this.baseUrl=baseUrl; }
 
+    public HtmlFormatter append(CharSequence csq) throws IOException { super.append(csq); return this; }
+    public HtmlFormatter append(CharSequence... csq) throws IOException { super.append(csq); return this; }
+    public HtmlFormatter append(CharSequence csq, int beg, int end) throws IOException { super.append(csq, beg, end); return this; }
+    public HtmlFormatter append(char c) throws IOException { super.append(c); return this; }
+    public HtmlFormatter ln() throws IOException { super.ln(); return this; }
+
     public HtmlFormatter hr(String... atr) throws IOException { elmt(TAG_HR,null,atr); return this; }
     public HtmlFormatter br(String... atr) throws IOException { elmt(TAG_BR,null,atr); return this; }
     public HtmlFormatter li(String... atr) throws IOException { elmt(TAG_LI,null,atr); return this; }

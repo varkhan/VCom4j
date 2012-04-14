@@ -1,12 +1,12 @@
 package net.varkhan.pres.widget.page;
 
 import net.varkhan.pres.format.HtmlFormatter;
-import net.varkhan.pres.render.Renderable;
 import net.varkhan.pres.widget.menu.Menu;
 import net.varkhan.pres.widget.menu.MenuContentRenderer;
 import net.varkhan.pres.widget.menu.MenuSelectorRenderer;
 
 import java.io.IOException;
+import java.util.*;
 
 
 /**
@@ -17,12 +17,13 @@ import java.io.IOException;
  * @date 3/18/12
  * @time 8:16 PM
  */
-public class MenuPage<F extends HtmlFormatter,P> extends AbstractWidget<String[],P> implements Page<F,P>, Renderable<F,String[],P> {
+public class MenuPage<F extends HtmlFormatter,P> extends AbstractWidget<String[],P> implements HtmlPage<F,P> {
 
     protected String title = null;
     protected final MenuSelectorRenderer<F,Page<F,P>,P> srdr;
     protected final MenuContentRenderer<F,Page<F,P>,P> crdr;
     protected final Menu<Page<F,P>> menu;
+    protected final Map<String,List<String>> links = new HashMap<String,List<String>>();
 
     public MenuPage(String id, MenuSelectorRenderer<F,Page<F,P>,P> srdr, MenuContentRenderer<F,Page<F,P>,P> crdr, Menu<Page<F,P>> menu) {
         super(id);
@@ -35,20 +36,20 @@ public class MenuPage<F extends HtmlFormatter,P> extends AbstractWidget<String[]
     public void render(F fmt, String[] loc, P par) throws IOException {
         switch(srdr.orientation()) {
             case H:
-                fmt.div_();
+                fmt.div_("id",id(),"class","menu bar Hmenu");
                 srdr.render(fmt, loc, menu, par);
                 fmt._div();
                 fmt.append("\n");
-                fmt.div_();
+                fmt.div_("class","menu page Hmenu");
                 crdr.render(fmt, loc, menu, par);
                 fmt._div();
                 break;
             case V:
-                fmt.div_("style", "float:left");
+                fmt.div_("id",id(),"class","menu bar Vmenu","style", "float:left");
                 srdr.render(fmt, loc, menu, par);
                 fmt._div();
                 fmt.append("\n");
-                fmt.div_("style", "float:right");
+                fmt.div_("class","menu page Vmenu","style", "float:right");
                 crdr.render(fmt, loc, menu, par);
                 fmt._div();
                 break;
@@ -71,10 +72,29 @@ public class MenuPage<F extends HtmlFormatter,P> extends AbstractWidget<String[]
         return menu.getItem(loc).desc(loc, par);
     }
 
-    public String link(String[] loc, P par) {
-        return menu.getItem(loc).link(loc,par);
+    public String href(String[] loc, P par) {
+        return menu.getItem(loc).href(loc, par);
     }
 
     public boolean addItem(Page<F,P> item, String id, String... loc) {return menu.addItem(item, id, loc);}
+
+    public Collection<String> getLinks(String type, String[] loc, P par) {
+        Collection<String> lk1=links.get(type);
+        Page<F,P> it = menu.getItem(loc);
+        if(it==null) return lk1;
+        Collection<String> lk2 = it.getLinks(type,loc,par);
+        if(lk2==null) return lk1;
+        if(lk1==null) return lk2;
+        Collection<String> lk = new ArrayList<String>();
+        lk.addAll(lk1);
+        lk.addAll(lk2);
+        return lk;
+    }
+
+    public void addLink(String type, String link, Object... args) {
+        List<String> lk = links.get(type);
+        if(lk==null) links.put(type,lk=new ArrayList<String>());
+        lk.add(link);
+    }
 
 }

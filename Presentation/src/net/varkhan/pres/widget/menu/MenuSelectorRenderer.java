@@ -27,4 +27,8 @@ public interface MenuSelectorRenderer<F extends Formatter, W, P> extends Rendere
 
     public Orientation orientation();
 
+    public static interface Layout {
+        abstract String[] itemAttr(String id, boolean selected);
+        abstract String[] subsAttr(String id, boolean selected);
+    }
 }

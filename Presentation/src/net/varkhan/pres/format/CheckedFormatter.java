@@ -43,19 +43,37 @@ public class CheckedFormatter implements Formatter {
 
     public CheckedFormatter append(CharSequence csq) throws IOException {
         if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
-        out.append(csq);
+        if(csq!=null) out.append(csq);
         return this;
     }
 
-    public CheckedFormatter append(CharSequence csq, int start, int end) throws IOException {
+    public CheckedFormatter append(CharSequence... csq) throws IOException {
         if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
-        out.append(csq, start, end);
+        if(csq!=null) for(CharSequence s: csq) if(s!=null) out.append(s).append('\n');
+        return this;
+    }
+
+    public CheckedFormatter append(CharSequence[]... csq) throws IOException {
+        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
+        if(csq!=null) for(CharSequence[] ss: csq) if(ss!=null) for(CharSequence s: ss) if(s!=null) out.append(s).append('\n');
+        return this;
+    }
+
+    public CheckedFormatter append(CharSequence csq, int beg, int end) throws IOException {
+        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
+        if(csq!=null) out.append(csq, beg, end);
         return this;
     }
 
     public CheckedFormatter append(char c) throws IOException {
         if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
         out.append(c);
+        return this;
+    }
+
+    public CheckedFormatter ln() throws IOException {
+        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
+        out.append('\n');
         return this;
     }
 

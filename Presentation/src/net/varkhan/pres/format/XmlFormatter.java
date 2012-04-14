@@ -51,9 +51,13 @@ public class XmlFormatter extends CheckedFormatter {
 
     public XmlFormatter append(CharSequence csq) throws IOException { super.append(csq); return this; }
 
-    public XmlFormatter append(CharSequence csq, int start, int end) throws IOException { super.append(csq, start, end); return this; }
+    public XmlFormatter append(CharSequence... csq) throws IOException { super.append(csq); return this; }
+
+    public XmlFormatter append(CharSequence csq, int beg, int end) throws IOException { super.append(csq, beg, end); return this; }
 
     public XmlFormatter append(char c) throws IOException { super.append(c); return this; }
+
+    public XmlFormatter ln() throws IOException { super.ln(); return this; }
 
     /**
      * Writes a comment to this formatter.
