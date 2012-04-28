@@ -7,6 +7,14 @@ import java.io.IOException;
 import java.io.Reader;
 
 
+/**
+ * <b>XML serialization and deserialization utilities</b>.
+ * <p/>
+ *
+ * @author varkhan
+ * @date 3/18/12
+ * @time 2:38 PM
+ */
 public class Xml {
 
     protected Xml() { }

@@ -14,7 +14,11 @@ import java.io.StringReader;
 
 
 /**
- * <b></b>.
+ * <b>JSON syntax parser and converter</b>.
+ * <p/>
+ * This class provides several static utilities, and helper objects, to serialize and deserialize
+ * basic Java objects (boolean, number, String, arrays, List and Map) to and from their
+ * representation as JSON text.
  * <p/>
  *
  * @author varkhan
@@ -552,7 +556,7 @@ public class Json {
         p.next();
         Map<CharSequence,Object> obj=readMap(p, '"', ':', ',', '}');
         c=p.last();
-        if(c!='}') throw new FormatException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!='}') throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip trailing
         p.next();
         return obj;
@@ -599,7 +603,6 @@ public class Json {
             if(c==t|| c<0) break;
             // Validate and skip separator
             else if(c==r) c = p.next();
-            else if(c<0) throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
             else throw new FormatException("Unexpected bare object in map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         }
         return map;
