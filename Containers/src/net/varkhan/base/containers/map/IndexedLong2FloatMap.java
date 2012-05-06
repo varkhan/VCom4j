@@ -210,7 +210,7 @@ public interface IndexedLong2FloatMap extends IndexedMap<Long,Float>/*, IndexedO
     public long add(IndexedLong2FloatMap.Entry item);
 
     /**
-     * Deletes an Element record, and invalidates the associated index mapping
+     * Deletes an Entry record, and invalidates the associated index mapping
      *
      * @param index a unique identifier for this record
      */

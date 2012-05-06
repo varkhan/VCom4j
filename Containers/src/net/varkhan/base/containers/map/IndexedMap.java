@@ -182,7 +182,7 @@ public interface IndexedMap<Key,Value> extends IndexedSearchable<Key,IndexedMap.
     public long add(IndexedMap.Entry<Key,Value> item);
 
     /**
-     * Deletes an Element record, and invalidates the associated index mapping
+     * Deletes an Entry record, and invalidates the associated index mapping
      *
      * @param index a unique identifier for this record
      */

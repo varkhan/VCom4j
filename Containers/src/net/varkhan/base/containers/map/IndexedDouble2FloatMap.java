@@ -210,7 +210,7 @@ public interface IndexedDouble2FloatMap extends IndexedMap<Double,Float>/*, Inde
     public long add(IndexedDouble2FloatMap.Entry item);
 
     /**
-     * Deletes an Element record, and invalidates the associated index mapping
+     * Deletes an Entry record, and invalidates the associated index mapping
      *
      * @param index a unique identifier for this record
      */

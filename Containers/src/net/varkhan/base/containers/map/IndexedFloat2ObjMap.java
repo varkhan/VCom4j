@@ -195,7 +195,7 @@ public interface IndexedFloat2ObjMap<Value> extends IndexedMap<Float,Value> {
     public long add(IndexedFloat2ObjMap.Entry<Value> item);
 
     /**
-     * Deletes an Element record, and invalidates the associated index mapping
+     * Deletes an Entry record, and invalidates the associated index mapping
      *
      * @param index a unique identifier for this record
      */

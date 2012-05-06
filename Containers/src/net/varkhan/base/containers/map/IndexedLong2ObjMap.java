@@ -195,7 +195,7 @@ public interface IndexedLong2ObjMap<Value> extends IndexedMap<Long,Value> {
     public long add(IndexedLong2ObjMap.Entry<Value> item);
 
     /**
-     * Deletes an Element record, and invalidates the associated index mapping
+     * Deletes an Entry record, and invalidates the associated index mapping
      *
      * @param index a unique identifier for this record
      */
