@@ -142,7 +142,7 @@ public class BlockOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedMap(long size) {
-        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -150,7 +150,7 @@ public class BlockOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedMap() {
-        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

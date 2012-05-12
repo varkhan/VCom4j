@@ -110,7 +110,7 @@ public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedSet(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -118,7 +118,7 @@ public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedSet() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

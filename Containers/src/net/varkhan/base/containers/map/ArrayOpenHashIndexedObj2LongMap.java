@@ -129,7 +129,7 @@ public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedObj2LongMap(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -137,7 +137,7 @@ public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedObj2LongMap() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**********************************************************************************

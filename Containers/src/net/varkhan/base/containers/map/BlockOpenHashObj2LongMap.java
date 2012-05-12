@@ -4,6 +4,7 @@
 package net.varkhan.base.containers.map;
 
 import net.varkhan.base.containers.Container;
+import net.varkhan.base.containers.Hashes;
 import net.varkhan.base.containers.HashingStrategy;
 import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.type.LongContainer;
@@ -128,7 +129,7 @@ public class BlockOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializ
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashObj2LongMap(long size) {
-        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -136,7 +137,7 @@ public class BlockOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializ
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashObj2LongMap() {
-        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

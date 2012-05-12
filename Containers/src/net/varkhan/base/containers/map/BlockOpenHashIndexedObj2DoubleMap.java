@@ -149,7 +149,7 @@ public class BlockOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2Double
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedObj2DoubleMap(long size) {
-        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -157,7 +157,7 @@ public class BlockOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2Double
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedObj2DoubleMap() {
-        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**********************************************************************************

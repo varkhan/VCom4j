@@ -129,7 +129,7 @@ public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedObj2FloatMap(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -137,7 +137,7 @@ public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedObj2FloatMap() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**********************************************************************************

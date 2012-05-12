@@ -4,6 +4,7 @@
 package net.varkhan.base.containers.map;
 
 import net.varkhan.base.containers.Container;
+import net.varkhan.base.containers.Hashes;
 import net.varkhan.base.containers.HashingStrategy;
 import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.type.IntContainer;
@@ -108,7 +109,7 @@ public class ArrayOpenHashObj2IntMap<Key> implements Obj2IntMap<Key>, Serializab
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashObj2IntMap(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -116,7 +117,7 @@ public class ArrayOpenHashObj2IntMap<Key> implements Obj2IntMap<Key>, Serializab
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashObj2IntMap() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

@@ -4,6 +4,7 @@
 package net.varkhan.base.containers.map;
 
 import net.varkhan.base.containers.Container;
+import net.varkhan.base.containers.Hashes;
 import net.varkhan.base.containers.HashingStrategy;
 import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.type.FloatContainer;
@@ -108,7 +109,7 @@ public class ArrayOpenHashObj2FloatMap<Key> implements Obj2FloatMap<Key>, Serial
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashObj2FloatMap(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -116,7 +117,7 @@ public class ArrayOpenHashObj2FloatMap<Key> implements Obj2FloatMap<Key>, Serial
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashObj2FloatMap() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

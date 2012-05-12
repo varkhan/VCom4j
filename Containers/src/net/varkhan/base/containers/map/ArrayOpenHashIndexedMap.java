@@ -122,7 +122,7 @@ public class ArrayOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedMap(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -130,7 +130,7 @@ public class ArrayOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedMap() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**********************************************************************************

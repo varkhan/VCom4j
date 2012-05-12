@@ -64,27 +64,4 @@ public interface HashingStrategy<Type> extends Serializable {
      */
     public boolean equal(Type o1, Type o2);
 
-    /**
-     * The default hashing strategy, that use the default {@link #hashCode()} and {@link #equals(Object)} methods.
-     */
-    public static final HashingStrategy<Object> DefaultHashingStrategy=new HashingStrategy<Object>() {
-        private static final long serialVersionUID=1L;
-
-        public long hash(Object o) { return o==null ? 0 : o.hashCode(); }
-
-        public boolean equal(Object o1, Object o2) { return (o1==null&&o2==null)||(o1!=null&&o2!=null&&o1.equals(o2)); }
-
-    };
-
-    /**
-     * The reference-based hashing strategy, that use the reference frame pointer as hash code, and reference identity to define equality.
-     */
-    public static final HashingStrategy<Object> ReferenceHashingStrategy=new HashingStrategy<Object>() {
-        private static final long serialVersionUID=1L;
-
-        public long hash(Object o) { return System.identityHashCode(o); }
-
-        public boolean equal(Object o1, Object o2) { return o1==o2; }
-
-    };
 }

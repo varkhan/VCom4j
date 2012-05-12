@@ -3,6 +3,7 @@
  */
 package net.varkhan.base.containers.set;
 
+import net.varkhan.base.containers.Hashes;
 import net.varkhan.base.containers.HashingStrategy;
 import net.varkhan.base.containers.Iterator;
 
@@ -118,7 +119,7 @@ abstract class AbstractBlockOpenHashSet<Key> implements Set<Key>, Serializable {
      */
     @SuppressWarnings("unchecked")
     public AbstractBlockOpenHashSet(long size) {
-        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -126,7 +127,7 @@ abstract class AbstractBlockOpenHashSet<Key> implements Set<Key>, Serializable {
      */
     @SuppressWarnings("unchecked")
     public AbstractBlockOpenHashSet() {
-        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

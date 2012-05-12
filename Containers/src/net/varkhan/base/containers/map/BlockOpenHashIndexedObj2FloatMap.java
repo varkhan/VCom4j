@@ -149,7 +149,7 @@ public class BlockOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedObj2FloatMap(long size) {
-        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -157,7 +157,7 @@ public class BlockOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedObj2FloatMap() {
-        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

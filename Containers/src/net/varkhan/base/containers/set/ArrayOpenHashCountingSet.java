@@ -3,6 +3,7 @@
  */
 package net.varkhan.base.containers.set;
 
+import net.varkhan.base.containers.Hashes;
 import net.varkhan.base.containers.HashingStrategy;
 import net.varkhan.base.containers.Iterator;
 
@@ -110,7 +111,7 @@ public class ArrayOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashCountingSet(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -118,7 +119,7 @@ public class ArrayOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashCountingSet() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

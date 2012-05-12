@@ -136,7 +136,7 @@ abstract class AbstractBlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, 
      */
     @SuppressWarnings("unchecked")
     public AbstractBlockOpenHashIndexedSet(long size) {
-        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -144,7 +144,7 @@ abstract class AbstractBlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, 
      */
     @SuppressWarnings("unchecked")
     public AbstractBlockOpenHashIndexedSet() {
-        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 

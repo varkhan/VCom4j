@@ -176,4 +176,220 @@ public final class Hashes {
         if(n>=PRIMES.length) return Integer.MAX_VALUE;
         return PRIMES[n];
     }
+
+
+
+    /**********************************************************************************
+     **  Hashing strategy implementations
+     **/
+
+    /**
+     * The default hashing strategy, that use the default {@link #hashCode()} and {@link #equals(Object)} methods.
+     */
+    public static final HashingStrategy<Object> DefaultHashingStrategy=new HashingStrategy<Object>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(Object o) { return o==null ? 0 : o.hashCode(); }
+
+        public boolean equal(Object o1, Object o2) { return (o1==null&&o2==null)||(o1!=null&&o2!=null&&o1.equals(o2)); }
+
+    };
+    /**
+     * The reference-based hashing strategy, that use the reference frame pointer as hash code, and reference identity to define equality.
+     */
+    public static final HashingStrategy<Object> ReferenceHashingStrategy=new HashingStrategy<Object>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(Object o) { return System.identityHashCode(o); }
+
+        public boolean equal(Object o1, Object o2) { return o1==o2; }
+
+    };
+
+    public static final HashingStrategy<byte[]> ByteArrayHashingStrategy=new HashingStrategy<byte[]>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(byte[] o) {
+            if(o==null) return 0;
+            long h = 0;
+            final int len = o.length;
+            for(int i = 0; i<len; i++) {
+                h = 31*h + o[i];
+            }
+            return h;
+        }
+
+        public boolean equal(byte[] o1, byte[] o2) {
+            if(o1==o2) return true;
+            if(o1==null || o2==null) return false;
+            if(o1.length!=o2.length) return false;
+            final int len = o1.length;
+            for(int i=0; i<len; i++) if(o1[i]!=o2[i]) return false;
+            return true;
+        }
+    };
+
+    public static final HashingStrategy<char[]> CharArrayHashingStrategy=new HashingStrategy<char[]>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(char[] o) {
+            if(o==null) return 0;
+            long h = 0;
+            final int len = o.length;
+            for(int i = 0; i<len; i++) {
+                h = 127*h + o[i];
+            }
+            return h;
+        }
+
+        public boolean equal(char[] o1, char[] o2) {
+            if(o1==o2) return true;
+            if(o1==null || o2==null) return false;
+            if(o1.length!=o2.length) return false;
+            final int len = o1.length;
+            for(int i=0; i<len; i++) if(o1[i]!=o2[i]) return false;
+            return true;
+        }
+    };
+
+    public static final HashingStrategy<short[]> ShortArrayHashingStrategy=new HashingStrategy<short[]>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(short[] o) {
+            if(o==null) return 0;
+            long h = 0;
+            final int len = o.length;
+            for(int i = 0; i<len; i++) {
+                h = 127*h + o[i];
+            }
+            return h;
+        }
+
+        public boolean equal(short[] o1, short[] o2) {
+            if(o1==o2) return true;
+            if(o1==null || o2==null) return false;
+            if(o1.length!=o2.length) return false;
+            final int len = o1.length;
+            for(int i=0; i<len; i++) if(o1[i]!=o2[i]) return false;
+            return true;
+        }
+    };
+
+    public static final HashingStrategy<int[]> IntArrayHashingStrategy=new HashingStrategy<int[]>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(int[] o) {
+            if(o==null) return 0;
+            long h = 0;
+            final int len = o.length;
+            for(int i = 0; i<len; i++) {
+                h = 65521*h + o[i];
+            }
+            return h;
+        }
+
+        public boolean equal(int[] o1, int[] o2) {
+            if(o1==o2) return true;
+            if(o1==null || o2==null) return false;
+            if(o1.length!=o2.length) return false;
+            final int len = o1.length;
+            for(int i=0; i<len; i++) if(o1[i]!=o2[i]) return false;
+            return true;
+        }
+    };
+
+    public static final HashingStrategy<long[]> LongArrayHashingStrategy=new HashingStrategy<long[]>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(long[] o) {
+            if(o==null) return 0;
+            long h = 0;
+            final int len = o.length;
+            for(int i = 0; i<len; i++) {
+                h = 65521*h + o[i];
+            }
+            return h;
+        }
+
+        public boolean equal(long[] o1, long[] o2) {
+            if(o1==o2) return true;
+            if(o1==null || o2==null) return false;
+            if(o1.length!=o2.length) return false;
+            final int len = o1.length;
+            for(int i=0; i<len; i++) if(o1[i]!=o2[i]) return false;
+            return true;
+        }
+    };
+
+    public static final HashingStrategy<float[]> FloatArrayHashingStrategy=new HashingStrategy<float[]>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(float[] o) {
+            if(o==null) return 0;
+            double h = 0;
+            final int len = o.length;
+            for(int i = 0; i<len; i++) {
+                h = 65521*h + o[i];
+            }
+            return Double.doubleToRawLongBits(h);
+        }
+
+        public boolean equal(float[] o1, float[] o2) {
+            if(o1==o2) return true;
+            if(o1==null || o2==null) return false;
+            if(o1.length!=o2.length) return false;
+            final int len = o1.length;
+            for(int i=0; i<len; i++) if(o1[i]!=o2[i]) return false;
+            return true;
+        }
+    };
+
+    public static final HashingStrategy<double[]> DoubleArrayHashingStrategy=new HashingStrategy<double[]>() {
+        private static final long serialVersionUID=1L;
+
+        public long hash(double[] o) {
+            if(o==null) return 0;
+            double h = 0;
+            final int len = o.length;
+            for(int i = 0; i<len; i++) {
+                h = 65521*h + o[i];
+            }
+            return Double.doubleToRawLongBits(h);
+        }
+
+        public boolean equal(double[] o1, double[] o2) {
+            if(o1==o2) return true;
+            if(o1==null || o2==null) return false;
+            if(o1.length!=o2.length) return false;
+            final int len = o1.length;
+            for(int i=0; i<len; i++) if(o1[i]!=o2[i]) return false;
+            return true;
+        }
+    };
+
+    public static final <T> HashingStrategy<T[]> ObjArrayHashingStrategy(final HashingStrategy<T> hash) {
+        return new HashingStrategy<T[]>() {
+            private static final long serialVersionUID=1L;
+
+            public long hash(T[] o) {
+                if(o==null) return 0;
+                long h = 0;
+                final int len = o.length;
+                for(int i = 0; i<len; i++) {
+                    h = 65521*h + hash.hash(o[i]);
+                }
+                return h;
+            }
+
+            public boolean equal(T[] o1, T[] o2) {
+                if(o1==o2) return true;
+                if(o1==null || o2==null) return false;
+                if(o1.length!=o2.length) return false;
+                final int len = o1.length;
+                for(int i=0; i<len; i++) if(!hash.equal(o1[i],o2[i])) return false;
+                return true;
+            }
+        };
+    }
+
 }

@@ -129,7 +129,7 @@ public class ArrayOpenHashIndexedObj2IntMap<Key> implements IndexedObj2IntMap<Ke
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedObj2IntMap(long size) {
-        this(size, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -137,7 +137,7 @@ public class ArrayOpenHashIndexedObj2IntMap<Key> implements IndexedObj2IntMap<Ke
      */
     @SuppressWarnings("unchecked")
     public ArrayOpenHashIndexedObj2IntMap() {
-        this(11, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**********************************************************************************

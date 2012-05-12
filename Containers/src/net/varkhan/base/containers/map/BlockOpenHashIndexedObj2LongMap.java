@@ -149,7 +149,7 @@ public class BlockOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedObj2LongMap(long size) {
-        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
     /**
@@ -157,7 +157,7 @@ public class BlockOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
      */
     @SuppressWarnings("unchecked")
     public BlockOpenHashIndexedObj2LongMap() {
-        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) HashingStrategy.DefaultHashingStrategy);
+        this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
 
