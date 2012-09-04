@@ -95,6 +95,20 @@ public class EmptyMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * A container of all the keys in this map
+     *
+     * @return a container, backed by the map, providing a view of the keys in the map
+     */
+    public Container<K> keys() { return new EmptySet<K>(); }
+
+    /**
+     * A container of all the values in this map
+     *
+     * @return a container, backed by the map, providing a view of the values in the map
+     */
+    public Container<V> values() { return new EmptySet<V>(); }
+
+    /**
      * Iterate over each element of the container, and pass it as argument to a
      * visitor's {@link net.varkhan.base.containers.Visitable.Visitor#invoke} method, until this method returns
      * a negative count.
@@ -108,16 +122,16 @@ public class EmptyMap<K,V> implements Map<K,V> {
     public <Par> long visit(Visitor<Entry<K,V>,Par> vis, Par par) { return 0; }
 
     /**
-     * A container of all the keys in this map
+     * Iterate over each (key,value) pair of the map, and pass it as argument to a
+     * visitor's {@link MapVisitor#invoke} method, until this method returns
+     * a negative count.
      *
-     * @return a container, backed by the map, providing a view of the keys in the map
+     * @param vis the visitor
+     * @param par the control parameter
+     * @param <Par> the type of the control parameter
+     *
+     * @return the sum of all positive return values from the visitor
      */
-    public Container<K> keys() { return new EmptySet<K>(); }
+    public <Par> long visit(MapVisitor<K,V,Par> vis, Par par) { return 0; }
 
-    /**
-     * A container of all the values in this map
-     *
-     * @return a container, backed by the map, providing a view of the values in the map
-     */
-    public Container<V> values() { return new EmptySet<V>(); }
 }

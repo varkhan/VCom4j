@@ -27,7 +27,7 @@ public interface IndexedMap<Key,Value> extends IndexedSearchable<Key,IndexedMap.
 
 
     /**********************************************************************************
-     **  IndexedMap.Entry interface
+     **  Utility interfaces
      **/
 
     /**
@@ -69,6 +69,26 @@ public interface IndexedMap<Key,Value> extends IndexedSearchable<Key,IndexedMap.
         public Value setValue(Value val);
     }
 
+    /**
+     * <b>A callback, or procedure, used by the {@link IndexedMap#visit} method.</b>
+     */
+    public interface IndexedMapVisitor<Key,Value,Par> {
+
+        /**
+         * Visit one element in the map.
+         *
+         * @param index the unique index for the entry
+         * @param key   the key part of the entry
+         * @param val   the value part of the entry
+         * @param par   the control parameter
+         *
+         * @return an integer count:
+         *         <li/> if non-negative, it will be added to the visitor count,
+         *         <li/> if negative it will trigger the termination of the visit.
+         */
+        public long invoke(long index, Key key, Value val, Par par);
+
+    }
 
     /**********************************************************************************
      **  Global information accessors
@@ -254,5 +274,18 @@ public interface IndexedMap<Key,Value> extends IndexedSearchable<Key,IndexedMap.
      * @return a container, backed by the map, providing a view of the values in the map
      */
     public IndexedContainer<Value> values();
+
+    /**
+     * Iterate over each (key,value) pair of the map, and pass it as argument to a
+     * visitor's {@link IndexedMapVisitor#invoke} method, until this method returns
+     * a negative count.
+     *
+     * @param vis the visitor
+     * @param par the control parameter
+     * @param <Par> the type of the control parameter
+     *
+     * @return the sum of all positive return values from the visitor
+     */
+    public <Par> long visit(IndexedMapVisitor<Key,Value,Par> vis, Par par);
 
 }

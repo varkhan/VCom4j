@@ -27,7 +27,7 @@ package net.varkhan.base.containers;
 public interface Visitable<Type> {
 
     /**
-     * <b>A callback, or procedure, used by the {@link Visitable#visit}.</b>
+     * <b>A callback, or procedure, used by the {@link Visitable#visit} method.</b>
      * <p/>
      * A Visitor callback takes a single object of the type supported by the
      * container, processes that element, and returns a {@code long} value that

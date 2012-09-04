@@ -867,6 +867,25 @@ public class BlockOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
         return c;
     }
 
+    public <Par> long visit(IndexedMapVisitor<Key,Float,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            long idx=_getIndex(pos);
+            if(idx<=0) {
+                pos++;
+                continue;
+            }
+            idx--;
+            @SuppressWarnings("unchecked")
+            long r=vis.invoke(idx, (Key) _getKey(idx), _getVal(idx), par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
     public Iterable<IndexedObj2FloatMap.Entry<Key>> iterate(final long[] indexes) {
         return new Iterable<IndexedObj2FloatMap.Entry<Key>>() {
             public Iterator<IndexedObj2FloatMap.Entry<Key>> iterator() {

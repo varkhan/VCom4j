@@ -867,6 +867,25 @@ public class BlockOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
         return c;
     }
 
+    public <Par> long visit(IndexedMapVisitor<Key,Long,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            long idx=_getIndex(pos);
+            if(idx<=0) {
+                pos++;
+                continue;
+            }
+            idx--;
+            @SuppressWarnings("unchecked")
+            long r=vis.invoke(idx, (Key) _getKey(idx), _getVal(idx), par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
     public Iterable<IndexedObj2LongMap.Entry<Key>> iterate(final long[] indexes) {
         return new Iterable<IndexedObj2LongMap.Entry<Key>>() {
             public Iterator<IndexedObj2LongMap.Entry<Key>> iterator() {

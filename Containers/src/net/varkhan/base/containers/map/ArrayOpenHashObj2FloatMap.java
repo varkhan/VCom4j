@@ -594,6 +594,24 @@ public class ArrayOpenHashObj2FloatMap<Key> implements Obj2FloatMap<Key>, Serial
         return c;
     }
 
+    public <Par> long visit(MapVisitor<Key,Float,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            Object k=keys[pos];
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            @SuppressWarnings("unchecked")
+            long r=vis.invoke((Key) k, vals[pos], par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
     public Container<Key> keys() {
         return new Container<Key>() {
             public long size() { return size; }

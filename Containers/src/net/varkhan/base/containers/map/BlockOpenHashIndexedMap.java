@@ -829,6 +829,25 @@ public class BlockOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>
         return c;
     }
 
+    public <Par> long visit(IndexedMapVisitor<Key,Value,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            long idx=_getIndex(pos);
+            if(idx<=0) {
+                pos++;
+                continue;
+            }
+            idx--;
+            @SuppressWarnings("unchecked")
+            long r=vis.invoke(idx, (Key) _getKey(idx), (Value) _getVal(idx), par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
     public Iterable<IndexedMap.Entry<Key,Value>> iterate(final long[] indexes) {
         return new Iterable<IndexedMap.Entry<Key,Value>>() {
             public Iterator<IndexedMap.Entry<Key,Value>> iterator() {

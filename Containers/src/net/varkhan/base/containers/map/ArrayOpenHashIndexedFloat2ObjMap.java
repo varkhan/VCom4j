@@ -722,7 +722,8 @@ public class ArrayOpenHashIndexedFloat2ObjMap<Value> implements IndexedFloat2Obj
                 pos++;
                 continue;
             }
-            long r=vis.invoke(new Entry(idx, keys[idx-1]), par);
+            idx --;
+            long r=vis.invoke(new Entry(idx, keys[idx]), par);
             if(r<0) return c;
             c+=r;
             pos++;
@@ -739,7 +740,27 @@ public class ArrayOpenHashIndexedFloat2ObjMap<Value> implements IndexedFloat2Obj
                 pos++;
                 continue;
             }
-            long r=vis.invoke(idx, new Entry(idx, keys[idx-1]), par);
+            idx --;
+            long r=vis.invoke(idx, new Entry(idx, keys[idx]), par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
+    public <Par> long visit(IndexedMapVisitor<Float,Value,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            int idx=idxs[pos];
+            if(idx<=0) {
+                pos++;
+                continue;
+            }
+            idx --;
+            @SuppressWarnings("unchecked")
+            long r=vis.invoke(idx, keys[idx], (Value) vals[idx], par);
             if(r<0) return c;
             c+=r;
             pos++;

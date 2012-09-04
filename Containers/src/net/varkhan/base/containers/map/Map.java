@@ -26,11 +26,11 @@ public interface Map<Key,Value> extends Searchable<Key>, Container<Map.Entry<Key
 
 
     /**********************************************************************************
-     **  Map.Entry interface
+     **  Utility interfaces
      **/
 
     /**
-     * <b>An indexed map entry (key-index-value triplet)</b>
+     * <b>A map entry (key-value pair)</b>
      */
     public interface Entry<Key,Value> extends java.util.Map.Entry<Key,Value> {
 
@@ -59,6 +59,26 @@ public interface Map<Key,Value> extends Searchable<Key>, Container<Map.Entry<Key
          * @throws UnsupportedOperationException if the backing map is read-only
          */
         public Value setValue(Value val);
+    }
+
+    /**
+     * <b>A callback, or procedure, used by the {@link Map#visit} method.</b>
+     */
+    public interface MapVisitor<Key,Value,Par> {
+
+        /**
+         * Visit one element in the map.
+         *
+         * @param key the key part of the entry
+         * @param val the value part of the entry
+         * @param par the control parameter
+         *
+         * @return an integer count:
+         *         <li/> if non-negative, it will be added to the visitor count,
+         *         <li/> if negative it will trigger the termination of the visit.
+         */
+        public long invoke(Key key, Value val, Par par);
+
     }
 
     /**********************************************************************************
@@ -168,5 +188,18 @@ public interface Map<Key,Value> extends Searchable<Key>, Container<Map.Entry<Key
      * @return a container, backed by the map, providing a view of the values in the map
      */
     public Container<Value> values();
+
+    /**
+     * Iterate over each (key,value) pair of the map, and pass it as argument to a
+     * visitor's {@link MapVisitor#invoke} method, until this method returns
+     * a negative count.
+     *
+     * @param vis the visitor
+     * @param par the control parameter
+     * @param <Par> the type of the control parameter
+     *
+     * @return the sum of all positive return values from the visitor
+     */
+    public <Par> long visit(MapVisitor<Key,Value,Par> vis, Par par);
 
 }

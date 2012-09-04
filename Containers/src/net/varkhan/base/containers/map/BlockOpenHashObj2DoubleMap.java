@@ -663,6 +663,24 @@ public class BlockOpenHashObj2DoubleMap<Key> implements Obj2DoubleMap<Key>, Seri
         return c;
     }
 
+    public <Par> long visit(MapVisitor<Key,Double,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            Object k=_getKey(pos);
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            @SuppressWarnings("unchecked")
+            long r=vis.invoke((Key) k, _getVal(pos), par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
     public Container<Key> keys() {
         return new Container<Key>() {
             public long size() { return size; }

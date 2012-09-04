@@ -740,8 +740,9 @@ public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
                 pos++;
                 continue;
             }
+            idx --;
             @SuppressWarnings("unchecked")
-            long r=vis.invoke(new Entry(idx, (Key) keys[idx-1]), par);
+            long r=vis.invoke(new Entry(idx, (Key) keys[idx]), par);
             if(r<0) return c;
             c+=r;
             pos++;
@@ -758,8 +759,28 @@ public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
                 pos++;
                 continue;
             }
+            idx --;
             @SuppressWarnings("unchecked")
-            long r=vis.invoke(idx, new Entry(idx, (Key) keys[idx-1]), par);
+            long r=vis.invoke(idx, new Entry(idx, (Key) keys[idx]), par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
+    public <Par> long visit(IndexedMapVisitor<Key,Long,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            int idx=idxs[pos];
+            if(idx<=0) {
+                pos++;
+                continue;
+            }
+            idx --;
+            @SuppressWarnings("unchecked")
+            long r=vis.invoke(idx, (Key) keys[idx], vals[idx], par);
             if(r<0) return c;
             c+=r;
             pos++;

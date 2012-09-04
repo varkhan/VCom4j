@@ -600,6 +600,23 @@ public class ArrayOpenHashLong2FloatMap implements Long2FloatMap, Serializable {
         return c;
     }
 
+    public <Par> long visit(MapVisitor<Long,Float,Par> vis, Par par) {
+        long c=0;
+        int pos=0;
+        while(pos<capa) {
+            long k=keys[pos];
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            long r=vis.invoke(k, vals[pos], par);
+            if(r<0) return c;
+            c+=r;
+            pos++;
+        }
+        return c;
+    }
+
     public LongContainer keys() {
         return new LongContainer() {
             public long size() { return size; }
