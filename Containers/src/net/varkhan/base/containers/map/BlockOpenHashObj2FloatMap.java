@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashObj2FloatMap<Key> implements Obj2FloatMap<Key>, Serializable {
+public class BlockOpenHashObj2FloatMap<Key> implements Obj2FloatMap<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -833,7 +833,7 @@ public class BlockOpenHashObj2FloatMap<Key> implements Obj2FloatMap<Key>, Serial
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public BlockOpenHashObj2FloatMap<Key> clone() {
         BlockOpenHashObj2FloatMap<Key> c;
         try {
             c=(BlockOpenHashObj2FloatMap<Key>) super.clone();
@@ -865,6 +865,29 @@ public class BlockOpenHashObj2FloatMap<Key> implements Obj2FloatMap<Key>, Serial
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof Obj2FloatMap){
+            Obj2FloatMap that=(Obj2FloatMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=_getKey(pos);
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                float v=_getVal(pos);
+                float w=that.getFloat(k);
+                if(Float.floatToRawIntBits(v)!=Float.floatToRawIntBits(w)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

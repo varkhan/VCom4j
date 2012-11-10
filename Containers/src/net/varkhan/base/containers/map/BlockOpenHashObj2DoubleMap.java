@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashObj2DoubleMap<Key> implements Obj2DoubleMap<Key>, Serializable {
+public class BlockOpenHashObj2DoubleMap<Key> implements Obj2DoubleMap<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -833,7 +833,7 @@ public class BlockOpenHashObj2DoubleMap<Key> implements Obj2DoubleMap<Key>, Seri
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public BlockOpenHashObj2DoubleMap<Key> clone() {
         BlockOpenHashObj2DoubleMap<Key> c;
         try {
             c=(BlockOpenHashObj2DoubleMap<Key>) super.clone();
@@ -865,6 +865,29 @@ public class BlockOpenHashObj2DoubleMap<Key> implements Obj2DoubleMap<Key>, Seri
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof Obj2DoubleMap){
+            Obj2DoubleMap that=(Obj2DoubleMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=_getKey(pos);
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                double v=_getVal(pos);
+                double w=that.getDouble(k);
+                if(Double.doubleToRawLongBits(v)!=Double.doubleToRawLongBits(w)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

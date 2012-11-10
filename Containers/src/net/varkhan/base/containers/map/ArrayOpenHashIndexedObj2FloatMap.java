@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMap<Key>, Serializable {
+public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMap<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1313,7 +1313,7 @@ public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashIndexedObj2FloatMap<Key> clone() {
         ArrayOpenHashIndexedObj2FloatMap<Key> c;
         try {
             c=(ArrayOpenHashIndexedObj2FloatMap<Key>) super.clone();
@@ -1339,7 +1339,6 @@ public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
         int i=0, j=size;
         while(j--!=0) {
             int idx;
-            ;
             while((idx=idxs[i])<=0) i++;
             Object k=keys[(idx-1)];
             if(this!=k) h+=strategy.hash((Key) k);
@@ -1348,6 +1347,33 @@ public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
         return (int) h;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedObj2FloatMap) {
+            IndexedObj2FloatMap that=(IndexedObj2FloatMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                Object k=keys[idx];
+                float v=vals[idx];
+                Object l = that.getKey(idx);
+                float w = that.getFloatValue(idx);
+                if(k!=l&&(k==null||!k.equals(l))) return false;
+                if(Float.floatToRawIntBits(v)!=Float.floatToRawIntBits(w)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

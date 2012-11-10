@@ -5,6 +5,8 @@ import net.varkhan.base.containers.Container;
 import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.set.EmptySet;
 
+import java.io.Serializable;
+
 
 /**
  * <b>An empty, unmodifiable map</b>.
@@ -14,7 +16,9 @@ import net.varkhan.base.containers.set.EmptySet;
  * @date 1/30/11
  * @time 11:10 PM
  */
-public class EmptyMap<K,V> implements Map<K,V> {
+public class EmptyMap<K,V> implements Map<K,V>, Serializable, Cloneable {
+
+    public static final long serialVersionUID=1L;
 
     /**
      * Returns the number of elements in this container.
@@ -133,5 +137,24 @@ public class EmptyMap<K,V> implements Map<K,V> {
      * @return the sum of all positive return values from the visitor
      */
     public <Par> long visit(MapVisitor<K,V,Par> vis, Par par) { return 0; }
+
+    /**
+     * Returns a clone of this map.
+     *
+     * @return an identical, yet independent copy of this map
+     */
+    @SuppressWarnings("unchecked")
+    public EmptyMap<K,V> clone() {
+        try { return (EmptyMap<K,V>) super.clone(); }
+        catch(CloneNotSupportedException cantHappen) { throw new InternalError(); }
+    }
+
+    public int hashCode() {
+        return 0;
+    }
+
+    public boolean equals(Object obj) {
+        return obj instanceof Map && ((Map)obj).isEmpty();
+    }
 
 }

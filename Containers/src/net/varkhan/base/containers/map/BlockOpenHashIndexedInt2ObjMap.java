@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashIndexedInt2ObjMap<Value> implements IndexedInt2ObjMap<Value>, Serializable {
+public class BlockOpenHashIndexedInt2ObjMap<Value> implements IndexedInt2ObjMap<Value>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1369,7 +1369,7 @@ public class BlockOpenHashIndexedInt2ObjMap<Value> implements IndexedInt2ObjMap<
      * @return an identical, yet independent copy of this map
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public BlockOpenHashIndexedInt2ObjMap<Value> clone() {
         BlockOpenHashIndexedInt2ObjMap<Value> c;
         try {
             c=(BlockOpenHashIndexedInt2ObjMap<Value>) super.clone();
@@ -1394,7 +1394,6 @@ public class BlockOpenHashIndexedInt2ObjMap<Value> implements IndexedInt2ObjMap<
         long i=0, j=size;
         while(j--!=0) {
             long idx;
-            ;
             while((idx=_getIndex(i))<=0) i++;
             int k=_getKey(idx-1);
             h+=strategy.hash(k);
@@ -1403,30 +1402,57 @@ public class BlockOpenHashIndexedInt2ObjMap<Value> implements IndexedInt2ObjMap<
         return (int) h;
     }
 
-
-    public String toString() {
-        StringBuilder buf=new StringBuilder();
-        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
-        for(int i=0;i<capa;i++) {
-            long idx=_getIndex(i);
-            buf.append('\t');
-            if(idx<0) {
-                idx=-idx-1;
-                buf.append('X').append(' ').append(idx).append('\t').append((_hasKey(idx) ? '+' : '-')).append(' ').append(_getKey(idx));
-                buf.append("\t").append(getValue(idx));
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedInt2ObjMap) {
+            IndexedInt2ObjMap that=(IndexedInt2ObjMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                long idx=_getIndex(pos);
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx--;
+                if(!that.has(idx)) return false;
+                int k=_getKey(idx);
+                Object v=_getVal(idx);
+                int l = that.getIntKey(idx);
+                Object w = that.getValue(idx);
+                if(k!=l) return false;
+                if(v!=w&&(v==null||!v.equals(w))) return false;
+                pos++;
             }
-            else if(idx>0) {
-                idx=idx-1;
-                buf.append('=').append(' ').append(idx).append('\t').append((_hasKey(idx) ? '+' : '-')).append(' ').append(_getKey(idx));
-                buf.append("\t").append(getValue(idx));
-            }
-            else {
-                buf.append('-');
-            }
-            buf.append('\n');
+            return true;
         }
-        return buf.toString();
+        return false;
     }
+
+//    public String toString() {
+//        StringBuilder buf=new StringBuilder();
+//        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
+//        for(int i=0;i<capa;i++) {
+//            long idx=_getIndex(i);
+//            buf.append('\t');
+//            if(idx<0) {
+//                idx=-idx-1;
+//                buf.append('X').append(' ').append(idx).append('\t').append((_hasKey(idx) ? '+' : '-')).append(' ').append(_getKey(idx));
+//                buf.append("\t").append(getValue(idx));
+//            }
+//            else if(idx>0) {
+//                idx=idx-1;
+//                buf.append('=').append(' ').append(idx).append('\t').append((_hasKey(idx) ? '+' : '-')).append(' ').append(_getKey(idx));
+//                buf.append("\t").append(getValue(idx));
+//            }
+//            else {
+//                buf.append('-');
+//            }
+//            buf.append('\n');
+//        }
+//        return buf.toString();
+//    }
 
 
 }

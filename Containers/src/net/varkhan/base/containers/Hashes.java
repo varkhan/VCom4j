@@ -367,7 +367,7 @@ public final class Hashes {
         }
     };
 
-    public static final <T> HashingStrategy<T[]> ObjArrayHashingStrategy(final HashingStrategy<T> hash) {
+    public static <T> HashingStrategy<T[]> ObjArrayHashingStrategy(final HashingStrategy<T> hash) {
         return new HashingStrategy<T[]>() {
             private static final long serialVersionUID=1L;
 

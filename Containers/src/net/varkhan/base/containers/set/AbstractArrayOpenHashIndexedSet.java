@@ -958,6 +958,29 @@ abstract class AbstractArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, 
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedSet) {
+            IndexedSet that = (IndexedSet) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idxs[pos]<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                Object k=keys[idx];
+                Object l=that.get(idx);
+                if(k!=l&&(k==null||!k.equals(l))) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

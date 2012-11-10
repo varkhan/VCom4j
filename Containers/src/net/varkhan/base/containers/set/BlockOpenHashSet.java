@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashSet<Key> implements Set<Key>, Serializable {
+public class BlockOpenHashSet<Key> implements Set<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -523,7 +523,7 @@ public class BlockOpenHashSet<Key> implements Set<Key>, Serializable {
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public BlockOpenHashSet<Key> clone() {
         BlockOpenHashSet<Key> c;
         try {
             c=(BlockOpenHashSet<Key>) super.clone();
@@ -554,6 +554,25 @@ public class BlockOpenHashSet<Key> implements Set<Key>, Serializable {
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof Set) {
+            Set that = (Set) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=_getKey(pos);
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

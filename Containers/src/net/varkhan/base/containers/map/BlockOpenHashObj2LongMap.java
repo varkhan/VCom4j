@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializable {
+public class BlockOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -833,7 +833,7 @@ public class BlockOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializ
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public BlockOpenHashObj2LongMap<Key> clone() {
         BlockOpenHashObj2LongMap<Key> c;
         try {
             c=(BlockOpenHashObj2LongMap<Key>) super.clone();
@@ -865,6 +865,29 @@ public class BlockOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializ
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof Obj2LongMap){
+            Obj2LongMap that=(Obj2LongMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=_getKey(pos);
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                long v=_getVal(pos);
+                long w=that.getLong(k);
+                if(v!=w) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

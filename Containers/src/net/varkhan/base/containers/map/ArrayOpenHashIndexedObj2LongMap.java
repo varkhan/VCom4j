@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<Key>, Serializable {
+public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1308,12 +1308,12 @@ public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
      **/
 
     /**
-     * Returns a clone of this set.
+     * Returns a clone of this map.
      *
-     * @return an identical, yet independent copy of this set
+     * @return an identical, yet independent copy of this map
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashIndexedObj2LongMap<Key> clone() {
         ArrayOpenHashIndexedObj2LongMap<Key> c;
         try {
             c=(ArrayOpenHashIndexedObj2LongMap<Key>) super.clone();
@@ -1339,7 +1339,6 @@ public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
         int i=0, j=size;
         while(j--!=0) {
             int idx;
-            ;
             while((idx=idxs[i])<=0) i++;
             Object k=keys[(idx-1)];
             if(this!=k) h+=strategy.hash((Key) k);
@@ -1348,6 +1347,33 @@ public class ArrayOpenHashIndexedObj2LongMap<Key> implements IndexedObj2LongMap<
         return (int) h;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedObj2LongMap) {
+            IndexedObj2LongMap that=(IndexedObj2LongMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                Object k=keys[idx];
+                long v=vals[idx];
+                Object l = that.getKey(idx);
+                long w = that.getLongValue(idx);
+                if(k!=l&&(k==null||!k.equals(l))) return false;
+                if(v!=w) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashCountingSet<Key> implements CountingSet<Key>, Serializable {
+public class ArrayOpenHashCountingSet<Key> implements CountingSet<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -539,7 +539,7 @@ public class ArrayOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
      * @return an identical, yet independent copy of this map
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashCountingSet<Key> clone() {
         ArrayOpenHashCountingSet<Key> c;
         try {
             c=(ArrayOpenHashCountingSet<Key>) super.clone();
@@ -571,6 +571,29 @@ public class ArrayOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof CountingSet){
+            CountingSet that=(CountingSet) o;
+            if(this.size!=that.size()) return false;
+            if(this.count!=that.count()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=keys[pos];
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                long v=vals[pos];
+                long w=that.count(k);
+                if(v!=w) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashIndexedLongSet implements IndexedLongSet, Serializable {
+public class BlockOpenHashIndexedLongSet implements IndexedLongSet, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1051,7 +1051,7 @@ public class BlockOpenHashIndexedLongSet implements IndexedLongSet, Serializable
      *
      * @return an identical, yet independent copy of this set
      */
-    public Object clone() {
+    public BlockOpenHashIndexedLongSet clone() {
         BlockOpenHashIndexedLongSet c;
         try {
             c=(BlockOpenHashIndexedLongSet) super.clone();
@@ -1075,7 +1075,6 @@ public class BlockOpenHashIndexedLongSet implements IndexedLongSet, Serializable
         long i=0, j=size;
         while(j--!=0) {
             long idx;
-            ;
             while((idx=_getIndex(i))<=0) i++;
             long k=_getKey(idx-1);
             h+=strategy.hash(k);
@@ -1084,6 +1083,29 @@ public class BlockOpenHashIndexedLongSet implements IndexedLongSet, Serializable
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedLongSet) {
+            IndexedLongSet that = (IndexedLongSet) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                long idx=_getIndex(pos);
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                long k=_getKey(idx);
+                long l=that.getLong(idx);
+                if(k!=l) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

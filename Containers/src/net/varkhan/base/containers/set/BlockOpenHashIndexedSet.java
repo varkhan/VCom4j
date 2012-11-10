@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializable {
+public class BlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -986,7 +986,7 @@ public class BlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public BlockOpenHashIndexedSet<Key> clone() {
         BlockOpenHashIndexedSet<Key> c;
         try {
             c=(BlockOpenHashIndexedSet<Key>) super.clone();
@@ -1011,7 +1011,6 @@ public class BlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
         long i=0, j=size;
         while(j--!=0) {
             long idx;
-            ;
             while((idx=_getIndex(i))<=0) i++;
             Object k=_getKey(idx-1);
             if(this!=k) h+=strategy.hash((Key) k);
@@ -1020,6 +1019,29 @@ public class BlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedSet) {
+            IndexedSet that = (IndexedSet) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                long idx=_getIndex(pos);
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                Object k=_getKey(idx);
+                Object l=that.get(idx);
+                if(k!=l&&(k==null||!k.equals(l))) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

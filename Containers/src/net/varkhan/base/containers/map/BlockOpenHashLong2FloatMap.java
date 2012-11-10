@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashLong2FloatMap implements Long2FloatMap, Serializable {
+public class BlockOpenHashLong2FloatMap implements Long2FloatMap, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -890,6 +890,30 @@ public class BlockOpenHashLong2FloatMap implements Long2FloatMap, Serializable {
             i++;
         }
         return (int) h;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof Long2FloatMap){
+            Long2FloatMap that=(Long2FloatMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                long k=_getKey(pos);
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                float v=_getVal(pos);
+                float w=that.getFloat(k);
+                if(Float.floatToRawIntBits(v)!=Float.floatToRawIntBits(w)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
     }
 
 

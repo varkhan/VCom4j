@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializable {
+public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -918,7 +918,7 @@ public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashIndexedSet<Key> clone() {
         ArrayOpenHashIndexedSet<Key> c;
         try {
             c=(ArrayOpenHashIndexedSet<Key>) super.clone();
@@ -951,5 +951,28 @@ public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedSet) {
+            IndexedSet that = (IndexedSet) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idxs[pos]<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                Object k=keys[idx];
+                Object l=that.get(idx);
+                if(k!=l&&(k==null||!k.equals(l))) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 }

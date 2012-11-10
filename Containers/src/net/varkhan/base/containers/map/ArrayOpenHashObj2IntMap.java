@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashObj2IntMap<Key> implements Obj2IntMap<Key>, Serializable {
+public class ArrayOpenHashObj2IntMap<Key> implements Obj2IntMap<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -770,7 +770,7 @@ public class ArrayOpenHashObj2IntMap<Key> implements Obj2IntMap<Key>, Serializab
      * @return an identical, yet independent copy of this map
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashObj2IntMap<Key> clone() {
         ArrayOpenHashObj2IntMap<Key> c;
         try {
             c=(ArrayOpenHashObj2IntMap<Key>) super.clone();
@@ -802,6 +802,29 @@ public class ArrayOpenHashObj2IntMap<Key> implements Obj2IntMap<Key>, Serializab
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof Obj2IntMap){
+            Obj2IntMap that=(Obj2IntMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=keys[pos];
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                int v=vals[pos];
+                int w=that.getInt(k);
+                if(v!=w) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

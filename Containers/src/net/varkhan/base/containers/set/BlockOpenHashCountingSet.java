@@ -652,6 +652,29 @@ public class BlockOpenHashCountingSet<Key,Value> implements CountingSet<Key>, Se
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof CountingSet){
+            CountingSet that=(CountingSet) o;
+            if(this.size!=that.size()) return false;
+            if(this.count!=that.count()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=_getKey(pos);
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                long v=_getVal(pos);
+                long w=that.count(k);
+                if(v!=w) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

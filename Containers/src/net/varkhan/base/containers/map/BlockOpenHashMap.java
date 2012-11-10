@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable {
+public class BlockOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -768,7 +768,7 @@ public class BlockOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public BlockOpenHashMap<Key,Value> clone() {
         BlockOpenHashMap<Key,Value> c;
         try {
             c=(BlockOpenHashMap<Key,Value>) super.clone();
@@ -783,9 +783,9 @@ public class BlockOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable
     }
 
     /**
-     * Returns a hash code for this set.
+     * Returns a hash code for this map.
      *
-     * @return a hash code for this set
+     * @return a hash code for this map
      */
     @SuppressWarnings("unchecked")
     public int hashCode() {
@@ -798,6 +798,30 @@ public class BlockOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable
             i++;
         }
         return (int) h;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof Map){
+            Map that=(Map) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=_getKey(pos);
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                Object v=_getVal(pos);
+                Object w=that.get(k);
+                if(v!=w&&(v==null||!v.equals(w))) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
     }
 
 

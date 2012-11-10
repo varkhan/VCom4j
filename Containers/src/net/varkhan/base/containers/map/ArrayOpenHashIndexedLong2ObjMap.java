@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedLong2ObjMap<Value> implements IndexedLong2ObjMap<Value>, Serializable {
+public class ArrayOpenHashIndexedLong2ObjMap<Value> implements IndexedLong2ObjMap<Value>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1290,7 +1290,7 @@ public class ArrayOpenHashIndexedLong2ObjMap<Value> implements IndexedLong2ObjMa
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashIndexedLong2ObjMap<Value> clone() {
         ArrayOpenHashIndexedLong2ObjMap<Value> c;
         try {
             c=(ArrayOpenHashIndexedLong2ObjMap<Value>) super.clone();
@@ -1315,7 +1315,6 @@ public class ArrayOpenHashIndexedLong2ObjMap<Value> implements IndexedLong2ObjMa
         int i=0, j=size;
         while(j--!=0) {
             int idx;
-            ;
             while((idx=idxs[i])<=0) i++;
             long k=keys[(idx-1)];
             h+=strategy.hash(k);
@@ -1324,6 +1323,33 @@ public class ArrayOpenHashIndexedLong2ObjMap<Value> implements IndexedLong2ObjMa
         return (int) h;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedLong2ObjMap) {
+            IndexedLong2ObjMap that=(IndexedLong2ObjMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                long k=keys[idx];
+                Object v=vals[idx];
+                long l = that.getLongKey(idx);
+                Object w = that.getValue(idx);
+                if(k!=l) return false;
+                if(v!=w&&(v==null||!v.equals(w))) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

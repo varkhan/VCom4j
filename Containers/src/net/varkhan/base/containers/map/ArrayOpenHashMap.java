@@ -9,6 +9,7 @@ import net.varkhan.base.containers.HashingStrategy;
 import net.varkhan.base.containers.Iterator;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 
@@ -17,7 +18,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable {
+public class ArrayOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -703,7 +704,7 @@ public class ArrayOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable
      * @return an identical, yet independent copy of this map
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashMap<Key,Value> clone() {
         ArrayOpenHashMap<Key,Value> c;
         try {
             c=(ArrayOpenHashMap<Key,Value>) super.clone();
@@ -735,6 +736,29 @@ public class ArrayOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(o instanceof Map){
+            Map that=(Map) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                Object k=keys[pos];
+                if(k==NULL||k==DEL) {
+                    pos++;
+                    continue;
+                }
+                if(!that.has(k)) return false;
+                Object v=vals[pos];
+                Object w=that.get(k);
+                if(v!=w&&(v==null||!v.equals(w))) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

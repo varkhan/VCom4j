@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>, Serializable {
+public class ArrayOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1240,7 +1240,7 @@ public class ArrayOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashIndexedMap<Key,Value> clone() {
         ArrayOpenHashIndexedMap<Key,Value> c;
         try {
             c=(ArrayOpenHashIndexedMap<Key,Value>) super.clone();
@@ -1274,6 +1274,33 @@ public class ArrayOpenHashIndexedMap<Key,Value> implements IndexedMap<Key,Value>
         return (int) h;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedMap) {
+            IndexedMap that=(IndexedMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                Object k=keys[idx];
+                Object v=vals[idx];
+                Object l = that.getKey(idx);
+                Object w = that.getValue(idx);
+                if(k!=l&&(k==null||!k.equals(l))) return false;
+                if(v!=w&&(v==null||!v.equals(w))) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

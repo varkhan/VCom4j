@@ -40,7 +40,7 @@ public class Containers {
      *      element returned by their iterators at each iteration step are either
      *      {@see Object#equals} to each other or both {@literal null}.
      */
-    public static <E> boolean equals(Container<E> obj1, Collection<E> obj2) {
+    public static <E> boolean equals(Container<E> obj1, Container<E> obj2) {
         // We don't compare sizes, as this can be a slow operation for some containers,
         // and we have to check elements one by one anyways
         Iterator<? extends E> it1 = obj1.iterator();

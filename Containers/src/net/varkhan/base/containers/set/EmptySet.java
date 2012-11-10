@@ -2,6 +2,8 @@ package net.varkhan.base.containers.set;
 
 import net.varkhan.base.containers.Iterator;
 
+import java.io.Serializable;
+
 
 /**
  * <b>An empty, unmodifiable set</b>.
@@ -11,7 +13,9 @@ import net.varkhan.base.containers.Iterator;
  * @date 1/30/11
  * @time 11:16 PM
  */
-public class EmptySet<K> implements Set<K> {
+public class EmptySet<K> implements Set<K>, Serializable, Cloneable {
+
+    public static final long serialVersionUID=1L;
 
     /**
      * Returns the number of elements in this container.
@@ -85,4 +89,22 @@ public class EmptySet<K> implements Set<K> {
      */
     public <Par> long visit(Visitor<K,Par> vis, Par par) { return 0; }
 
+    /**
+     * Returns a clone of this set.
+     *
+     * @return an identical, yet independent copy of this set
+     */
+    @SuppressWarnings("unchecked")
+    public EmptySet clone() {
+        try { return (EmptySet) super.clone(); }
+        catch(CloneNotSupportedException cantHappen) { throw new InternalError(); }
+    }
+
+    public int hashCode() {
+        return 0;
+    }
+
+    public boolean equals(Object obj) {
+        return obj instanceof Set && ((Set)obj).isEmpty();
+    }
 }

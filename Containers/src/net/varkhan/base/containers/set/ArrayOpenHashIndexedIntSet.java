@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedIntSet implements IndexedIntSet, Serializable {
+public class ArrayOpenHashIndexedIntSet implements IndexedIntSet, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -966,7 +966,7 @@ public class ArrayOpenHashIndexedIntSet implements IndexedIntSet, Serializable {
      *
      * @return an identical, yet independent copy of this set
      */
-    public Object clone() {
+    public ArrayOpenHashIndexedIntSet clone() {
         ArrayOpenHashIndexedIntSet c;
         try {
             c=(ArrayOpenHashIndexedIntSet) super.clone();
@@ -998,6 +998,28 @@ public class ArrayOpenHashIndexedIntSet implements IndexedIntSet, Serializable {
         return (int) h;
     }
 
+    public boolean equals(Object o) {
+        if(o instanceof IndexedIntSet) {
+            IndexedIntSet that = (IndexedIntSet) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idxs[pos]<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                int k=keys[idx];
+                int l=that.getInt(idx);
+                if(k!=l) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

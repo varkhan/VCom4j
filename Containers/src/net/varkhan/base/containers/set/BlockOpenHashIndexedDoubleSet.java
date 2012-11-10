@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializable {
+public class BlockOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1051,7 +1051,7 @@ public class BlockOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializ
      *
      * @return an identical, yet independent copy of this set
      */
-    public Object clone() {
+    public BlockOpenHashIndexedDoubleSet clone() {
         BlockOpenHashIndexedDoubleSet c;
         try {
             c=(BlockOpenHashIndexedDoubleSet) super.clone();
@@ -1075,7 +1075,6 @@ public class BlockOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializ
         long i=0, j=size;
         while(j--!=0) {
             long idx;
-            ;
             while((idx=_getIndex(i))<=0) i++;
             double k=_getKey(idx-1);
             h+=strategy.hash(k);
@@ -1084,6 +1083,29 @@ public class BlockOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializ
         return (int) h;
     }
 
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedDoubleSet) {
+            IndexedDoubleSet that = (IndexedDoubleSet) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                long idx=_getIndex(pos);
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                double k=_getKey(idx);
+                double l=that.getDouble(idx);
+                if(Double.doubleToRawLongBits(k)!=Double.doubleToRawLongBits(l)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

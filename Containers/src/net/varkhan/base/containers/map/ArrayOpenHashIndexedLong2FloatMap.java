@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedLong2FloatMap implements IndexedLong2FloatMap, Serializable {
+public class ArrayOpenHashIndexedLong2FloatMap implements IndexedLong2FloatMap, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1368,7 +1368,7 @@ public class ArrayOpenHashIndexedLong2FloatMap implements IndexedLong2FloatMap, 
      *
      * @return an identical, yet independent copy of this set
      */
-    public Object clone() {
+    public ArrayOpenHashIndexedLong2FloatMap clone() {
         ArrayOpenHashIndexedLong2FloatMap c;
         try {
             c=(ArrayOpenHashIndexedLong2FloatMap) super.clone();
@@ -1393,7 +1393,6 @@ public class ArrayOpenHashIndexedLong2FloatMap implements IndexedLong2FloatMap, 
         int i=0, j=size;
         while(j--!=0) {
             int idx;
-            ;
             while((idx=idxs[i])<=0) i++;
             long k=keys[(idx-1)];
             h+=strategy.hash(k);
@@ -1402,6 +1401,33 @@ public class ArrayOpenHashIndexedLong2FloatMap implements IndexedLong2FloatMap, 
         return (int) h;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedLong2FloatMap) {
+            IndexedLong2FloatMap that=(IndexedLong2FloatMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                long k=keys[idx];
+                float v=vals[idx];
+                long l = that.getLongKey(idx);
+                float w = that.getValue(idx);
+                if(k!=l) return false;
+                if(Float.floatToRawIntBits(v)!=Float.floatToRawIntBits(w)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

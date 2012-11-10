@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2DoubleMap<Key>, Serializable {
+public class ArrayOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2DoubleMap<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -1313,7 +1313,7 @@ public class ArrayOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2Double
      * @return an identical, yet independent copy of this set
      */
     @SuppressWarnings("unchecked")
-    public Object clone() {
+    public ArrayOpenHashIndexedObj2DoubleMap<Key> clone() {
         ArrayOpenHashIndexedObj2DoubleMap<Key> c;
         try {
             c=(ArrayOpenHashIndexedObj2DoubleMap<Key>) super.clone();
@@ -1347,6 +1347,33 @@ public class ArrayOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2Double
         return (int) h;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object o) {
+        if(o instanceof IndexedObj2DoubleMap) {
+            IndexedObj2DoubleMap that=(IndexedObj2DoubleMap) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idx<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                Object k=keys[idx];
+                double v=vals[idx];
+                Object l = that.getKey(idx);
+                double w = that.getDoubleValue(idx);
+                if(k!=l&&(k==null||!k.equals(l))) return false;
+                if(Double.doubleToRawLongBits(v)!=Double.doubleToRawLongBits(w)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();

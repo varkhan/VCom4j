@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class ArrayOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializable {
+public class ArrayOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 
@@ -966,7 +966,7 @@ public class ArrayOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializ
      *
      * @return an identical, yet independent copy of this set
      */
-    public Object clone() {
+    public ArrayOpenHashIndexedDoubleSet clone() {
         ArrayOpenHashIndexedDoubleSet c;
         try {
             c=(ArrayOpenHashIndexedDoubleSet) super.clone();
@@ -998,6 +998,28 @@ public class ArrayOpenHashIndexedDoubleSet implements IndexedDoubleSet, Serializ
         return (int) h;
     }
 
+    public boolean equals(Object o) {
+        if(o instanceof IndexedDoubleSet) {
+            IndexedDoubleSet that = (IndexedDoubleSet) o;
+            if(this.size!=that.size()) return false;
+            int pos=0;
+            while(pos<capa) {
+                int idx=idxs[pos];
+                if(idxs[pos]<=0) {
+                    pos++;
+                    continue;
+                }
+                idx --;
+                if(!that.has(idx)) return false;
+                double k=keys[idx];
+                double l=that.getDouble(idx);
+                if(Double.doubleToRawLongBits(k)!=Double.doubleToRawLongBits(l)) return false;
+                pos++;
+            }
+            return true;
+        }
+        return false;
+    }
 
 //    public String toString() {
 //        StringBuilder buf = new StringBuilder();
