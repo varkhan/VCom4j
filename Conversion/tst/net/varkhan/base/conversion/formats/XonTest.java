@@ -115,7 +115,22 @@ public class XonTest extends TestCase {
     }
 
 
-
+    public void testPerf() throws IOException {
+        String json="{\"a\":2,\"b\":true,\"c\",\"d\":[\"x\",\"y\",1.2,\"abc _\\t\\f\\r\\u4a9dgh\\u0003\"], \"e\":(\"m\",1,2,3,.14)}";
+        int n=10000000;
+        int q=0;
+        for(int i=0; i<n/100; i++) {
+            if(Xon.asXon(json)!=null) q++;
+        }
+        assertTrue(q>0);
+        q=0;
+        long t0 = System.currentTimeMillis();
+        for(int i=0; i<n; i++) {
+            if(Xon.asXon(json)!=null) q++;
+        }
+        long t1 = System.currentTimeMillis();
+        System.out.println("Read "+q+"/"+n+" XON strings in "+(t1-t0)+"ms, "+(1000000*(t1-t0)/n)+"ns / string");
+    }
 
 
 
