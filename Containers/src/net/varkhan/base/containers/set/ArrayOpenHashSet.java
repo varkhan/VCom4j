@@ -528,5 +528,24 @@ public class ArrayOpenHashSet<Key> implements Set<Key>, Serializable, Cloneable 
         return false;
     }
 
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            Object k=keys[pos];
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(k).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
 
 }

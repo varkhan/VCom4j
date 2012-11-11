@@ -760,7 +760,28 @@ public class ArrayOpenHashMap<Key,Value> implements Map<Key,Value>, Serializable
         return false;
     }
 
-//    public String toString() {
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            Object k=keys[pos];
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            Object v=vals[pos];
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(k).append(':').append(v).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
+//    public String toDebugString() {
 //        StringBuilder buf = new StringBuilder();
 //        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
 //        for(int i=0; i<capa;i++) {

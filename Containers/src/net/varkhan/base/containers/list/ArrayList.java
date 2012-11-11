@@ -395,19 +395,22 @@ public class ArrayList<Type> implements List<Type> {
     /**
      * Returns a string representation of the list.
      *
-     * @return a string enclosing in curly brackets the string representations
+     * @return a string enclosing in square brackets the string representations
      *         of all the elements in the list
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append("{");
+        buf.append('[').append(' ');
+        boolean first = true;
         for(int i=0;i<size;i++) {
             @SuppressWarnings("unchecked")
             Type obj=(Type) list[i];
-            buf.append(" ").append(obj);
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(obj).append(' ');
             i++;
         }
-        buf.append("}");
+        buf.append(']');
         return buf.toString();
     }
 

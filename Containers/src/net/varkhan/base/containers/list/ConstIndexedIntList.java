@@ -438,7 +438,7 @@ public class ConstIndexedIntList implements IndexedIntList, Externalizable, Clon
      * @return the hash code of the default value
      */
     public int hashCode() {
-        return (int) (defVal^(defVal>>>32));
+        return defVal;
     }
 
     /**
@@ -467,10 +467,10 @@ public class ConstIndexedIntList implements IndexedIntList, Externalizable, Clon
     /**
      * Returns a string representation of the list.
      *
-     * @return the value of {@code "{("+ getDefaultValue() + ")}"}
+     * @return the value of {@code "[ ("+ getDefaultValue() + ") ]"}
      */
     public String toString() {
-        return new StringBuilder().append("{(").append(defVal).append(")}").toString();
+        return new StringBuilder().append("[ (").append(defVal).append(") ]").toString();
     }
 
 }

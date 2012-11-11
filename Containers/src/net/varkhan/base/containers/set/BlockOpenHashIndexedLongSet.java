@@ -1107,7 +1107,29 @@ public class BlockOpenHashIndexedLongSet implements IndexedLongSet, Serializable
         return false;
     }
 
-//    public String toString() {
+    public String toString() {
+        StringBuilder buf=new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            long idx=_getIndex(pos);
+            if(idx<=0) {
+                pos++;
+                continue;
+            }
+            idx--;
+            long k=_getKey(idx);
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(idx).append('@').append(k).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
+//    public String toDebugString() {
 //        StringBuilder buf = new StringBuilder();
 //        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
 //        for(int i=0; i<capa;i++) {

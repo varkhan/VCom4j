@@ -826,7 +826,28 @@ public class ArrayOpenHashObj2IntMap<Key> implements Obj2IntMap<Key>, Serializab
         return false;
     }
 
-//    public String toString() {
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            Object k=keys[pos];
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            int v=vals[pos];
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(k).append(':').append(v).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
+//    public String toDebugString() {
 //        StringBuilder buf = new StringBuilder();
 //        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
 //        for(int i=0; i<capa;i++) {

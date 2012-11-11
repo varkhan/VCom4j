@@ -157,4 +157,8 @@ public class EmptyMap<K,V> implements Map<K,V>, Serializable, Cloneable {
         return obj instanceof Map && ((Map)obj).isEmpty();
     }
 
+    public String toString() {
+        return "{ }";
+    }
+
 }

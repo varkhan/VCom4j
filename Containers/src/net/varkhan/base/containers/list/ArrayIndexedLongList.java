@@ -805,18 +805,18 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
     /**
      * Returns a string representation of the IndexedList.
      *
-     * @return a string enclosing in curly brackets the string representations
+     * @return a string enclosing in square brackets the string representations
      *         of all the elements in the list, prefixed by their index
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append("{(null)");
+        buf.append("[(null)");
         for(int i=0;i<head;i++) {
             long obj=list[i];
             if(obj!=defVal) buf.append(" ").append(i).append(":").append(obj);
             i++;
         }
-        buf.append("}");
+        buf.append("]");
         return buf.toString();
     }
 

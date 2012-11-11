@@ -574,7 +574,27 @@ public class BlockOpenHashSet<Key> implements Set<Key>, Serializable, Cloneable 
         return false;
     }
 
-//    public String toString() {
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            Object k=_getKey(pos);
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(k).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
+//    public String toDebugString() {
 //        StringBuilder buf = new StringBuilder();
 //        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
 //        for(int i=0; i<capa;i++) {

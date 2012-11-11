@@ -918,12 +918,13 @@ public class BlockIndexedDoubleList extends AbstractBlockIndexedList implements 
     /**
      * Returns a string representation of the IndexedList.
      *
-     * @return a string enclosing in curly brackets the string representations
+     * @return a string enclosing in square brackets the string representations
      *         of all the elements in the list, prefixed by their index
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append("{(null)");
+        buf.append('[').append(' ');
+        boolean first = true;
         long i=0;
         while(i<head) {
             int blockpos=(int) (i>>>blockshift);
@@ -931,11 +932,17 @@ public class BlockIndexedDoubleList extends AbstractBlockIndexedList implements 
                 i=(blockpos+1)<<blockshift;
                 continue;
             }
+            @SuppressWarnings("unchecked")
             double val=list[blockpos][(int) (i&blockmask)];
-            if(val!=defVal) buf.append(" ").append(i).append(":").append(val);
+            if(val!=defVal) {
+                if(first) first=false;
+                else buf.append(',');
+                buf.append(i).append('@').append(val).append(' ');
+            }
             i++;
         }
-        buf.append("}");
+        buf.append('(').append(defVal).append(')').append(' ');
+        buf.append(']');
         return buf.toString();
     }
 

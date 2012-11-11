@@ -1021,7 +1021,29 @@ public class ArrayOpenHashIndexedIntSet implements IndexedIntSet, Serializable, 
         return false;
     }
 
-//    public String toString() {
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            int idx=idxs[pos];
+            if(idxs[pos]<=0) {
+                pos++;
+                continue;
+            }
+            idx --;
+            int k=keys[idx];
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(idx).append('@').append(k).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
+//    public String toDebugString() {
 //        StringBuilder buf = new StringBuilder();
 //        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
 //        for(int i=0; i<capa;i++) {
@@ -1042,6 +1064,5 @@ public class ArrayOpenHashIndexedIntSet implements IndexedIntSet, Serializable, 
 //        }
 //        return buf.toString();
 //    }
-
 
 }

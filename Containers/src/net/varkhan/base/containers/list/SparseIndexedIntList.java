@@ -897,12 +897,13 @@ public class SparseIndexedIntList extends AbstractSparseIndexedList implements I
     /**
      * Returns a string representation of the IndexedList.
      *
-     * @return a string enclosing in curly brackets the string representations
+     * @return a string enclosing in square brackets the string representations
      *         of all the elements in the list, prefixed by their index
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append("{(null)");
+        buf.append('[').append(' ');
+        boolean first = true;
         long i=0;
         while(i<head) {
             int blockpos=(int) (i>>>blockshift);
@@ -912,10 +913,15 @@ public class SparseIndexedIntList extends AbstractSparseIndexedList implements I
                 continue;
             }
             int pos=getSparsePos(mask, (int) (i&blockmask));
-            if(pos>0) buf.append(" ").append(i).append(":").append(list[blockpos][pos-1]);
+            if(pos>0) {
+                if(first) first=false;
+                else buf.append(',');
+                buf.append(i).append('@').append(list[blockpos][pos-1]).append(' ');
+            }
             i++;
         }
-        buf.append("}");
+        buf.append('(').append(defVal).append(')').append(' ');
+        buf.append(']');
         return buf.toString();
     }
 

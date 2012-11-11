@@ -1375,7 +1375,28 @@ public class ArrayOpenHashIndexedObj2FloatMap<Key> implements IndexedObj2FloatMa
         return false;
     }
 
-//    public String toString() {
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            int idx=idxs[pos];
+            if(idx<=0) {
+                pos++;
+                continue;
+            }
+            idx --;
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(idx).append('@').append(keys[idx]).append(':').append(vals[idx]).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
+//    public String toDebugString() {
 //        StringBuilder buf = new StringBuilder();
 //        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
 //        for(int i=0; i<capa;i++) {

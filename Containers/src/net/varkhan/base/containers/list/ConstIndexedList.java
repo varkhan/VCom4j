@@ -407,12 +407,12 @@ public class ConstIndexedList<Type> implements IndexedList<Type>, Externalizable
     }
 
     /**
-     * Return a string representation of the list.
+     * Returns a string representation of the list.
      *
-     * @return the value of {@code "{("+ getDefaultValue() + ")}"}
+     * @return the value of {@code "[ ("+ getDefaultValue() + ") ]"}
      */
     public String toString() {
-        return new StringBuilder().append("{(").append(defVal.toString()).append(")}").toString();
+        return new StringBuilder().append("[ (").append(defVal).append(") ]").toString();
     }
 
 }

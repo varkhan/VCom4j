@@ -468,10 +468,10 @@ public class ConstIndexedDoubleList implements IndexedDoubleList, Externalizable
     /**
      * Returns a string representation of the list.
      *
-     * @return the value of {@code "{("+ getDefaultValue() + ")}"}
+     * @return the value of {@code "[ ("+ getDefaultValue() + ") ]"}
      */
     public String toString() {
-        return new StringBuilder().append("{(").append(defVal).append(")}").toString();
+        return new StringBuilder().append("[ (").append(defVal).append(") ]").toString();
     }
 
 }

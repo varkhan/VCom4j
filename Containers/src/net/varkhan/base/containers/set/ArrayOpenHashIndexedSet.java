@@ -975,4 +975,26 @@ public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
         return false;
     }
 
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            int idx=idxs[pos];
+            if(idxs[pos]<=0) {
+                pos++;
+                continue;
+            }
+            idx --;
+            Object k=keys[idx];
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(idx).append('@').append(k).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
+
 }

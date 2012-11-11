@@ -107,4 +107,9 @@ public class EmptySet<K> implements Set<K>, Serializable, Cloneable {
     public boolean equals(Object obj) {
         return obj instanceof Set && ((Set)obj).isEmpty();
     }
+
+    public String toString() {
+        return "{ }";
+    }
+
 }

@@ -916,9 +916,28 @@ public class BlockOpenHashLong2FloatMap implements Long2FloatMap, Serializable, 
         return false;
     }
 
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('{').append(' ');
+        boolean first = true;
+        int pos=0;
+        while(pos<capa) {
+            long k=_getKey(pos);
+            if(k==NULL||k==DEL) {
+                pos++;
+                continue;
+            }
+            float v=_getVal(pos);
+            if(first) first=false;
+            else buf.append(',');
+            buf.append(k).append(':').append(v).append(' ');
+            pos++;
+        }
+        buf.append('}');
+        return buf.toString();
+    }
 
-//    public String toString() {
-//        StringBuilder buf = new StringBuilder();
+//    public String toDebugString() {
 //        buf.append(this.getClass().getSimpleName()).append(" [").append(size).append('/').append(free).append('/').append(capa).append("] {\n");
 //        for(int i=0; i<capa;i++) {
 //            long k = getKey(i);

@@ -804,18 +804,24 @@ public class ArrayIndexedIntList implements IndexedIntList, Externalizable, Clon
     /**
      * Returns a string representation of the IndexedList.
      *
-     * @return a string enclosing in curly brackets the string representations
+     * @return a string enclosing in square brackets the string representations
      *         of all the elements in the list, prefixed by their index
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append("{(null)");
+        buf.append('[').append(' ');
+        boolean first = true;
         for(int i=0;i<head;i++) {
             int obj=list[i];
-            if(obj!=defVal) buf.append(" ").append(i).append(":").append(obj);
+            if(obj!=defVal) {
+                if(first) first=false;
+                else buf.append(',');
+                buf.append(i).append('@').append(obj).append(' ');
+            }
             i++;
         }
-        buf.append("}");
+        buf.append('(').append(defVal).append(')').append(' ');
+        buf.append(']');
         return buf.toString();
     }
 
