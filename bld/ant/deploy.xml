@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="deploy" default="deploy">
+
+    <condition property="module.name" value="unknown">
+        <not>
+            <isset property="module.name"/>
+        </not>
+    </condition>
+    <condition property="module.base.dir" value=".">
+        <not>
+            <isset property="module.base.dir"/>
+        </not>
+    </condition>
+    <condition property="module.artifact.dir" value="${module.base.dir}/lib">
+        <not>
+            <isset property="module.artifact.dir"/>
+        </not>
+    </condition>
+
+    <condition property="deploy.target.host" value="localhost">
+        <not>
+            <isset property="deploy.target.host"/>
+        </not>
+    </condition>
+    <condition property="deploy.target.dir" value="/home/ec2-user/${module.name}/">
+        <not>
+            <isset property="deploy.target.dir"/>
+        </not>
+    </condition>
+    <condition property="deploy.ssh.opts" value="">
+        <not>
+            <isset property="deploy.ssh.opts"/>
+        </not>
+    </condition>
+
+    <target name="deploy">
+        <exec command="ssh ${deploy.ssh.opts} ${deploy.target.host} -c &quot;mkdir -p${deploy.target.dir}&quot;"/>
+        <exec command="scp ${deploy.ssh.opts} ${module.artifact.dir}/${module.name}.jar ${deploy.target.host}:${deploy.target.dir}"/>
+    </target>
+
+</project>

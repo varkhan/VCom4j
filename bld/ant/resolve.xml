@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="resolve" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <dirname property="ivy.settings.dir" file="${ant.file.resolve}"/>
+
+    <condition property="library.ivy.classpath" value="${ant.home}/lib/ivy.jar">
+        <not>
+            <isset property="library.ivy.classpath"/>
+        </not>
+    </condition>
+
+<!--
+    <target name="ivy-load">
+        <path id="ivy.lib.path">
+                <pathelement location="${library.ivy.classpath}"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                  uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>    
+
+    <target name="ivy-init" depends="ivy-load">
+        <ivy:settings id="basic.settings"    file="${settings.dir}/ivysettings-basic.xml"/>
+        <ivy:settings id="advanced.settings" file="${settings.dir}/ivysettings-advanced.xml"/>
+    </target>
+-->
+
+
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant"
+             classpath="${library.ivy.classpath}"/>
+
+    <taskdef name="ivy:configure" classname="org.apache.ivy.ant.IvyConfigure" classpath="${library.ivy.classpath}"/>
+    <taskdef name="ivy:resolve" classname="org.apache.ivy.ant.IvyResolve" classpath="${library.ivy.classpath}"/>
+    <taskdef name="ivy:retrieve" classname="org.apache.ivy.ant.IvyRetrieve" classpath="${library.ivy.classpath}"/>
+    <taskdef name="ivy:makepom" classname="org.apache.ivy.ant.IvyMakePom" classpath="${library.ivy.classpath}"/>
+    <taskdef name="ivy:deliver" classname="org.apache.ivy.ant.IvyDeliver" classpath="${library.ivy.classpath}"/>
+    <taskdef name="ivy:publish" classname="org.apache.ivy.ant.IvyPublish" classpath="${library.ivy.classpath}"/>
+
+    <condition property="ivy.project.dir" value="${ivy.settings.dir}/../../">
+        <not>
+            <isset property="ivy.project.dir"/>
+        </not>
+    </condition>
+
+    <condition property="ivy.repo.dir" value="${ivy.project.dir}/.ivy/dist">
+        <not>
+            <isset property="ivy.repo.dir"/>
+        </not>
+    </condition>
+    <condition property="ivy.cache.dir" value="${ivy.project.dir}/.ivy/cache">
+        <not>
+            <isset property="ivy.cache.dir"/>
+        </not>
+    </condition>
+    <condition property="ivy.lib.dir" value="${ivy.project.dir}/.ivy/lib">
+        <not>
+            <isset property="ivy.lib.dir"/>
+        </not>
+    </condition>
+    <condition property="ivy.dist.dir" value="${ivy.repo.dir}">
+        <not>
+            <isset property="ivy.dist.dir"/>
+        </not>
+    </condition>
+
+    <property name="ivy.retrieve.pattern" value="${ivy.lib.dir}/[module]/[revision]/[conf]/[artifact](-[type]).[ext]"/>
+    <property name="ivy.deliver.ivy.pattern" value="[module]/[conf]/[artifact](-[type]).[ext]"/>
+    <property name="ivy.deliver.artifacts.pattern" value="[module]/[conf]/[artifact](-[type]).[ext]"/>
+    <property name="ivy.publish.src.artifacts.pattern" value="[module]/[conf]/[artifact](-[type]).[ext]"/>
+
+    <property name="ivy.buildlist.ivyfilepath" value="ivy.xml"/>
+    <property name="ivy.settings.file" value="${ivy.settings.dir}/ivysettings.xml"/>
+    <ivy:settings file="${ivy.settings.dir}/ivysettings.xml"/>
+    <property name="ivy.resolver.default.check.modified" value="false"/>
+    <property name="ivy.default.always.check.exact.revision" value="true"/>
+
+    <property name="ivy.configurations" value="*"/>
+    <property name="ivy.resolve.default.type.filter" value="*"/>
+    <condition property="ivy.status" value="integration">
+        <not>
+            <isset property="ivy.status"/>
+        </not>
+    </condition>
+    <condition property="ivy.version" value="1.0">
+        <not>
+            <isset property="ivy.version"/>
+        </not>
+    </condition>
+
+    <property name="recursive.delivery.status" value="${ivy.status}"/>
+    <property name="recursive.delivery.version" value="${ivy.version}"/>
+
+    <property name="ivy.report.output.pattern" value="[organisation]-[module]-[conf].[ext]"/>
+    <property name="ivy.checksums" value="sha1,md5"/>
+
+    <target name="clean"/>
+    <target name="wipe"/>
+
+</project>

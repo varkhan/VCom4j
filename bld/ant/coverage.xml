@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="coverage">
+    <dirname property="coverage.settings.dir" file="${ant.file.coverage}"/>
+
+    <property name="library.emma.dir" value="${ant.home}/"/>
+
+    <path id="library.emma.classpath">
+        <fileset dir="${library.emma.dir}/lib">
+            <include name="emma.jar"/>
+            <include name="emma_ant.jar"/>
+        </fileset>
+    </path>
+    <property name="library.emma.classpath" refid="library.emma.classpath"/>
+
+    <taskdef classpathref="library.emma.classpath" resource="emma_ant.properties"/>
+
+
+</project>

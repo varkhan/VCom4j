@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="junit3">
         <CLASSES>
           <root url="jar://$APPLICATION_HOME_DIR$/lib/junit.jar!/" />

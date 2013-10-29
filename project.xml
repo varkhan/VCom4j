@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="VCom4j">
+    <dirname property="project.base.dir" file="${ant.file.PROJECT}"/>
+    <property name="project.tool.dir" value="${project.base.dir}/bld/ant"/>
+    <property environment="env"/>
+    <condition property="project.jdk.home" value="${env.JAVA_HOME}" else="/usr/java/default">
+        <available file="${env.JAVA_HOME}"/>
+    </condition>
+    <property name="project.jdk.bin" value="${project.jdk.home}/bin"/>
+    <property name="project.jdk.lib" value="${project.jdk.home}/lib"/>
+    <property name="project.src.level" value="1.6"/>
+    <property name="library.junit.classpath" value="${project.base.dir}/lib/junit4/junit-4.10.jar"/>
+    <property name="project.cache.dir" value="${project.base.dir}/.ivy"/>
+    <property name="library.ivy.classpath" value="${project.base.dir}/lib/ant/apache-ant-1.8.4/lib/ivy.jar"/>
+</project>

@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module" default="all" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <!--====================
+        Property defaults
+        ====================-->
+
+    <include file="compiler.xml"/>
+
+    <!-- If no project settings, use basic compiler settings -->
+    <condition property="project.base.dir" value=".">
+        <not>
+            <isset property="project.base.dir"/>
+        </not>
+    </condition>
+    <condition property="project.jdk.home" value="${compiler.jdk.home}">
+        <not>
+            <isset property="project.jdk.home"/>
+        </not>
+    </condition>
+    <condition property="project.jdk.bin" value="${compiler.jdk.bin}">
+        <not>
+            <isset property="project.jdk.bin"/>
+        </not>
+    </condition>
+    <condition property="project.jdk.classpath" value="${compiler.jdk.classpath}">
+        <not>
+            <isset property="project.jdk.classpath"/>
+        </not>
+    </condition>
+    <condition property="project.src.level" value="${compiler.src.level}">
+        <not>
+            <isset property="project.src.level"/>
+        </not>
+    </condition>
+
+    <!-- Default to project settings -->
+    <condition property="module.jdk.home" value="${project.jdk.home}">
+        <not>
+            <isset property="module.jdk.home"/>
+        </not>
+    </condition>
+    <condition property="module.jdk.bin" value="${project.jdk.bin}">
+        <not>
+            <isset property="module.jdk.bin"/>
+        </not>
+    </condition>
+    <condition property="module.jdk.classpath" value="${project.jdk.classpath}">
+        <not>
+            <isset property="module.jdk.classpath"/>
+        </not>
+    </condition>
+    <condition property="module.src.level" value="${project.src.level}">
+        <not>
+            <isset property="module.src.level"/>
+        </not>
+    </condition>
+
+
+    <condition property="module.base.dir" value=".">
+        <not>
+            <isset property="module.base.dir"/>
+        </not>
+    </condition>
+    <condition property="module.name" value="unknown">
+        <not>
+            <isset property="module.name"/>
+        </not>
+    </condition>
+    <condition property="module.desc" value="Module ${module.name}">
+        <not>
+            <isset property="module.desc"/>
+        </not>
+    </condition>
+    <condition property="module.vers" value="0.0.1">
+        <not>
+            <isset property="module.vers"/>
+        </not>
+    </condition>
+    <condition property="module.dist" value="prod">
+        <not>
+            <isset property="module.dist"/>
+        </not>
+    </condition>
+    <condition property="module.status" value="integration">
+        <not>
+            <isset property="module.status"/>
+        </not>
+    </condition>
+    <property name="module.artifact.dir" value="${module.base.dir}/lib"/>
+    <property name="module.javadoc.dir" value="${module.base.dir}/doc"/>
+    <property name="module.main.out.dir" value="${module.base.dir}/.out/src"/>
+    <property name="module.test.out.dir" value="${module.base.dir}/.out/tst"/>
+    <property name="module.ress.out.dir" value="${module.base.dir}/.out/res"/>
+    <property name="module.test.run.dir" value="${module.base.dir}/.run/tst"/>
+    <!--<property name="module.spec.file" value="${module.base.dir}/build.spec"/>-->
+
+
+    <!--====================
+        Artifact resolution
+        ====================-->
+
+
+    <condition property="ivy.project.dir" value="${project.base.dir}">
+        <not>
+            <isset property="ivy.project.dir"/>
+        </not>
+    </condition>
+    <condition property="ivy.project.dir" value="${module.base.dir}">
+        <not>
+            <isset property="ivy.project.dir"/>
+        </not>
+    </condition>
+    <property name="ivy.lib.dir" value="${module.base.dir}/.lib"/>
+
+    <include file="resolve.xml"/>
+
+
+    <property name="ivy.dep.file" value="${module.base.dir}/ivy.xml"/>
+
+    <property name="ivy.buildlist.ivyfilepath" value="ivy.xml"/>
+
+    <property name="ivy.configurations" value="*"/>
+    <property name="ivy.resolve.default.type.filter" value="*"/>
+    <property name="ivy.status" value="${module.status}"/>
+
+
+    <!--====================
+    Testing and coverage
+    ====================-->
+
+
+    <condition property="test.failfast" value="true">
+        <not>
+            <isset property="test.failfast"/>
+        </not>
+    </condition>
+
+    <condition property="test.junit.failfast" value="${test.failfast}">
+        <not>
+            <isset property="test.junit.failfast"/>
+        </not>
+    </condition>
+
+    <condition property="test.failstatus" value="1">
+        <not>
+            <isset property="test.failstatus"/>
+        </not>
+    </condition>
+
+    <condition property="test.junit.failstatus" value="${test.failstatus}">
+        <not>
+            <isset property="test.junit.failstatus"/>
+        </not>
+    </condition>
+
+    <condition property="test.maxmemory" value="2000m">
+        <not>
+            <isset property="test.maxmemory"/>
+        </not>
+    </condition>
+
+    <condition property="test.timeout" value="300000">
+        <not>
+            <isset property="test.timeout"/>
+        </not>
+    </condition>
+
+    <include file="coverage.xml"/>
+    <condition property="skip.emma.tests" value="true">
+        <not>
+            <isset property="run.emma.tests"/>
+        </not>
+    </condition>
+    <condition property="skip.notemma.tests" value="true">
+        <not>
+            <isset property="run.emma.tests"/>
+        </not>
+    </condition>
+    <condition property="skip.junit.tests" value="true">
+        <isset property="run.emma.tests"/>
+    </condition>
+    <condition property="test.emma.include" value="+net.varkhan.*,-*Test*">
+        <not>
+            <isset property="test.emma.include"/>
+        </not>
+    </condition>
+
+
+    <!--====================
+    Build paths definitions
+    ====================-->
+
+    <path id="module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="module.main.classpath">
+        <path path="${module.jdk.classpath}"/>
+        <path path="${library.junit.classpath}"/>
+    </path>
+
+    <path id="ivy.main.artifact.path"/>
+
+    <path id="module.runtime.production.module.classpath">
+        <pathelement location="${module.main.out.dir}"/>
+        <path path="${library.junit.classpath}"/>
+    </path>
+
+    <path id="module.test.classpath">
+        <path path="${module.jdk.classpath}"/>
+        <pathelement location="${module.main.out.dir}"/>
+        <pathelement location="${module.test.out.dir}"/>
+        <path path="${library.junit.classpath}"/>
+    </path>
+
+    <path id="module.runtime.module.classpath">
+        <pathelement location="${module.test.out.dir}"/>
+        <pathelement location="${module.main.out.dir}"/>
+        <path path="${library.junit.classpath}"/>
+    </path>
+
+    <patternset id="module.compile.exclude">
+        <!--suppress AntResolveInspection -->
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <property name="module.main.src.dir" value="${module.base.dir}/src"/>
+    <path id="module.main.src.dir">
+        <dirset dir="${module.base.dir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+    <property name="module.main.res.dir" value="${module.base.dir}/res"/>
+    <path id="module.test.src.dir">
+        <dirset dir="${module.base.dir}">
+            <include name="tst"/>
+        </dirset>
+    </path>
+
+    <property name="module.test.src.dir" value="${module.base.dir}/tst"/>
+    <path id="module.test.src.dir">
+        <dirset dir="${module.base.dir}">
+            <include name="tst"/>
+        </dirset>
+    </path>
+
+    <condition property="module.main.src.dir-present" value="true">
+        <available file="${module.main.src.dir}" type="dir"/>
+    </condition>
+
+    <condition property="module.main.res.dir-present" value="true">
+        <available file="${module.main.res.dir}" type="dir"/>
+    </condition>
+
+    <condition property="module.test.src.dir-present" value="true">
+        <available file="${module.test.src.dir}" type="dir"/>
+    </condition>
+
+    <!--====================
+        Main targets definitions
+        ====================-->
+
+    <target name="all" depends="compile,artifact,publish"/>
+
+    <!--<extension-point name="pre-resolve-hook"/>-->
+    <target name="resolve" depends="resolve.main,resolve.test"
+            description="Resolve module dependencies"/>
+
+    <target name="resolve.main" depends="" description="Resolve module main dependencies">
+        <mkdir dir="${ivy.cache.dir}"/>
+        <ivy:resolve file="${ivy.dep.file}" conf="${ivy.configurations}" type="bin,jar,bundle"/>
+        <ivy:deliver conf="${ivy.configurations}" pubrevision="${module.vers}" pubbranch="${module.dist}"
+                     deliverpattern="${module.main.out.dir}/${module.name}.ivy"/>
+        <ivy:resolve file="${module.main.out.dir}/${module.name}.ivy" conf="${ivy.configurations}"
+                     type="bin,jar,bundle"/>
+        <ivy:retrieve pattern="${ivy.retrieve.pattern}" conf="${ivy.configurations}" pathid="ivy.main.artifact.path"
+                      type="bin,jar,bundle"/>
+        <property name="ivy.main.artifact.path" refid="ivy.main.artifact.path"/>
+        <available property="module.has.dependencies" file="${ivy.lib.dir}"/>
+        <echo message="Resolved main path ${ivy.main.artifact.path}"/>
+    </target>
+
+    <target name="resolve.test" depends="resolve.main" description="Resolve module test dependencies">
+    </target>
+
+    <!--<extension-point name="pre-compile-hook"/>-->
+    <target name="compile" depends="compile.main,compile.test" description="Compile module classes"/>
+
+    <target name="compile.main" depends="resolve.main" description="Compile module main classes">
+        <path id="module.main.resolved.path">
+            <path path="${module.jdk.classpath}"/>
+            <path refid="ivy.main.artifact.path"/>
+        </path>
+        <mkdir dir="${module.main.out.dir}"/>
+
+        <javac srcdir="${module.main.src.dir}" destdir="${module.main.out.dir}" source="${module.src.level}"
+               includeAntRuntime="false" debug="${compiler.debug}"
+               nowarn="${compiler.warn.no}" memorymaximumsize="${compiler.mem.max}" fork="true"
+               executable="${module.jdk.bin}/javac" encoding="UTF-8">
+            <compilerarg line="${compiler.args}"/>
+            <bootclasspath refid="module.bootclasspath"/>
+            <classpath refid="module.main.resolved.path"/>
+            <patternset refid="module.compile.exclude"/>
+        </javac>
+
+        <copy todir="${module.main.out.dir}">
+            <fileset dir="${module.main.src.dir}">
+                <!--suppress AntResolveInspection -->
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <!-- So the target doesn't complain on non-existing dirs -->
+        <mkdir dir="${module.main.res.dir}"/>
+        <copy todir="${module.main.out.dir}">
+            <fileset dir="${module.main.res.dir}">
+                <!--suppress AntResolveInspection -->
+                <!--<patternset refid="compiler.resources"/>-->
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="compile.test" depends="resolve.test,compile.main"
+            description="Compile module test classes"
+            if="module.test.src.dir-present" unless="skip.tests">
+        <path id="module.test.resolved.path">
+            <path path="${module.jdk.classpath}"/>
+            <path path="${module.main.out.dir}"/>
+            <path path="${library.junit.classpath}"/>
+            <path refid="ivy.main.artifact.path"/>
+        </path>
+        <mkdir dir="${module.test.out.dir}"/>
+        <javac srcdir="${module.test.src.dir}" destdir="${module.test.out.dir}" source="${module.src.level}"
+               includeAntRuntime="false" debug="true"
+               nowarn="${compiler.warn.no}" memorymaximumsize="${compiler.mem.max}" fork="true"
+               executable="${module.jdk.bin}/javac" encoding="UTF-8">
+            <compilerarg line="${compiler.args}"/>
+            <bootclasspath refid="module.bootclasspath"/>
+            <classpath refid="module.test.resolved.path"/>
+            <patternset refid="module.compile.exclude"/>
+        </javac>
+
+        <copy todir="${module.test.out.dir}">
+            <fileset dir="${module.test.src.dir}">
+                <!--suppress AntResolveInspection -->
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <!-- So the target doesn't complain on non-existing dirs -->
+        <mkdir dir="${module.main.res.dir}"/>
+        <copy todir="${module.test.out.dir}">
+            <fileset dir="${module.main.res.dir}">
+                <!--suppress AntResolveInspection -->
+                <!--<patternset refid="compiler.resources"/>-->
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!--<extension-point name="pre-artifact-hook"/>-->
+    <target name="artifact" depends="artifact.bin,artifact.src,artifact.doc"
+            description="Assemble module artifact"/>
+
+    <target name="artifact.src" depends="" description="Assemble the module sources artifact">
+        <mkdir dir="${module.artifact.dir}"/>
+        <jar basedir="${module.main.src.dir}" destfile="${module.artifact.dir}/${module.name}-src.jar"/>
+    </target>
+
+    <target name="artifact.bin" depends="compile.main" description="Assemble module binary artifact">
+        <mkdir dir="${module.artifact.dir}"/>
+        <jar basedir="${module.main.out.dir}" destfile="${module.artifact.dir}/${module.name}-bin.jar"/>
+        <copy file="${module.main.out.dir}/${module.name}.ivy" tofile="${module.artifact.dir}/${module.name}-ivy.ivy"/>
+        <ivy:makepom ivyfile="${module.main.out.dir}/${module.name}.ivy"
+                     pomfile="${module.artifact.dir}/${module.name}-pom.pom" printIvyInfo="false"
+                     description="${module.desc}" conf="*">
+            <!-- this is supposed to mark dependencies in the pom as non-optional, but doesn't work -->
+            <!--<mapping conf="default" scope="runtime"/>-->
+        </ivy:makepom>
+    </target>
+
+    <target name="artifact.doc" depends="" description="Assemble the module documentation artifact">
+        <mkdir dir="${module.artifact.dir}"/>
+        <mkdir dir="${module.javadoc.dir}"/>
+        <javadoc sourcepath="${module.main.src.dir}" destdir="${module.javadoc.dir}" source="${module.src.level}"/>
+        <jar basedir="${module.javadoc.dir}" destfile="${module.artifact.dir}/${module.name}-doc.jar"/>
+    </target>
+
+    <!--<extension-point name="pre-publish-hook"/>-->
+    <target name="publish" depends="artifact" description="Publish the module artifacts">
+        <ivy:publish resolver="dist" pubrevision="${module.vers}" forcedeliver="true" overwrite="true"
+                     srcivypattern="${module.artifact.dir}/[artifact].[ext]"
+                     artifactspattern="${module.artifact.dir}/[artifact]-[type].[ext]"/>
+    </target>
+    <!--<extension-point name="pre-bundle-hook"/>-->
+    <target name="bundle" depends="artifact"
+            description="Assemble the module binary bundle (including all dependencies)" if="module.has.dependencies">
+        <mkdir dir="${module.ress.out.dir}"/>
+        <property name="bundle.temp.jar" value="${module.ress.out.dir}/temp.jar"/>
+        <delete file="${bundle.temp.jar}"/>
+        <zip destfile="${bundle.temp.jar}">
+            <zipgroupfileset dir="${ivy.lib.dir}" includes="**/***/****/*.jar"/>
+        </zip>
+        <jar basedir="${module.main.out.dir}" destfile="${module.base.dir}/bin/${module.name}.jar">
+            <zipfileset src="${bundle.temp.jar}"/>
+        </jar>
+        <delete file="${bundle.temp.jar}"/>
+    </target>
+    <target name="rpm" depends="bundle" description="Package the module binary bundle and scripts into a RPM"
+            if="module.spec.file">
+        <basename property="module.spec.file.name" file="${module.spec.file}"/>
+        <mkdir dir="${module.ress.out.dir}/rpmbuild"/>
+        <mkdir dir="${module.ress.out.dir}/rpmbuild/SPECS"/>
+        <mkdir dir="${module.ress.out.dir}/rpmbuild/SOURCES"/>
+        <copy file="${module.spec.file}" todir="${module.ress.out.dir}/rpmbuild/SPECS"/>
+        <rpm specfile="${module.spec.file.name}" topdir="${module.ress.out.dir}/rpmbuild" command="-bi"
+             failOnError="true"/>
+    </target>
+
+    <!--<extension-point name="pre-test-hook"/>-->
+    <target name="test" depends="test.junit,test.emma,test.notemma" description="Run tests for module"/>
+
+    <target name="test.junit" description="Run JUnit tests for module" depends="compile.test,artifact.bin"
+            if="module.test.src.dir-present" unless="skip.junit.tests">
+        <mkdir dir="${module.test.run.dir}"/>
+        <path id="module.test.resolved.path">
+            <path path="${module.jdk.classpath}"/>
+            <path path="${module.artifact.dir}/${module.name}-bin.jar"/>
+            <path path="${module.test.out.dir}"/>
+            <path refid="ivy.main.artifact.path"/>
+            <path path="${library.junit.classpath}"/>
+        </path>
+        <fileset id="module.test.junit.fileset" dir="${module.test.out.dir}">
+            <include name="**/*Test.class"/>
+            <exclude name="**/Abstract*.class"/>
+        </fileset>
+
+        <junit jvm="${module.jdk.bin}/java" timeout="${test.timeout}" showoutput="true"
+               failureproperty="test.junit.failed" errorproperty="test.junit.error"
+               printsummary="withOutAndErr" fork="true">
+            <formatter type="xml"/>
+            <classpath refid="module.test.resolved.path"/>
+            <batchtest todir="${module.test.run.dir}" haltonfailure="${test.junit.failfast}"
+                       haltonerror="${test.junit.failfast}">
+                <fileset refid="module.test.junit.fileset"/>
+            </batchtest>
+            <jvmarg value="-Xmx${test.maxmemory}"/>
+        </junit>
+        <fail if="test.junit.error" message="Junit tests error, see reports for details"
+              status="${test.junit.failstatus}"/>
+        <fail if="test.junit.failed" message="Junit tests failed, see reports for details"
+              status="${test.junit.failstatus}"/>
+    </target>
+
+    <target name="test.emma" description="Run JUnit tests for module with emma coverage analysis"
+            depends="compile.test,artifact.bin"
+            if="module.test.src.dir-present" unless="skip.emma.tests">
+        <mkdir dir="${module.test.run.dir}"/>
+        <path id="module.test.resolved.path">
+            <path path="${module.jdk.classpath}"/>
+            <path path="${module.artifact.dir}/${module.name}-bin.jar"/>
+            <!--<path path="${module.main.out.dir}"/>-->
+            <path path="${module.test.out.dir}"/>
+            <path refid="ivy.main.artifact.path"/>
+            <path path="${library.junit.classpath}"/>
+            <path path="${library.emma.classpath}"/>
+            <!--<path path="${library.cobertura.classpath}"/>-->
+        </path>
+        <fileset id="module.test.junit.fileset" dir="${module.test.out.dir}">
+            <include name="**/*Test.class"/>
+            <exclude name="**/Abstract*.class"/>
+            <exclude name="**/*TestNotEmma.class"/>
+        </fileset>
+
+        <junit jvm="${module.jdk.bin}/java" timeout="${test.timeout}" showoutput="true"
+               failureproperty="test.junit.failed" errorproperty="test.junit.error"
+               printsummary="withOutAndErr" fork="true" forkmode="once">
+            <formatter type="xml"/>
+            <classpath refid="module.test.resolved.path"/>
+            <batchtest todir="${module.test.run.dir}" haltonfailure="${test.junit.failfast}"
+                       haltonerror="${test.junit.failfast}">
+                <fileset refid="module.test.junit.fileset"/>
+            </batchtest>
+            <jvmarg value="-Xmx${test.maxmemory}"/>
+            <jvmarg value="-Xbootclasspath/a:${library.emma.dir}/lib/emma.jar"/>
+            <jvmarg value="emmarun"/>
+            <jvmarg value="-out"/>
+            <jvmarg value="${module.test.run.dir}/coverage.emma"/>
+            <jvmarg value="-raw"/>
+            <jvmarg value="-merge"/>
+            <jvmarg value="yes"/>
+            <jvmarg value="-r"/>
+            <jvmarg value="xml"/>
+            <jvmarg value="-ix"/>
+            <jvmarg value="${test.emma.include}"/>
+            <jvmarg value="-ix"/>
+            <jvmarg value="-*Test*"/>
+            <jvmarg value="-Dreport.depth=method"/>
+            <jvmarg value="-Dreport.xml.out.file=${module.test.run.dir}/coverage.xml"/>
+        </junit>
+        <fail if="test.junit.error" message="Junit tests error, see reports for details"
+              status="${test.junit.failstatus}"/>
+        <fail if="test.junit.failed" message="Junit tests failed, see reports for details"
+              status="${test.junit.failstatus}"/>
+    </target>
+
+    <target name="test.notemma" description="Run JUnit tests for excluded from Emma"
+            depends="compile.test,artifact.bin"
+            if="module.test.src.dir-present" unless="skip.notemma.tests">
+        <mkdir dir="${module.test.run.dir}"/>
+        <path id="module.test.resolved.path">
+            <path path="${module.jdk.classpath}"/>
+            <path path="${module.artifact.dir}/${module.name}-bin.jar"/>
+            <path path="${module.test.out.dir}"/>
+            <path refid="ivy.main.artifact.path"/>
+            <path path="${library.junit.classpath}"/>
+        </path>
+        <fileset id="module.test.junit.fileset" dir="${module.test.out.dir}">
+            <include name="**/*TestNotEmma.class"/>
+            <exclude name="**/Abstract*.class"/>
+        </fileset>
+
+        <junit jvm="${module.jdk.bin}/java" timeout="${test.timeout}" showoutput="true"
+               failureproperty="test.junit.failed" errorproperty="test.junit.error"
+               printsummary="withOutAndErr" fork="true">
+            <formatter type="xml"/>
+            <classpath refid="module.test.resolved.path"/>
+            <batchtest todir="${module.test.run.dir}" haltonfailure="${test.junit.failfast}"
+                       haltonerror="${test.junit.failfast}">
+                <fileset refid="module.test.junit.fileset"/>
+            </batchtest>
+            <jvmarg value="-Xmx${test.maxmemory}"/>
+        </junit>
+        <fail if="test.junit.error" message="Junit tests error, see reports for details"
+              status="${test.junit.failstatus}"/>
+        <fail if="test.junit.failed" message="Junit tests failed, see reports for details"
+              status="${test.junit.failstatus}"/>
+    </target>
+
+    <target name="clean" description="Cleanup module">
+        <delete dir="${module.main.out.dir}"/>
+        <delete dir="${module.test.out.dir}"/>
+        <delete dir="${module.test.run.dir}"/>
+        <delete dir="${ivy.lib.dir}"/>
+        <delete dir="${ivy.cache.dir}/net.varkhan"/>
+    </target>
+
+</project>

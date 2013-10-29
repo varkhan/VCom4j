@@ -1,0 +1,26 @@
+<ivysettings>
+    <properties file="${ivy.settings.dir}/ivysettings.properties"/>
+    <settings defaultResolver="repo"/>
+    <caches defaultCacheDir="${ivy.cache.dir}"/>
+    <resolvers>
+        <chain name="repo">
+            <filesystem name="repo-local">
+                <ivy pattern="${ivy.repo.dir}/[module]/[revision]/ivy.xml"/>
+                <artifact pattern="${ivy.repo.dir}/[module]/[revision]/[conf]/[artifact]-[type].[ext]"/>
+            </filesystem>
+            <ibiblio name="repo-maven" m2compatible="true"
+                     pattern="[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+            <filesystem name="lib-local">
+                <ivy pattern="${project.base.dir}/lib/[module]/[revision]/ivy.xml"/>
+                <artifact pattern="${project.base.dir}/lib/[module]/[revision]/[artifact].[ext]"/>
+            </filesystem>
+        </chain>
+        <filesystem name="dist">
+            <ivy pattern="${ivy.dist.dir}/[module]/[revision]/ivy.xml"/>
+            <artifact pattern="${ivy.dist.dir}/[module]/[revision]/[conf]/[artifact]-[type].[ext]"/>
+        </filesystem>
+    </resolvers>
+    <modules>
+        <module organisation="net.varkhan" name=".*" resolver="dist"/>
+    </modules>
+</ivysettings>

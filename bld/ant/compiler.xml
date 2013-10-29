@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="compiler">
+    <!--suppress AntResolveInspection -->
+    <condition property="compiler.jdk.home" value="${project.jdk.home}">
+        <not>
+            <isset property="compiler.jdk.home"/>
+        </not>
+    </condition>
+    <property environment="env"/>
+    <condition property="compiler.jdk.home" value="${env.JAVA_HOME}">
+        <and>
+            <not>
+                <isset property="compiler.jdk.home"/>
+            </not>
+            <available file="${env.JAVA_HOME}"/>
+        </and>
+    </condition>
+    <condition property="compiler.jdk.home" value="/usr/java/default">
+        <not>
+            <isset property="compiler.jdk.home"/>
+        </not>
+    </condition>
+    <property name="compiler.jdk.bin" value="${compiler.jdk.home}/bin"/>
+    <condition property="compiler.jdk.lib" value="${compiler.jdk.home}/jre/lib">
+        <available file="${compiler.jdk.home}/jre/lib/rt.jar" type="dir"/>
+    </condition>
+    <condition property="compiler.jdk.lib" value="${compiler.jdk.home}/lib">
+        <not>
+            <isset property="compiler.jdk.lib"/>
+        </not>
+    </condition>
+    <condition property="compiler.jdk.ext" value="${compiler.jdk.home}/jre/lib/ext">
+        <available file="${compiler.jdk.home}/jre/lib/rt.jar" type="dir"/>
+    </condition>
+    <condition property="compiler.jdk.ext" value="${compiler.jdk.home}/lib">
+        <not>
+            <isset property="compiler.jdk.ext"/>
+        </not>
+    </condition>
+
+    <condition property="compiler.src.level" value="1.6">
+        <not>
+            <isset property="compiler.src.level"/>
+        </not>
+    </condition>
+
+    <path id="compiler.jdk.classpath">
+        <fileset dir="${compiler.jdk.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${compiler.jdk.ext}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    <property name="compiler.jdk.classpath" refid="compiler.jdk.classpath"/>
+
+    <!-- Compiler settings -->
+    <property name="compiler.args" value=""/>
+    <property name="compiler.mem.max" value="512m"/>
+    <property name="compiler.warn.no" value="false"/>
+    <property name="compiler.debug" value="true"/>
+
+    <patternset id="compiler.resources">
+        <include name="?*.properties"/>
+        <include name="?*.jks"/>
+        <include name="?*.js"/>
+        <include name="?*.xml"/>
+        <include name="?*.gif"/>
+        <include name="?*.png"/>
+        <include name="?*.jpeg"/>
+        <include name="?*.jpg"/>
+        <include name="?*.html"/>
+        <include name="?*.dtd"/>
+        <include name="?*.css"/>
+        <include name="?*.tld"/>
+        <include name="?*.ftl"/>
+        <include name="?*.tsv"/>
+        <include name="?*.tsv.gz"/>
+        <include name="?*.txt"/>
+    </patternset>
+
+    <patternset id="ignored.files" includes="">
+    </patternset>
+
+    <property name="library.junit.classpath" value="${ant.home}/lib/ant-junit.jar"/>
+    <property name="library.ivy.classpath" value="${ant.home}/lib/ivy.jar"/>
+
+
+</project>
