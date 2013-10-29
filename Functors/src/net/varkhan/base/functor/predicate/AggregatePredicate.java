@@ -25,4 +25,49 @@ public abstract class AggregatePredicate<A,C> implements Predicate<A,C> {
 
     public abstract boolean invoke(A arg, C ctx);
 
+
+    public static <A,C> AggregatePredicate<A,C> and(Predicate<A, C>... preds) {
+        return new AggregatePredicate<A,C>(preds) {
+            @Override
+            public boolean invoke(A arg, C ctx) {
+                for(Predicate<A, C> p: preds)
+                    if(!p.invoke(arg, ctx)) return false;
+                return true;
+            }
+        };
+    }
+
+    public static <A,C> AggregatePredicate<A,C> nand(Predicate<A, C>... preds) {
+        return new AggregatePredicate<A,C>(preds) {
+            @Override
+            public boolean invoke(A arg, C ctx) {
+                for(Predicate<A, C> p: preds)
+                    if(!p.invoke(arg, ctx)) return true;
+                return false;
+            }
+        };
+    }
+
+    public static <A,C> AggregatePredicate<A,C> or(Predicate<A, C>... preds) {
+        return new AggregatePredicate<A,C>(preds) {
+            @Override
+            public boolean invoke(A arg, C ctx) {
+                for(Predicate<A, C> p: preds)
+                    if(p.invoke(arg, ctx)) return true;
+                return false;
+            }
+        };
+    }
+
+    public static <A,C> AggregatePredicate<A,C> nor(Predicate<A, C>... preds) {
+        return new AggregatePredicate<A,C>(preds) {
+            @Override
+            public boolean invoke(A arg, C ctx) {
+                for(Predicate<A, C> p: preds)
+                    if(p.invoke(arg, ctx)) return false;
+                return true;
+            }
+        };
+    }
+
  }

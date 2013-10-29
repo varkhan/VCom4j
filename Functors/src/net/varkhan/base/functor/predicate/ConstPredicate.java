@@ -29,5 +29,4 @@ public class ConstPredicate<A,C> implements Predicate<A,C> {
     @SuppressWarnings({ "unchecked" })
     public static <A,C> Predicate<A,C> as(boolean val) { return (Predicate<A, C>) (val?TRUE:FALSE); }
 
-
 }
