@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+    <info organisation="net.varkhan" module="VCom4j-Conversion" branch="prod" revision="0.3.2" status="release"/>
+    <publications>
+        <artifact name="VCom4j-Conversion" ext="jar" type="src"/>
+        <artifact name="VCom4j-Conversion" ext="jar" type="bin"/>
+        <artifact name="VCom4j-Conversion" ext="jar" type="doc"/>
+        <artifact name="VCom4j-Conversion" ext="ivy" type="ivy"/>
+        <artifact name="VCom4j-Conversion" ext="pom" type="pom"/>
+    </publications>
+    <dependencies>
+        <dependency org="net.varkhan" name="VCom4j-Containers" rev="0.6.+"/>
+    </dependencies>
+</ivy-module>

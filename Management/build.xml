@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="VCom4j-Management" default="all">
+    <dirname property="module.base.dir" file="${ant.file.VCom4j-Management}"/>
+    <property name="project.base.dir" value="${module.base.dir}/../"/>
+    <property name="module.name" value="${ant.project.name}"/>
+    <property name="module.vers" value="0.6.1"/>
+    <property name="module.desc" value="Logging, management and supervision"/>
+    <include file="${project.base.dir}/project.xml"/>
+    <include file="${project.tool.dir}/compiler.xml"/>
+    <import file="${project.tool.dir}/module.xml"/>
+</project>
