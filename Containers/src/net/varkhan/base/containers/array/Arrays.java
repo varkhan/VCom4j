@@ -212,13 +212,13 @@ public class Arrays {
      */
     public static <T> int heapSort(Comparator<? super T> comp, T[] ary, int inf, int sup) {
         int cnt = 0;
-        int beg = (inf+sup)>>1;
+        int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
             beg --;
             cnt += heapDown(comp, ary,beg,sup);
         }
         int end = sup;
-        while(end>inf) {
+        while(end>=inf) {
             T v = ary[end];
             ary[end] = ary[inf];
             ary[inf] = v;
@@ -247,6 +247,7 @@ public class Arrays {
             ary[swp] = v;
             cnt ++;
             pos = swp;
+            cld = (pos<<1)+1;
         }
         return cnt;
     }
@@ -266,9 +267,9 @@ public class Arrays {
      */
     public static <T extends Comparable<? super T>> int search(T[] ary, int inf, int sup, T key) {
         int min=inf;
-        int max=sup-1;
+        int max=sup;
 
-        while(min<=max) {
+        while(min<max) {
             int med=(min+max)>>>1;
             T medVal=ary[med];
             int cmp=medVal.compareTo(key);
@@ -297,7 +298,7 @@ public class Arrays {
     public static <T> int search(T[] ary, int inf, int sup, T key, Comparator<? super T> comp) {
 //        if (comp == null)  return search(ary, inf, sup, key);
         int min=inf;
-        int max=sup-1;
+        int max=sup;
 
         while(min<max) {
             int med=(min+max)>>>1;
@@ -312,7 +313,10 @@ public class Arrays {
     }
 
     /**
-     * Inserts an object in a sorted ary, using the natural order.
+     * Inserts an object in a sorted array, using the natural order.
+     * The array <em>must</em> have space for an extra element, i.e.
+     * the length of the array must be larger than the specified
+     * maximum index.
      *
      * @param ary  the sorted array
      * @param inf  the minimum index
@@ -321,10 +325,11 @@ public class Arrays {
      * @param <T>  the element type
      *
      * @return the position of the inserted object
+     * @throws ArrayIndexOutOfBoundsException if sup <= ary.length
      */
     public static <T extends Comparable<? super T>> int insert(T[] ary, int inf, int sup, T key) {
         int min=inf;
-        int max=sup-1;
+        int max=sup;
 
         while(min<max) {
             int med=(min+max)>>>1;
@@ -339,13 +344,16 @@ public class Arrays {
                 return med;
             }
         }
-        if(sup>min+1) System.arraycopy(ary, min, ary, min+1, sup-min-1);
+        if(min<sup) System.arraycopy(ary, min, ary, min+1, sup-min);
         ary[min]=key;
         return min;
     }
 
     /**
-     * Inserts an object in a sorted ary, using a comparator.
+     * Inserts an object in a sorted array, using a comparator.
+     * The array <em>must</em> have space for an extra element, i.e.
+     * the length of the array must be larger than the specified
+     * maximum index.
      *
      * @param ary  the sorted array
      * @param inf  the minimum index
@@ -355,13 +363,14 @@ public class Arrays {
      * @param <T>  the element type
      *
      * @return the position of the inserted object
+     * @throws ArrayIndexOutOfBoundsException if sup <= ary.length
      */
     public static <T> int insert(T[] ary, int inf, int sup, T key, Comparator<? super T> comp) {
 //        if (comp == null)  return insert(ary, inf, sup, key);
         int min=inf;
-        int max=sup-1;
+        int max=sup;
 
-        while(min<=max) {
+        while(min<max) {
             int med=(min+max)>>>1;
             T medVal=ary[med];
             int cmp=comp.compare(medVal, key);
@@ -374,7 +383,7 @@ public class Arrays {
                 return med;
             }
         }
-        System.arraycopy(ary, min, ary, min+1, sup-min-1);
+        if(min<sup) System.arraycopy(ary, min, ary, min+1, sup-min);
         ary[min]=key;
         return min;
     }

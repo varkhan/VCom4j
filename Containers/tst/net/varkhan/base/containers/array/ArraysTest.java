@@ -83,16 +83,17 @@ public class ArraysTest extends TestCase {
         Comparator<String> cmp = new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
-                if (o1.equals(o2)) return 0;
-                if (o1.length() == 0 && o2.length() == 0) return 0;
-                if (o1.length() == 0) return -1;
-                if (o2.length() == 0) return +1;
-                return o1.charAt(0) - o2.charAt(0);
+                return o1.compareTo(o2);
+//                if (o1.equals(o2)) return 0;
+//                if (o1.length() == 0 && o2.length() == 0) return 0;
+//                if (o1.length() == 0) return -1;
+//                if (o2.length() == 0) return +1;
+//                return o1.charAt(0) - o2.charAt(0);
             }
         };
         String[] ary = {"0"};
-        Arrays.heapSort(ary);
-        assertArrayEquals("heapSort(0)", new Integer[] { 0 }, ary);
+        Arrays.heapSort(cmp,ary);
+        assertArrayEquals("heapSort(0)", new String[] { "0" }, ary);
         ary = new String[]{"3","2","1","1","4","4","6","5","7","2"};
         Arrays.heapSort(cmp,ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new Object[] { "1", "1", "2", "2", "3", "4", "4", "5", "6", "7" }, ary);
@@ -106,7 +107,7 @@ public class ArraysTest extends TestCase {
         for(int i=0; i<N; i++) {
             int l = rand.nextInt(N);
             String[] s = new String[l];
-            for(int j=0; j<l; j++) s[j]=""+rand.nextInt();
+            for(int j=0; j<l; j++) s[j]=""+(char)('a'+rand.nextInt(26));
             a[i] = s;
             a1[i] = s.clone();
             a2[i] = s.clone();
@@ -146,11 +147,12 @@ public class ArraysTest extends TestCase {
         Comparator<String> cmp = new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
-                if (o1.equals(o2)) return 0;
-                if (o1.length() == 0 && o2.length() == 0) return 0;
-                if (o1.length() == 0) return -1;
-                if (o2.length() == 0) return +1;
-                return o1.charAt(0) - o2.charAt(0);
+                return o1.compareTo(o2);
+//                if (o1.equals(o2)) return 0;
+//                if (o1.length() == 0 && o2.length() == 0) return 0;
+//                if (o1.length() == 0) return -1;
+//                if (o2.length() == 0) return +1;
+//                return o1.charAt(0) - o2.charAt(0);
             }
         };
         String[] a1 = new String[] {};
@@ -167,16 +169,16 @@ public class ArraysTest extends TestCase {
 
     public void testInsert() throws Exception {
         String[] a1 = new String[] {null};
-        assertEquals("",0,Arrays.insert(a1,0,1,"1"));
+        assertEquals("",0,Arrays.insert(a1,0,0,"1"));
         assertArrayEquals("",new String[]{"1"},a1);
         String[] a2 = new String[] { "2", null};
-        assertEquals("",1,Arrays.insert(a2,0,2,"3"));
+        assertEquals("",1,Arrays.insert(a2,0,1,"3"));
         assertArrayEquals("",new String[]{"2","3"},a2);
         String[] a3 = new String[] { "2", null};
-        assertEquals("",0,Arrays.insert(a3,0,2,"1"));
+        assertEquals("",0,Arrays.insert(a3,0,1,"1"));
         assertArrayEquals("",new String[]{"1","2"},a3);
         String[] a4 = new String[]{"2", "3", "4", "7", "8", null};
-        assertEquals("",3,Arrays.insert(a4,0,6,"5"));
+        assertEquals("",3,Arrays.insert(a4,0,5,"5"));
         assertArrayEquals("",new String[]{"2", "3", "4", "5", "7", "8"},a4);
     }
 
@@ -184,24 +186,25 @@ public class ArraysTest extends TestCase {
         Comparator<String> cmp = new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
-                if (o1.equals(o2)) return 0;
-                if (o1.length() == 0 && o2.length() == 0) return 0;
-                if (o1.length() == 0) return -1;
-                if (o2.length() == 0) return +1;
-                return o1.charAt(0) - o2.charAt(0);
+                return o1.compareTo(o2);
+//                if (o1.equals(o2)) return 0;
+//                if (o1.length() == 0 && o2.length() == 0) return 0;
+//                if (o1.length() == 0) return -1;
+//                if (o2.length() == 0) return +1;
+//                return o1.charAt(0) - o2.charAt(0);
             }
         };
         String[] a1 = new String[] {null};
-        assertEquals("",0,Arrays.insert(a1,0,1,"1",cmp));
+        assertEquals("",0,Arrays.insert(a1,0,0,"1",cmp));
         assertArrayEquals("",new String[]{"1"},a1);
         String[] a2 = new String[] { "2", null};
-        assertEquals("",1,Arrays.insert(a2,0,2,"3",cmp));
+        assertEquals("",1,Arrays.insert(a2,0,1,"3",cmp));
         assertArrayEquals("",new String[]{"2","3"},a2);
         String[] a3 = new String[] { "2", null};
-        assertEquals("",0,Arrays.insert(a3,0,2,"1",cmp));
+        assertEquals("",0,Arrays.insert(a3,0,1,"1",cmp));
         assertArrayEquals("",new String[]{"1","2"},a3);
         String[] a4 = new String[]{"2", "3", "4", "7", "8", null};
-        assertEquals("",3,Arrays.insert(a4,0,6,"5",cmp));
+        assertEquals("",3,Arrays.insert(a4,0,5,"5",cmp));
         assertArrayEquals("",new String[]{"2", "3", "4", "5", "7", "8"},a4);
     }
 
