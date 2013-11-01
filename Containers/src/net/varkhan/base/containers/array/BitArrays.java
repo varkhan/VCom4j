@@ -37,7 +37,7 @@ public class BitArrays {
      */
     public static long flip(long mask, boolean[] flags) {
         for(int i=0;i<flags.length;i++) {
-            mask^=1<<i;
+            if(flags[i]) mask^=1<<i;
         }
         return mask;
     }

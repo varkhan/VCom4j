@@ -504,7 +504,7 @@ public class LongArrays {
      */
     public static long[] subarray(long[] array, int beg, int end) {
         int l=array.length;
-        if(beg<0 || beg>end || end>l) throw new IndexOutOfBoundsException();
+        if(beg<0 || beg>end || end>l) throw new ArrayIndexOutOfBoundsException("["+beg+":"+end+"] is not a valid range specifier");
         long[] subary=new long[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;

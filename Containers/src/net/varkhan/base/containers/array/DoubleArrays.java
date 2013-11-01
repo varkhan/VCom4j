@@ -503,7 +503,7 @@ public class DoubleArrays {
      */
     public static double[] subarray(double[] array, int beg, int end) {
         int l=array.length;
-        if(beg<0 || beg>end || end>l) throw new IndexOutOfBoundsException();
+        if(beg<0 || beg>end || end>l) throw new ArrayIndexOutOfBoundsException("["+beg+":"+end+"] is not a valid range specifier");
         double[] subary=new double[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;

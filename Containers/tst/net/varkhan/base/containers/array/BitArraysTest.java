@@ -10,6 +10,27 @@ import junit.framework.TestCase;
  */
 public class BitArraysTest extends TestCase {
 
+    public static void assertArrayEquals(String message, boolean[] expected, boolean[] actual) {
+        if(expected==null) { if(actual==null) return; }
+        else if(expected.length==actual.length) {
+            boolean same = true;
+            for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
+            if(same) return;
+        }
+        fail(message+";\n expected: ["+StringArrays.join(",",expected)+"];\n   actual: ["+StringArrays.join(",",actual)+"]");
+    }
+
+    public void testFlipBoolean() {
+        assertEquals("flip(00000000b,true,true,false,true)","1011",Long.toBinaryString(BitArrays.flip(0,new boolean[]{true,true,false,true})));
+        assertEquals("flip(00000000b,true,true,false,true,false)","1011",Long.toBinaryString(BitArrays.flip(0,new boolean[]{true,true,false,true,false})));
+        assertEquals("flip(00000010b,true,true,false,true,false)","1001",Long.toBinaryString(BitArrays.flip(2,new boolean[]{true,true,false,true,false})));
+    }
+
+    public void testFlipMask() {
+        assertArrayEquals("flip(00000000b,true,true,false,true)", new boolean[] { true, true, false, true }, BitArrays.flip(new boolean[] { true, true, false, true }, 0));
+        assertArrayEquals("flip(00000000b,true,true,false,true,false)", new boolean[] { true, false, false, true, false }, BitArrays.flip(new boolean[] { true, true, false, true, false }, 2));
+    }
+
     private static int csb(int b) {
         if(b==0) return 0;
         int c=0;
@@ -185,7 +206,7 @@ public class BitArraysTest extends TestCase {
 
     public void testRevLong() {
         for(int i=0;i<256*256;i++) {
-            assertEquals("rev("+Integer.toBinaryString(i)+")", rev((long) i,64), BitArrays.rev((long) i));
+            assertEquals("rev("+Integer.toBinaryString(i)+")", rev((long) i, 64), BitArrays.rev((long) i));
         }
         System.out.println("BitArrays.rev(byte) OK");
     }

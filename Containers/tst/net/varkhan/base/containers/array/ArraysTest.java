@@ -24,6 +24,7 @@ public class ArraysTest extends TestCase {
     }
 
     public void testEquals() throws Exception {
+        assertTrue("equals([],[])", Arrays.equals(new Object[] {}, new Object[] {}));
         assertTrue("equals([1,2,3,\"6\"],[1,2,3,\"6\"])", Arrays.equals(new Object[] { 1, 2, 3, "6" }, new Object[] { 1, 2, 3, "6" }));
         assertFalse("equals([1,2,3,\"6\"],[5,2,3,\"6\"])", Arrays.equals(new Object[] { 1, 2, 3, "6" }, new Object[] { 5, 2, 3, "6" }));
         assertFalse("equals([1,2,3,\"6\"],[1,2,3,null])", Arrays.equals(new Object[] { 1, 2, 3, "6" }, new Object[] { 5, 2, 3, null }));

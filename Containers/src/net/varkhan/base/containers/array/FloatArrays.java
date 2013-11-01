@@ -101,6 +101,123 @@ public class FloatArrays {
      **  Sorting and search
      **/
 
+
+    /**
+     * Sorts an array in place, in ascending order.
+     *
+     * @param ary the array to sort
+     * @return the number of swap operations required for the sorting
+     */
+    public static int heapSortInc(float... ary) {
+        return heapSortInc(ary,0,ary.length-1);
+    }
+
+    /**
+     * Sorts an array in place, in descending order.
+     *
+     * @param ary the array to sort
+     * @return the number of swap operations required for the sorting
+     */
+    public static int heapSortDec(float... ary) {
+        return heapSortDec(ary,0,ary.length-1);
+    }
+
+    /**
+     * Sorts an array segment in place, in ascending order.
+     *
+     * @param ary the array to sort
+     * @param inf the minimum index
+     * @param sup the maximum index
+     * @return the number of swap operations required for the sorting
+     */
+    public static int heapSortInc(float[] ary, int inf, int sup) {
+        int cnt = 0;
+        int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
+        while(beg>inf) {
+            beg --;
+            cnt += heapDownInc(ary,beg,sup);
+        }
+        int end = sup;
+        while(end>=inf) {
+            float v = ary[end];
+            ary[end] = ary[inf];
+            ary[inf] = v;
+            end --;
+            cnt += 1 + heapDownInc(ary,inf,end);
+        }
+        return cnt;
+    }
+
+    /**
+     * Sorts an array segment in place, in descending order.
+     *
+     * @param ary the array to sort
+     * @param inf the minimum index
+     * @param sup the maximum index
+     * @return the number of swap operations required for the sorting
+     */
+    public static int heapSortDec(float[] ary, int inf, int sup) {
+        int cnt = 0;
+        int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
+        while(beg>inf) {
+            beg --;
+            cnt += heapDownDec(ary,beg,sup);
+        }
+        int end = sup;
+        while(end>=inf) {
+            float v = ary[end];
+            ary[end] = ary[inf];
+            ary[inf] = v;
+            end --;
+            cnt += 1 + heapDownDec(ary,inf,end);
+        }
+        return cnt;
+    }
+
+    protected static int heapDownInc(float[] ary, int inf, int sup) {
+        int cnt = 0;
+        int pos = inf;
+        int cld = (pos<<1)+1;
+        while(cld<=sup) {
+            int swp = pos;
+            if(ary[swp]<ary[cld]) swp = cld;
+            cld ++;
+            if(cld<=sup) {
+                if(ary[swp]<ary[cld]) swp = cld;
+            }
+            if(swp==pos) return cnt;
+            float v = ary[pos];
+            ary[pos] = ary[swp];
+            ary[swp] = v;
+            cnt ++;
+            pos = swp;
+            cld = (pos<<1)+1;
+        }
+        return cnt;
+    }
+
+    protected static int heapDownDec(float[] ary, int inf, int sup) {
+        int cnt = 0;
+        int pos = inf;
+        int cld = (pos<<1)+1;
+        while(cld<=sup) {
+            int swp = pos;
+            if(ary[swp]>ary[cld]) swp = cld;
+            cld ++;
+            if(cld<=sup) {
+                if(ary[swp]>ary[cld]) swp = cld;
+            }
+            if(swp==pos) return cnt;
+            float v = ary[pos];
+            ary[pos] = ary[swp];
+            ary[swp] = v;
+            cnt ++;
+            pos = swp;
+            cld = (pos<<1)+1;
+        }
+        return cnt;
+    }
+
     /**
      * Finds an object in a sorted array, in ascending order.
      *
@@ -388,7 +505,7 @@ public class FloatArrays {
      */
     public static float[] subarray(float[] array, int beg, int end) {
         int l=array.length;
-        if(beg<0 || beg>end || end>l) throw new IndexOutOfBoundsException();
+        if(beg<0 || beg>end || end>l) throw new ArrayIndexOutOfBoundsException("["+beg+":"+end+"] is not a valid range specifier");
         float[] subary=new float[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
