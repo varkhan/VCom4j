@@ -70,6 +70,20 @@ public class BitArraysTest extends TestCase {
         System.out.println("BitArrays.csb(short) OK");
     }
 
+    public void testLsbInt() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("lsb("+Integer.toBinaryString(i)+")", lsb(i), BitArrays.lsb((int) i));
+        }
+        System.out.println("BitArrays.csb(int) OK");
+    }
+
+    public void testLsbLong() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("lsb("+Integer.toBinaryString(i)+")", lsb(i), BitArrays.lsb((long) i));
+        }
+        System.out.println("BitArrays.csb(long) OK");
+    }
+
 
     private static int rsb(int b) {
         if(b==0) return -1;
@@ -92,6 +106,21 @@ public class BitArraysTest extends TestCase {
         System.out.println("BitArrays.rsb(short) OK");
     }
 
+    public void testRsbInt() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("rsb("+Integer.toBinaryString(i)+")", rsb(i), BitArrays.rsb((int) i));
+        }
+        System.out.println("BitArrays.rsb(int) OK");
+    }
+
+    public void testRsbLong() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("rsb("+Integer.toBinaryString(i)+")", rsb(i), BitArrays.rsb((long) i));
+        }
+        System.out.println("BitArrays.rsb(long) OK");
+    }
+
+
     private static long mp2(int b) {
         long c=0;
         for(int p=0;p<32;p++) {
@@ -113,6 +142,52 @@ public class BitArraysTest extends TestCase {
             assertEquals("mp2("+Integer.toBinaryString(i)+")", mp2(i), BitArrays.mp2((short) i));
         }
         System.out.println("BitArrays.mp2(short) OK");
+    }
+
+    public void testMp2Int() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("mp2("+Integer.toBinaryString(i)+")", mp2(i), BitArrays.mp2((int) i));
+        }
+        System.out.println("BitArrays.mp2(int) OK");
+    }
+
+
+    private static long rev(long b, int w) {
+        long c=0;
+        for(int p=0;p<w;p++) {
+            // Compute the (w-p-1)-th bit of c as the p-th bit of b
+//            System.out.println(Long.toBinaryString(b)+" => "+p+":"+Long.toBinaryString(((b&(1<<p))==0?0:1)<<(w-p-1)));
+            c|=((b&(1L<<p))==0?0L:1L)<<(w-p-1);
+        }
+        return c;
+    }
+
+    public void testRevByte() {
+        for(int i=0;i<256;i++) {
+            assertEquals("rev("+Integer.toBinaryString(i)+")", rev(i,8), 0xFF&BitArrays.rev((byte) i));
+        }
+        System.out.println("BitArrays.rev(byte) OK");
+    }
+
+    public void testRevShort() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("rev("+Integer.toBinaryString(i)+")", rev(i,16), 0xFFFF&BitArrays.rev((short) i));
+        }
+        System.out.println("BitArrays.rev(byte) OK");
+    }
+
+    public void testRevInt() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("rev("+Integer.toBinaryString(i)+")", rev(i,32), 0xFFFFFFFFL&BitArrays.rev((int) i));
+        }
+        System.out.println("BitArrays.rev(byte) OK");
+    }
+
+    public void testRevLong() {
+        for(int i=0;i<256*256;i++) {
+            assertEquals("rev("+Integer.toBinaryString(i)+")", rev((long) i,64), BitArrays.rev((long) i));
+        }
+        System.out.println("BitArrays.rev(byte) OK");
     }
 
 }

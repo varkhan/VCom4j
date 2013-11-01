@@ -47,7 +47,7 @@ public class ArraysTest extends TestCase {
         ary = new Integer[]{3,2,1,1,4,4,6,5,7,2};
         Arrays.heapSort(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new Object[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }, ary);
-        int N = 5000; // Max number of objects that will fit in normal heap size: 16*5k^2 = 400m
+        int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         Integer[][] a = new Integer[N][];
         Integer[][] a1 = new Integer[N][];
         Integer[][] a2 = new Integer[N][];
@@ -79,6 +79,56 @@ public class ArraysTest extends TestCase {
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.Arrays.sort)");
     }
 
+    public void testSortCmp() throws Exception {
+        Comparator<String> cmp = new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.equals(o2)) return 0;
+                if (o1.length() == 0 && o2.length() == 0) return 0;
+                if (o1.length() == 0) return -1;
+                if (o2.length() == 0) return +1;
+                return o1.charAt(0) - o2.charAt(0);
+            }
+        };
+        String[] ary = {"0"};
+        Arrays.heapSort(ary);
+        assertArrayEquals("heapSort(0)", new Integer[] { 0 }, ary);
+        ary = new String[]{"3","2","1","1","4","4","6","5","7","2"};
+        Arrays.heapSort(cmp,ary);
+        assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new Object[] { "1", "1", "2", "2", "3", "4", "4", "5", "6", "7" }, ary);
+        int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
+        String[][] a = new String[N][];
+        String[][] a1 = new String[N][];
+        String[][] a2 = new String[N][];
+        Random rand = new Random();
+        int n = 0;
+        int c = 0;
+        for(int i=0; i<N; i++) {
+            int l = rand.nextInt(N);
+            String[] s = new String[l];
+            for(int j=0; j<l; j++) s[j]=""+rand.nextInt();
+            a[i] = s;
+            a1[i] = s.clone();
+            a2[i] = s.clone();
+            n += l;
+        }
+        System.out.println("Sorting "+N+" arrays of "+n+" elements");
+        long t0 = System.currentTimeMillis();
+        for(int i=0; i<N; i++) {
+            c+=Arrays.heapSort(cmp,a1[i]);
+        }
+        long t1 = System.currentTimeMillis();
+        for(int i=0; i<N; i++) {
+            java.util.Arrays.sort(a2[i],cmp);
+        }
+        long t2 = System.currentTimeMillis();
+        for(int i=0; i<N; i++) {
+            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+        }
+        System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.Arrays.sort)");
+    }
+
+
     public void testSearch() throws Exception {
         String[] a1 = new String[] {};
         assertEquals("",-1,Arrays.search(a1,0,0,"1"));
@@ -90,6 +140,29 @@ public class ArraysTest extends TestCase {
         String[] a4 = new String[]{"2", "3", "4", "7", "8"};
         assertEquals("",-4,Arrays.search(a4,0,5,"5"));
         assertEquals("",2,Arrays.search(a4,0,5,"4"));
+    }
+
+    public void testSearchCmp() throws Exception {
+        Comparator<String> cmp = new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.equals(o2)) return 0;
+                if (o1.length() == 0 && o2.length() == 0) return 0;
+                if (o1.length() == 0) return -1;
+                if (o2.length() == 0) return +1;
+                return o1.charAt(0) - o2.charAt(0);
+            }
+        };
+        String[] a1 = new String[] {};
+        assertEquals("",-1,Arrays.search(a1,0,0,"1",cmp));
+        String[] a2 = new String[] { "2"};
+        assertEquals("",-2,Arrays.search(a2,0,1,"3",cmp));
+        String[] a3 = new String[] { "2"};
+        assertEquals("",-1,Arrays.search(a3,0,1,"1",cmp));
+        assertEquals("",0,Arrays.search(a3,0,1,"2",cmp));
+        String[] a4 = new String[]{"2", "3", "4", "7", "8"};
+        assertEquals("",-4,Arrays.search(a4,0,5,"5",cmp));
+        assertEquals("",2,Arrays.search(a4,0,5,"4",cmp));
     }
 
     public void testInsert() throws Exception {
@@ -104,6 +177,31 @@ public class ArraysTest extends TestCase {
         assertArrayEquals("",new String[]{"1","2"},a3);
         String[] a4 = new String[]{"2", "3", "4", "7", "8", null};
         assertEquals("",3,Arrays.insert(a4,0,6,"5"));
+        assertArrayEquals("",new String[]{"2", "3", "4", "5", "7", "8"},a4);
+    }
+
+    public void testInsertCmp() throws Exception {
+        Comparator<String> cmp = new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.equals(o2)) return 0;
+                if (o1.length() == 0 && o2.length() == 0) return 0;
+                if (o1.length() == 0) return -1;
+                if (o2.length() == 0) return +1;
+                return o1.charAt(0) - o2.charAt(0);
+            }
+        };
+        String[] a1 = new String[] {null};
+        assertEquals("",0,Arrays.insert(a1,0,1,"1",cmp));
+        assertArrayEquals("",new String[]{"1"},a1);
+        String[] a2 = new String[] { "2", null};
+        assertEquals("",1,Arrays.insert(a2,0,2,"3",cmp));
+        assertArrayEquals("",new String[]{"2","3"},a2);
+        String[] a3 = new String[] { "2", null};
+        assertEquals("",0,Arrays.insert(a3,0,2,"1",cmp));
+        assertArrayEquals("",new String[]{"1","2"},a3);
+        String[] a4 = new String[]{"2", "3", "4", "7", "8", null};
+        assertEquals("",3,Arrays.insert(a4,0,6,"5",cmp));
         assertArrayEquals("",new String[]{"2", "3", "4", "5", "7", "8"},a4);
     }
 
