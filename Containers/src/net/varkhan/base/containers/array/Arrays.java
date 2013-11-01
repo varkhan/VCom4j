@@ -299,7 +299,7 @@ public class Arrays {
         int min=inf;
         int max=sup-1;
 
-        while(min<=max) {
+        while(min<max) {
             int med=(min+max)>>>1;
             T medVal=ary[med];
             int cmp=comp.compare(medVal, key);
@@ -326,7 +326,7 @@ public class Arrays {
         int min=inf;
         int max=sup-1;
 
-        while(min<=max) {
+        while(min<max) {
             int med=(min+max)>>>1;
             T medVal=ary[med];
             int cmp=medVal.compareTo(key);
@@ -339,7 +339,7 @@ public class Arrays {
                 return med;
             }
         }
-        System.arraycopy(ary, min, ary, min+1, sup-min-1);
+        if(sup>min+1) System.arraycopy(ary, min, ary, min+1, sup-min-1);
         ary[min]=key;
         return min;
     }
@@ -403,7 +403,7 @@ public class Arrays {
         len1+=beg1;
         len2+=beg2;
         int beg=0;
-        while(len1>0 && len2>0) {
+        while(beg1<len1 && beg2<len2) {
             T val1 = ary1[beg1];
             T val2 = ary2[beg2];
             int cmp = comp.compare(val1, val2);
@@ -411,12 +411,12 @@ public class Arrays {
             if(cmp>0) { if(beg==0||comp.compare(val2,last)>0) last = union[beg++] = val2; beg2++; } else
             { if(beg==0||comp.compare(val1,last)>0) last = union[beg++] = val1; beg1++; beg2++; }
         }
-        while(len1>0) {
+        while(beg1<len1) {
             T val1 = ary1[beg1];
             if(beg==0||comp.compare(val1,last)>0) last = union[beg++] = val1;
             beg1++;
         }
-        while(len2>0) {
+        while(beg2<len2) {
             T val2 = ary2[beg2];
             if(beg==0||comp.compare(val2,last)>0) last = union[beg++] = val2;
             beg2++;
@@ -461,12 +461,12 @@ public class Arrays {
             if(cmp>0) { if(beg==0||val2.compareTo(last)>0) last = union[beg++] = val2; beg2++; } else
             { if(beg==0||val1.compareTo(last)>0) last = union[beg++] = val1; beg1++; beg2++; }
         }
-        while(len1>0) {
+        while(beg1<len1) {
             T val1 = ary1[beg1];
             if(beg==0||val1.compareTo(last)>0) last = union[beg++] = val1;
             beg1++;
         }
-        while(len2>0) {
+        while(beg2<len2) {
             T val2 = ary2[beg2];
             if(beg==0||val2.compareTo(last)>0) last = union[beg++] = val2;
             beg2++;
@@ -508,9 +508,9 @@ public class Arrays {
             T val1 = ary1[beg1];
             T val2 = ary2[beg2];
             int cmp = comp.compare(val1, val2);
-            if(cmp<0) { beg1++; len1--; } else
-            if(cmp>0) { beg2++; len2--; } else
-            { if(beg==0||comp.compare(val1,last)>0) last = inter[beg++] = val1; beg1++; beg2++; }
+            if(cmp<0) { beg1++; } else
+            if(cmp>0) { beg2++; } else
+            { beg1++; beg2++;  if(beg==0||comp.compare(val1,last)>0) last = inter[beg++] = val1;}
         }
         if(beg==len) return inter;
         @SuppressWarnings("unchecked")
@@ -548,9 +548,9 @@ public class Arrays {
             T val1 = ary1[beg1];
             T val2 = ary2[beg2];
             int cmp = val1.compareTo(val2);
-            if(cmp<0) { beg1++; len1--; } else
-            if(cmp>0) { beg2++; len2--; } else
-            { if(beg==0||val1.compareTo(last)>0) last = inter[beg++] = val1; beg1++; beg2++; }
+            if(cmp<0) { beg1++; } else
+            if(cmp>0) { beg2++; } else
+            { beg1++; beg2++;  if(beg==0||val1.compareTo(last)>0) last = inter[beg++] = val1;}
         }
         if(beg==len) return inter;
         @SuppressWarnings("unchecked")
@@ -644,7 +644,7 @@ public class Arrays {
      */
     public static <T> T[] subarray(T[] array, int beg, int end) {
         int l=array.length;
-        if(beg<0 || beg>end || end>l) throw new IndexOutOfBoundsException();
+        if(beg<0 || beg>end || end>l) throw new ArrayIndexOutOfBoundsException("["+beg+":"+end+"] is not a valid range specifier");
         @SuppressWarnings("unchecked")
         T[] subary=(array.getClass()==Object[].class)
                    ? (T[]) new Object[end-beg]
