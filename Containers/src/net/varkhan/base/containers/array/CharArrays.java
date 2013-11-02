@@ -1891,7 +1891,7 @@ public class CharArrays {
      *
      * @throws IOException if appending to the buffer produced an I/O error
      */
-    public static void format(Appendable buf, CharSequence fmt, Object... var) throws IOException {
+    public static <A extends Appendable> A format(A buf, CharSequence fmt, Object... var) throws IOException {
         int a=0;
         final int n=fmt.length();
         char[] nbf=null;
@@ -2004,9 +2004,9 @@ public class CharArrays {
                     // Ignore padding and orientation
                     if(o==null)
                         throw new IllegalArgumentException("Null argument for format %c in '"+fmt+"' at char "+pos+", arg "+a);
-                    if(!(o instanceof Character))
-                        throw new IllegalArgumentException("Invalid argument for format %c in '"+fmt+"' at char "+pos+", arg "+a);
-                    buf.append(((Character) o).charValue());
+                    if(o instanceof Character) buf.append((Character) o);
+                    else if(o instanceof Integer) buf.append((char)((Integer) o).intValue());
+                    else throw new IllegalArgumentException("Invalid argument for format %c in '"+fmt+"' at char "+pos+", arg "+a);
                 }
                 break;
                 case 's':
@@ -2017,11 +2017,13 @@ public class CharArrays {
                     if(o==null) {
                         if(chr!='S')
                             throw new IllegalArgumentException("Null argument for format %s in '"+fmt+"' at char "+pos+", arg "+a);
-                        else o="null";
+//                        else o="null";
                     }
-                    if(!(o instanceof CharSequence))
+                    else if(!(o instanceof CharSequence))
                         throw new IllegalArgumentException("Invalid argument for format %s in '"+fmt+"' at char "+pos+", arg "+a);
-                    CharSequence s=(CharSequence) o;
+                    CharSequence s;
+                    if(chr=='S') s = o==null?"null":("\""+o+"\"");
+                    else s = (CharSequence) o;
                     // Pad with ' ' by default
                     if(pad=='\0') pad=' ';
                     if(dsp<0) {
@@ -2265,6 +2267,7 @@ public class CharArrays {
                 }
             } // End format character switch
         } // End item loop
+        return buf;
     }
 
     /**
@@ -2277,13 +2280,14 @@ public class CharArrays {
      *
      * @see {@link #format(Appendable, CharSequence, Object...)} for a complete description of syntax of the format sequence
      */
-    public static void format(StringBuilder buf, CharSequence fmt, Object... var) {
+    public static StringBuilder format(StringBuilder buf, CharSequence fmt, Object... var) {
         try {
             format((Appendable) buf, fmt, var);
         }
         catch(IOException e) {
             /* That exception is never thrown by StringBuilder */
         }
+        return buf;
     }
 
     /**
