@@ -36,6 +36,14 @@ public class BoolArraysTest extends TestCase {
         assertEquals("indexOf(false, true, true, true)", -1, BoolArrays.indexOf(false, true, true, true));
     }
 
+    public void testIndexOfArray() throws Exception {
+        assertEquals("indexOf([], 0, [true, true, false])", 0, BoolArrays.indexOf(new boolean[]{}, 0, new boolean[]{true, true, false}));
+        assertEquals("indexOf([true], 0, [true, true, false])", 0, BoolArrays.indexOf(new boolean[]{true}, 0, new boolean[]{true, true, false}));
+        assertEquals("indexOf([false, true], 0, [true, false, true])", 1, BoolArrays.indexOf(new boolean[]{false, true}, 0, new boolean[]{true, false, true}));
+        assertEquals("indexOf([false, true], 2, [true, false, true])", -1, BoolArrays.indexOf(new boolean[]{false, true}, 2, new boolean[]{true, false, true}));
+        assertEquals("indexOf([false, true], 0, [true, true, false])", -1, BoolArrays.indexOf(new boolean[]{false, true}, 0, new boolean[]{true, true, false}));
+    }
+
     public void testAppend() throws Exception {
         assertArrayEquals("",
                           new boolean[]{true, true, false, false, true, true, false},

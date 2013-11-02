@@ -90,6 +90,20 @@ public class CharArraysTest extends TestCase {
         assertEquals("indexOf(\"3\",1,2,\"3\",4)", 2, CharArrays.indexOf((char)3, (char)1, (char)2, (char)3, (char)4));
     }
 
+    public void testIndexOfArray() throws Exception {
+        assertEquals("indexOf(\"foo\",0,\"foobarbazfoo\".)", 0, CharArrays.indexOf("foo".toCharArray(),0,"foobarbazfoo".toCharArray()));
+        assertEquals("indexOf(\"foo\",1,\"foobarbazfoo\".)", 9, CharArrays.indexOf("foo".toCharArray(),1,"foobarbazfoo".toCharArray()));
+        assertEquals("indexOf(\"bar\",0,\"foobarbazfoo\".)", 3, CharArrays.indexOf("bar".toCharArray(),0,"foobarbazfoo".toCharArray()));
+        assertEquals("indexOf(\"bar\",4,\"foobarbazfoo\".)", -1, CharArrays.indexOf("bar".toCharArray(),4,"foobarbazfoo".toCharArray()));
+    }
+
+    public void testIndexOfCharSequence() throws Exception {
+        assertEquals("indexOf(\"foo\",0,\"foobarbazfoo\".)", 0, CharArrays.indexOf("foo",0,"foobarbazfoo"));
+        assertEquals("indexOf(\"foo\",1,\"foobarbazfoo\".)", 9, CharArrays.indexOf("foo",1,"foobarbazfoo"));
+        assertEquals("indexOf(\"bar\",0,\"foobarbazfoo\".)", 3, CharArrays.indexOf("bar",0,"foobarbazfoo"));
+        assertEquals("indexOf(\"bar\",4,\"foobarbazfoo\".)", -1, CharArrays.indexOf("bar",4,"foobarbazfoo"));
+    }
+
     public void testSortDec() throws Exception {
         char[] ary = {0};
         CharArrays.heapSortDec(ary);
@@ -362,6 +376,10 @@ public class CharArraysTest extends TestCase {
         assertEquals("totoghaaghtiti", CharArrays.repl("tototaaatatiti", "ta", "gh"));
         assertEquals("totoghaaghtiti", CharArrays.repl(new StringBuilder(),"tototaaatatiti", "ta".toCharArray(), "gh".toCharArray()).toString());
         assertEquals("totoghaaghtiti", CharArrays.repl(new StringBuffer(),"tototaaatatiti", "ta".toCharArray(), "gh".toCharArray()).toString());
+        assertEquals("ghoghoghaaaghaghighi", CharArrays.repl(new StringBuilder(),"tototaaatatiti", 't', "gh").toString());
+        assertEquals("ghoghoghaaaghaghighi", CharArrays.repl(new StringBuffer(),"tototaaatatiti", 't', "gh").toString());
+        assertEquals("totogaagtiti", CharArrays.repl(new StringBuilder(),"tototaaatatiti", "ta", 'g').toString());
+        assertEquals("totogaagtiti", CharArrays.repl(new StringBuffer(),"tototaaatatiti", "ta", 'g').toString());
         assertEquals("totoghiaghtiti", CharArrays.repl("tototaaatatiti", new String[] { "taa", "ta" }, new String[] { "ghi", "gh" }));
         assertEquals("totoghaaghtiti", CharArrays.repl("tototaaatatiti", new String[] { "ta", "taa" }, new String[] { "gh", "ghi" }));
         assertEquals("totoghaaghffi", CharArrays.repl("tototaaatatiti", new String[] { "ta", "taa", "tit" }, new String[] { "gh", "ghi", "ff" }));
@@ -372,6 +390,8 @@ public class CharArraysTest extends TestCase {
         assertEquals("totoghaaghtiti", CharArrays.repl(new StringBuffer(), "tototaaatatiti", new String[] { "ta", "taa", "tip" }, new String[] { "gh", "ghi", "ff" }).toString());
         assertEquals("totoghaaghtiti", CharArrays.repl(new StringBuilder(),"tototaaatatiti", new char[][] { "ta".toCharArray(), "taa".toCharArray(), "tip".toCharArray() }, new char[][] { "gh".toCharArray(), "ghi".toCharArray(), "ff".toCharArray() }).toString());
         assertEquals("totoghaaghtiti", CharArrays.repl(new StringBuffer(),"tototaaatatiti", new char[][] { "ta".toCharArray(), "taa".toCharArray(), "tip".toCharArray() }, new char[][] { "gh".toCharArray(), "ghi".toCharArray(), "ff".toCharArray() }).toString());
+        assertEquals("totoghaaghtiti", CharArrays.repl(new StringBuilder(),"tototaaatatiti".toCharArray(), 0, 14, new char[][] { "ta".toCharArray(), "taa".toCharArray(), "tip".toCharArray() }, new char[][] { "gh".toCharArray(), "ghi".toCharArray(), "ff".toCharArray() }).toString());
+        assertEquals("totoghaaghtiti", CharArrays.repl(new StringBuffer(),"tototaaatatiti".toCharArray(), 0, 14, new char[][] { "ta".toCharArray(), "taa".toCharArray(), "tip".toCharArray() }, new char[][] { "gh".toCharArray(), "ghi".toCharArray(), "ff".toCharArray() }).toString());
     }
 
     public void testChop() throws Exception {
@@ -394,9 +414,15 @@ public class CharArraysTest extends TestCase {
         assertEquals("join(:,\"tata\", \"titi\", \"tutu\")","tata:titi:tutu",CharArrays.join(":", new String[] {"tata", "titi", "tutu"}));
         assertEquals("join(:,\"tata\", \"titi\", \"tutu\")","tata:titi:tutu",CharArrays.join(new StringBuilder(),":",new String[] { "tata", "titi", "tutu" }).toString());
         assertEquals("join(:,\"tata\", \"titi\", \"tutu\")","tata:titi:tutu",CharArrays.join(new StringBuffer(),":",new String[] { "tata", "titi", "tutu" }).toString());
+        assertEquals("join(null,\"tata\", \"titi\", \"tutu\")","tatatititutu",CharArrays.join(null, new String[] {"tata", "titi", "tutu"}));
+        assertEquals("join(null,\"tata\", \"titi\", \"tutu\")","tatatititutu",CharArrays.join(new StringBuilder(),null,new String[] { "tata", "titi", "tutu" }).toString());
+        assertEquals("join(null,\"tata\", \"titi\", \"tutu\")","tatatititutu",CharArrays.join(new StringBuffer(),null,new String[] { "tata", "titi", "tutu" }).toString());
         assertEquals("join(<,>,:,\"tata\", \"titi\", \"tutu\")","<tata>:<titi>:<tutu>:<>",CharArrays.join("<",">",":", new String[] {"tata", "titi", "tutu", ""}));
         assertEquals("join(<,>,:,\"tata\", \"titi\", \"tutu\")","<tata>:<titi>:<tutu>:<>",CharArrays.join(new StringBuilder(),"<",">",":",new String[] { "tata", "titi", "tutu", "" }).toString());
         assertEquals("join(<,>,:,\"tata\", \"titi\", \"tutu\")","<tata>:<titi>:<tutu>:<>",CharArrays.join(new StringBuffer(),"<",">",":",new String[] { "tata", "titi", "tutu", "" }).toString());
+        assertEquals("join(null,>,null,\"tata\", \"titi\", \"tutu\")","tata>titi>tutu>>",CharArrays.join(null,">",null, new String[] {"tata", "titi", "tutu", ""}));
+        assertEquals("join(null,>,null,\"tata\", \"titi\", \"tutu\")","tata>titi>tutu>>",CharArrays.join(new StringBuilder(),null,">",null,new String[] { "tata", "titi", "tutu", "" }).toString());
+        assertEquals("join(null,>,null,\"tata\", \"titi\", \"tutu\")","tata>titi>tutu>>",CharArrays.join(new StringBuffer(),null,">",null,new String[] { "tata", "titi", "tutu", "" }).toString());
     }
 
     public void testFormat() throws Exception {

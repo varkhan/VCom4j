@@ -326,12 +326,12 @@ public final class Hashes {
 
         public long hash(float[] o) {
             if(o==null) return 0;
-            double h = 0;
+            long h = 0;
             final int len = o.length;
             for(int i = 0; i<len; i++) {
-                h = 65521*h + o[i];
+                h = 65521*h + Float.floatToRawIntBits(o[i]);
             }
-            return Double.doubleToRawLongBits(h);
+            return h;
         }
 
         public boolean equal(float[] o1, float[] o2) {
@@ -349,12 +349,12 @@ public final class Hashes {
 
         public long hash(double[] o) {
             if(o==null) return 0;
-            double h = 0;
+            long h = 0;
             final int len = o.length;
             for(int i = 0; i<len; i++) {
-                h = 65521*h + o[i];
+                h = 65521*h + Double.doubleToRawLongBits(o[i]);
             }
-            return Double.doubleToRawLongBits(h);
+            return h;
         }
 
         public boolean equal(double[] o1, double[] o2) {

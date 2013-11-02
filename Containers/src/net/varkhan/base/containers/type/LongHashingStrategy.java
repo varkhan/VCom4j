@@ -70,21 +70,13 @@ public interface LongHashingStrategy extends HashingStrategy<Long> {
 
         public long hash(Long o) { return o.longValue(); }
 
-        ;
-
         public long hash(long o) { return o; }
-
-        ;
 
         public boolean equal(Long o1, Long o2) {
             return (o1==null&&o2==null)||(o1!=null&&o2!=null&&o1.longValue()==o2.longValue());
         }
 
-        ;
-
         public boolean equal(long o1, long o2) { return o1==o2; }
-
-        ;
     };
 
 }

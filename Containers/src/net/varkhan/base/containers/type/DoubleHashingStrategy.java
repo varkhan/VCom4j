@@ -70,21 +70,13 @@ public interface DoubleHashingStrategy extends HashingStrategy<Double> {
 
         public long hash(Double o) { return Double.doubleToLongBits(o.doubleValue()); }
 
-        ;
-
         public long hash(double o) { return Double.doubleToLongBits(o); }
-
-        ;
 
         public boolean equal(Double o1, Double o2) {
             return (o1==null&&o2==null)||(o1!=null&&o2!=null&&o1.doubleValue()==o2.doubleValue());
         }
 
-        ;
-
         public boolean equal(double o1, double o2) { return o1==o2; }
-
-        ;
     };
 
 }

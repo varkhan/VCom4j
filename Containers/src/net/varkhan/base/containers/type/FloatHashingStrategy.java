@@ -70,21 +70,13 @@ public interface FloatHashingStrategy extends HashingStrategy<Float> {
 
         public long hash(Float o) { return Float.floatToIntBits(o.floatValue()); }
 
-        ;
-
         public long hash(float o) { return Float.floatToIntBits(o); }
-
-        ;
 
         public boolean equal(Float o1, Float o2) {
             return (o1==null&&o2==null)||(o1!=null&&o2!=null&&o1.floatValue()==o2.floatValue());
         }
 
-        ;
-
         public boolean equal(float o1, float o2) { return o1==o2; }
-
-        ;
     };
 
 }

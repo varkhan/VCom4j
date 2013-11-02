@@ -54,6 +54,14 @@ public class IntArraysTest extends TestCase {
         assertEquals("indexOf(\"3\",1,2,\"3\",4)", 2, IntArrays.indexOf(3, 1, 2, 3, 4));
     }
 
+    public void testIndexOfArray() throws Exception {
+        assertEquals("indexOf([], 0, [1,2,3,6])", 0, IntArrays.indexOf(new int[]{}, 0, new int[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2], 0, [1,2,3,6])", 1, IntArrays.indexOf(new int[]{2}, 0, new int[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 0, [1,2,3,6])", 1, IntArrays.indexOf(new int[]{2, 3}, 0, new int[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 2, [1,2,3,6])", -1, IntArrays.indexOf(new int[]{2, 3}, 2, new int[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,6], 0, [1,2,3,6])", -1, IntArrays.indexOf(new int[]{2, 6}, 0, new int[]{ 1, 2, 3, 6 }));
+    }
+
     public void testSortDec() throws Exception {
         int[] ary = {0};
         IntArrays.heapSortDec(ary);

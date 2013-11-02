@@ -52,6 +52,14 @@ public class ShortArraysTest extends TestCase {
         assertEquals("indexOf(\"3\",1,2,\"3\",4)", 2, ShortArrays.indexOf((short)3, (short)1, (short)2, (short)3, (short)4));
     }
 
+    public void testIndexOfArray() throws Exception {
+        assertEquals("indexOf([], 0, [1,2,3,6])", 0, ShortArrays.indexOf(new short[]{}, 0, new short[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2], 0, [1,2,3,6])", 1, ShortArrays.indexOf(new short[]{2}, 0, new short[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 0, [1,2,3,6])", 1, ShortArrays.indexOf(new short[]{2, 3}, 0, new short[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 2, [1,2,3,6])", -1, ShortArrays.indexOf(new short[]{2, 3}, 2, new short[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,6], 0, [1,2,3,6])", -1, ShortArrays.indexOf(new short[]{2, 6}, 0, new short[]{ 1, 2, 3, 6 }));
+    }
+
     public void testSortDec() throws Exception {
         short[] ary = {0};
         ShortArrays.heapSortDec(ary);

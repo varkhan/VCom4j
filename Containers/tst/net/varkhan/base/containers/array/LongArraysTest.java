@@ -54,6 +54,14 @@ public class LongArraysTest extends TestCase {
         assertEquals("indexOf(\"3\",1,2,\"3\",4)", 2, LongArrays.indexOf(3L, 1, 2, 3L, 4));
     }
 
+    public void testIndexOfArray() throws Exception {
+        assertEquals("indexOf([], 0, [1,2,3,6])", 0, LongArrays.indexOf(new long[]{}, 0, new long[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2], 0, [1,2,3,6])", 1, LongArrays.indexOf(new long[]{2}, 0, new long[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 0, [1,2,3,6])", 1, LongArrays.indexOf(new long[]{2, 3}, 0, new long[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 2, [1,2,3,6])", -1, LongArrays.indexOf(new long[]{2, 3}, 2, new long[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,6], 0, [1,2,3,6])", -1, LongArrays.indexOf(new long[]{2, 6}, 0, new long[]{ 1, 2, 3, 6 }));
+    }
+
     public void testSortDec() throws Exception {
         long[] ary = {0};
         LongArrays.heapSortDec(ary);

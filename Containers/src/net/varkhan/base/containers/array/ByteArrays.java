@@ -65,21 +65,21 @@ public class ByteArrays {
      * Returns the position of the first occurrence of an array as a subsequence
      * of an other array.
      *
-     * @param array the array
-     * @param pos   the starting point in the array
      * @param sub   the subsequence to find
+     * @param pos   the starting point in the array
+     * @param array the array
      *
      * @return the smallest index {@code idx} greater than {@code pos} such that
      *         the elements of {@code array} starting at {@code idx} are exactly those of
      *         {@code sub}  ({@code -1} is returned if {@code sub} is not a subsequence
      *         of {@code array})
      */
-    public static int indexOf(byte[] array, int pos, byte[] sub) {
+    public static int indexOf(byte[] sub, int pos, byte[] array) {
         if(array==null) return sub==null ? 0 : -1;
         match:
         while(pos<array.length) {
             for(int i=0;i<sub.length;i++) {
-                if(pos+i>array.length) return -1;
+                if(pos+i>=array.length) return -1;
                 if(array[pos+i]!=sub[i]) {
                     pos++;
                     continue match;

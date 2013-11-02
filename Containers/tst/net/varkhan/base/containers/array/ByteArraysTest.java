@@ -64,10 +64,10 @@ public class ByteArraysTest extends TestCase {
 
     public void testEquals() throws Exception {
         assertTrue("equals([],[])", ByteArrays.equals(new byte[] { }, new byte[] { }));
-        assertTrue("equals([1,2,3,\"6\"],[1,2,3,\"6\"])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 1, 2, 3, 6 }));
-        assertFalse("equals([1,2,3,\"6\"],[5,2,3,\"6\"])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 5, 2, 3, 6 }));
-        assertFalse("equals([1,2,3,\"6\"],[1,2,3,0xFF])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 5, 2, 3, (byte)0xFF }));
-        assertFalse("equals([1,2,3,\"6\"],[1,2,3,\"6\",10])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 5, 2, 3, 6, 10 }));
+        assertTrue("equals([1,2,3,6],[1,2,3,6])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 1, 2, 3, 6 }));
+        assertFalse("equals([1,2,3,6],[5,2,3,6])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 5, 2, 3, 6 }));
+        assertFalse("equals([1,2,3,6],[1,2,3,0xFF])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 5, 2, 3, (byte)0xFF }));
+        assertFalse("equals([1,2,3,6],[1,2,3,6,10])", ByteArrays.equals(new byte[] { 1, 2, 3, 6 }, new byte[] { 5, 2, 3, 6, 10 }));
     }
 
     public void testIndexOf() throws Exception {
@@ -78,6 +78,14 @@ public class ByteArraysTest extends TestCase {
         assertEquals("indexOf(4,1,2,\"3\",0xFF)", -1, ByteArrays.indexOf((byte)4, (byte)1, (byte)2, (byte)3, (byte)0xFF));
         assertEquals("indexOf(4,1,2,\"3\",4)", 3, ByteArrays.indexOf((byte)4, (byte)1, (byte)2, (byte)3, (byte)4));
         assertEquals("indexOf(\"3\",1,2,\"3\",4)", 2, ByteArrays.indexOf((byte)3, (byte)1, (byte)2, (byte)3, (byte)4));
+    }
+
+    public void testIndexOfArray() throws Exception {
+        assertEquals("indexOf([], 0, [1,2,3,6])", 0, ByteArrays.indexOf(new byte[]{}, 0, new byte[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2], 0, [1,2,3,6])", 1, ByteArrays.indexOf(new byte[]{2}, 0, new byte[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 0, [1,2,3,6])", 1, ByteArrays.indexOf(new byte[]{2, 3}, 0, new byte[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,3], 2, [1,2,3,6])", -1, ByteArrays.indexOf(new byte[]{2, 3}, 2, new byte[]{ 1, 2, 3, 6 }));
+        assertEquals("indexOf([2,6], 0, [1,2,3,6])", -1, ByteArrays.indexOf(new byte[]{2, 6}, 0, new byte[]{ 1, 2, 3, 6 }));
     }
 
     public void testSortDec() throws Exception {

@@ -29,6 +29,9 @@ public class StringArraysTest extends TestCase {
         assertEquals("0:1:1:0:1",StringArrays.join(":",new boolean[]{false,true,true,false,true}));
         assertEquals("0:1:1:0:1",StringArrays.join(new StringBuilder(),":",new boolean[]{false,true,true,false,true}).toString());
         assertEquals("0:1:1:0:1",StringArrays.join(new StringBuffer(),":",new boolean[]{false,true,true,false,true}).toString());
+        assertEquals("01101",StringArrays.join(null,new boolean[]{false,true,true,false,true}));
+        assertEquals("01101",StringArrays.join(new StringBuilder(),null,new boolean[]{false,true,true,false,true}).toString());
+        assertEquals("01101",StringArrays.join(new StringBuffer(),null,new boolean[]{false,true,true,false,true}).toString());
     }
 
 
@@ -50,6 +53,9 @@ public class StringArraysTest extends TestCase {
         assertEquals("00:01:02:F3:04",StringArrays.join(":",new byte[]{0,1,2,(byte)0xF3,4}));
         assertEquals("00:01:02:F3:04",StringArrays.join(new StringBuilder(),":",new byte[]{0,1,2,(byte)0xF3,4}).toString());
         assertEquals("00:01:02:F3:04",StringArrays.join(new StringBuffer(),":",new byte[]{0,1,2,(byte)0xF3,4}).toString());
+        assertEquals("000102F304",StringArrays.join(null,new byte[]{0,1,2,(byte)0xF3,4}));
+        assertEquals("000102F304",StringArrays.join(new StringBuilder(),null,new byte[]{0,1,2,(byte)0xF3,4}).toString());
+        assertEquals("000102F304",StringArrays.join(new StringBuffer(),null,new byte[]{0,1,2,(byte)0xF3,4}).toString());
     }
 
 
@@ -71,6 +77,9 @@ public class StringArraysTest extends TestCase {
         assertEquals("0:1:2:243:4",StringArrays.join(":",new short[]{0,1,2,(short)0xF3,4}));
         assertEquals("0:1:2:243:4",StringArrays.join(new StringBuilder(),":",new short[]{0,1,2,(short)0xF3,4}).toString());
         assertEquals("0:1:2:243:4",StringArrays.join(new StringBuffer(),":",new short[]{0,1,2,(short)0xF3,4}).toString());
+        assertEquals("0122434",StringArrays.join(null,new short[]{0,1,2,(short)0xF3,4}));
+        assertEquals("0122434",StringArrays.join(new StringBuilder(),null,new short[]{0,1,2,(short)0xF3,4}).toString());
+        assertEquals("0122434",StringArrays.join(new StringBuffer(),null,new short[]{0,1,2,(short)0xF3,4}).toString());
     }
 
 
@@ -92,6 +101,9 @@ public class StringArraysTest extends TestCase {
         assertEquals("0:1:2:243:4",StringArrays.join(":",new int[]{0,1,2,0xF3,4}));
         assertEquals("0:1:2:243:4",StringArrays.join(new StringBuilder(),":",new int[]{0,1,2,0xF3,4}).toString());
         assertEquals("0:1:2:243:4",StringArrays.join(new StringBuffer(),":",new int[]{0,1,2,0xF3,4}).toString());
+        assertEquals("0122434",StringArrays.join(null,new int[]{0,1,2,0xF3,4}));
+        assertEquals("0122434",StringArrays.join(new StringBuilder(),null,new int[]{0,1,2,0xF3,4}).toString());
+        assertEquals("0122434",StringArrays.join(new StringBuffer(),null,new int[]{0,1,2,0xF3,4}).toString());
     }
 
 
@@ -113,6 +125,9 @@ public class StringArraysTest extends TestCase {
         assertEquals("0:1:2:243:4",StringArrays.join(":",new long[]{0,1,2,0xF3,4}));
         assertEquals("0:1:2:243:4",StringArrays.join(new StringBuilder(),":",new long[]{0,1,2,0xF3,4}).toString());
         assertEquals("0:1:2:243:4",StringArrays.join(new StringBuffer(),":",new long[]{0,1,2,0xF3,4}).toString());
+        assertEquals("0122434",StringArrays.join(null,new long[]{0,1,2,0xF3,4}));
+        assertEquals("0122434",StringArrays.join(new StringBuilder(),null,new long[]{0,1,2,0xF3,4}).toString());
+        assertEquals("0122434",StringArrays.join(new StringBuffer(),null,new long[]{0,1,2,0xF3,4}).toString());
     }
 
 
@@ -134,6 +149,9 @@ public class StringArraysTest extends TestCase {
         assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",StringArrays.join(":",new float[]{0,1,2.2f,0xF3,4}));
         assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",StringArrays.join(new StringBuilder(),":",new float[]{0,1,2.2f,0xF3,4}).toString());
         assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",StringArrays.join(new StringBuffer(),":",new float[]{0,1,2.2f,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",StringArrays.join(null,new float[]{0,1,2.2f,0xF3,4}));
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",StringArrays.join(new StringBuilder(),null,new float[]{0,1,2.2f,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",StringArrays.join(new StringBuffer(),null,new float[]{0,1,2.2f,0xF3,4}).toString());
     }
 
 
@@ -155,6 +173,9 @@ public class StringArraysTest extends TestCase {
         assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",StringArrays.join(":",new double[]{0,1,2.2,0xF3,4}));
         assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",StringArrays.join(new StringBuilder(),":",new double[]{0,1,2.2,0xF3,4}).toString());
         assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",StringArrays.join(new StringBuffer(),":",new double[]{0,1,2.2,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",StringArrays.join(null,new double[]{0,1,2.2,0xF3,4}));
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",StringArrays.join(new StringBuilder(),null,new double[]{0,1,2.2,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",StringArrays.join(new StringBuffer(),null,new double[]{0,1,2.2,0xF3,4}).toString());
     }
 
 

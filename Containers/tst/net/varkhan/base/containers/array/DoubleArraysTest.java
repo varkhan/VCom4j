@@ -54,6 +54,14 @@ public class DoubleArraysTest extends TestCase {
         assertEquals("indexOf(\"3\",1,2,\"3\",4)", 2, DoubleArrays.indexOf(3.03, 1, 2, 3.03, 4));
     }
 
+    public void testIndexOfArray() throws Exception {
+        assertEquals("indexOf([], 0, [1,2,3,6])", 0, DoubleArrays.indexOf(new double[]{}, 0, new double[]{ 1, 2, 3.03, 6 }));
+        assertEquals("indexOf([2], 0, [1,2,3,6])", 1, DoubleArrays.indexOf(new double[]{2}, 0, new double[]{ 1, 2, 3.03, 6 }));
+        assertEquals("indexOf([2,3], 0, [1,2,3,6])", 1, DoubleArrays.indexOf(new double[]{2, 3.03}, 0, new double[]{ 1, 2, 3.03, 6 }));
+        assertEquals("indexOf([2,3], 2, [1,2,3,6])", -1, DoubleArrays.indexOf(new double[]{2, 3.03}, 2, new double[]{ 1, 2, 3.03, 6 }));
+        assertEquals("indexOf([2,6], 0, [1,2,3,6])", -1, DoubleArrays.indexOf(new double[]{2, 6}, 0, new double[]{ 1, 2, 3.03, 6 }));
+    }
+
     public void testSortDec() throws Exception {
         double[] ary = {0};
         DoubleArrays.heapSortDec(ary);

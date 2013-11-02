@@ -70,21 +70,13 @@ public interface IntHashingStrategy extends HashingStrategy<Integer> {
 
         public long hash(Integer o) { return o.intValue(); }
 
-        ;
-
         public long hash(int o) { return o; }
-
-        ;
 
         public boolean equal(Integer o1, Integer o2) {
             return (o1==null&&o2==null)||(o1!=null&&o2!=null&&o1.intValue()==o2.intValue());
         }
 
-        ;
-
         public boolean equal(int o1, int o2) { return o1==o2; }
-
-        ;
     };
 
 }
