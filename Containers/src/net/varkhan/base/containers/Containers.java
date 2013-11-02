@@ -41,6 +41,7 @@ public class Containers {
      *      {@see Object#equals} to each other or both {@literal null}.
      */
     public static <E> boolean equals(Container<E> obj1, Container<E> obj2) {
+        if(obj1==obj2) return true;
         // We don't compare sizes, as this can be a slow operation for some containers,
         // and we have to check elements one by one anyways
         Iterator<? extends E> it1 = obj1.iterator();
@@ -73,6 +74,7 @@ public class Containers {
      *      to each other or both {@literal null}.
      */
     public static <K,V> boolean equals(Map<K,V> obj1, Map<K,V> obj2) {
+        if(obj1==obj2) return true;
         // We don't compare sizes, as this can be a slow operation for some maps,
         // and we have to check entries one by one anyways
         Iterator<? extends Map.Entry<K,V>> it1 = obj1.iterator();

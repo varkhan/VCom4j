@@ -14,6 +14,13 @@ import java.io.IOException;
 public class StringArrays {
 
 
+    /**
+     * Private empty constructor that forbids instantiation of this class.
+     */
+    protected StringArrays() {
+    }
+
+
     /*********************************************************************************
      **  Boolean arrays
      **/
@@ -142,8 +149,8 @@ public class StringArrays {
         buf.append("[").append(Integer.toString(array.length)).append("|");
         for(int i=0;i<array.length;i++) {
             if(i>0) buf.append(",");
-            buf.append(hexcode[array[i]&0xF]);
             buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
         }
         buf.append("]");
         return buf;
@@ -161,8 +168,8 @@ public class StringArrays {
         buf.append("[").append(array.length).append("|");
         for(int i=0;i<array.length;i++) {
             if(i>0) buf.append(",");
-            buf.append(hexcode[array[i]&0xF]);
             buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
         }
         buf.append("]");
         return buf;
@@ -192,13 +199,13 @@ public class StringArrays {
      */
     public static <A extends Appendable> A join(A buf, String sep, byte[] array) throws IOException {
         if(sep==null) for(int i=0;i<array.length;i++) {
-            buf.append(hexcode[array[i]&0xF]);
             buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
         }
         else for(int i=0;i<array.length;i++) {
             if(i>0) buf.append(sep);
-            buf.append(hexcode[array[i]&0xF]);
             buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
         }
         return buf;
     }
@@ -214,13 +221,13 @@ public class StringArrays {
      */
     public static StringBuilder join(StringBuilder buf, String sep, byte[] array) {
         if(sep==null) for(int i=0;i<array.length;i++) {
-            buf.append(hexcode[array[i]&0xF]);
             buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
         }
         else for(int i=0;i<array.length;i++) {
             if(i>0) buf.append(sep);
-            buf.append(hexcode[array[i]&0xF]);
             buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
         }
         return buf;
     }
