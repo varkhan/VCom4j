@@ -2,6 +2,7 @@ package net.varkhan.base.containers.list;
 
 import net.varkhan.base.containers.Iterator;
 
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -16,7 +17,7 @@ import java.util.NoSuchElementException;
  * @date 3/18/12
  * @time 6:27 PM
  */
-public class ArrayList<Type> implements List<Type> {
+public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
 
     private static final long serialVersionUID=1L;
 
@@ -203,6 +204,7 @@ public class ArrayList<Type> implements List<Type> {
     public boolean del(long idx){
         if(idx<0||idx>=size) return false;
         size--;
+        System.arraycopy(list,(int)(idx+1),list,(int)idx,(int)(size-idx));
         if(size*growthfact*growthfact<list.length) {
             // We need to realloc
             int newLen=(int) ((list.length+1)/growthfact);
@@ -227,6 +229,7 @@ public class ArrayList<Type> implements List<Type> {
             Object obj=list[(int) idx];
             if(elt==obj|| (elt!=null&&elt.equals(obj))) {
                 size--;
+                System.arraycopy(list,(int)(idx+1),list,(int)idx,(int)(size-idx));
                 if(size*growthfact*growthfact<list.length) {
                     // We need to realloc
                     int newLen=(int) ((list.length+1)/growthfact);

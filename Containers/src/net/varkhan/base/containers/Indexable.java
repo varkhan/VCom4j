@@ -24,6 +24,13 @@ public interface Indexable {
     public Index indexes();
 
     /**
+     * Returns the number of elements in this container.
+     *
+     * @return the number of entries (elements and related indexes) stored in this list
+     */
+    public long size();
+
+    /**
      * Indicates whether this container is empty.
      *
      * @return {@literal true} if this container contains no element,
@@ -60,6 +67,7 @@ public interface Indexable {
      */
     public static final class Empty implements Indexable {
         public Index.Empty indexes() { return new Index.Empty(); }
+        public long size() { return 0; }
         public boolean isEmpty() { return true; }
         public boolean has(long index) { return false; }
     }
@@ -82,6 +90,7 @@ public interface Indexable {
         public Singleton(long e) { element=e; }
 
         public Index.Singleton indexes() { return new Index.Singleton(element); }
+        public long size() { return 1; }
         public boolean isEmpty() { return false; }
         public boolean has(long index) { return index==element; }
     }
@@ -105,6 +114,7 @@ public interface Indexable {
         public Range(long min, long max) { this.min = min; this.max = max; }
 
         public Index.Range indexes() { return new Index.Range(min,max); }
+        public long size() { return max-min+1; }
         public boolean isEmpty() { return min>max; }
         public boolean has(long index) { return index>=min && index<=max; }
     }
@@ -128,6 +138,9 @@ public interface Indexable {
         public Index indexes() {
             if(elements==null || elements.length==0) return new Index.Empty();
             else return new Index.Enumerate(elements);
+        }
+        public long size() {
+            return elements==null ? 0 : elements.length;
         }
         public boolean isEmpty() {
             return elements==null || elements.length==0;
@@ -160,8 +173,16 @@ public interface Indexable {
             for(int i=0; i<segments.length; i++) it[i] = segments[i].indexes();
             return new Index.Sequence(it);
         }
+        public long size() {
+            if(segments==null) return 0;
+            long s = 0;
+            for(Indexable segment : segments) s+=segment.size();
+            return s;
+        }
         public boolean isEmpty() {
-            return segments==null || segments.length==0;
+            if(segments==null) return true;
+            for(Indexable segment : segments) if(!segment.isEmpty()) return false;
+            return true;
         }
         public boolean has(long index) {
             if(segments!=null) for(Indexable s: segments) { if(s.has(index)) return true; }

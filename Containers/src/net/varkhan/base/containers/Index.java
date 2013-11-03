@@ -125,22 +125,22 @@ public interface Index {
          * @param min the lowest index to return
          * @param max the highest index to return
          */
-        public Range(long min, long max) { this.min = min; this.max = max; this.pos = min; }
+        public Range(long min, long max) { this.min = min; this.max = max; this.pos = min-1; }
 
         public long current() { return pos; }
 
-        public boolean hasNext() { return pos<=max; }
+        public boolean hasNext() { return pos<max; }
 
         public long next() {
-            if(pos>max) throw new InvalidIndexException();
-            return pos++;
+            if(pos>=max) throw new InvalidIndexException();
+            return ++pos;
         }
 
-        public boolean hasPrevious() { return pos>min; }
+        public boolean hasPrevious() { return pos>=min; }
 
         public long previous() {
-            if(pos<=min) throw new InvalidIndexException();
-            return --pos;
+            if(pos<min) throw new InvalidIndexException();
+            return pos--;
         }
     }
 
@@ -149,7 +149,7 @@ public interface Index {
      */
     public static final class Enumerate implements Index {
         private final long[] elements;
-        private volatile int pos = 0;
+        private volatile int pos = -1;
 
         /**
          * Create a range index iterator.
@@ -158,20 +158,20 @@ public interface Index {
          */
         public Enumerate(long... e) { elements = e; }
 
-        public long current() { return pos; }
+        public long current() { return elements[pos]; }
 
-        public boolean hasNext() { return pos<elements.length; }
+        public boolean hasNext() { return pos+1<elements.length; }
 
         public long next() {
-            if(pos>=elements.length) throw new Sequence.InvalidIndexException();
-            return elements[pos++];
+            if(pos+1>=elements.length) throw new Sequence.InvalidIndexException();
+            return elements[++pos];
         }
 
         public boolean hasPrevious() { return pos>0; }
 
         public long previous() {
-            if(pos<=0) throw new Sequence.InvalidIndexException();
-            return elements[--pos];
+            if(pos<0) throw new Sequence.InvalidIndexException();
+            return elements[pos--];
         }
     }
 
