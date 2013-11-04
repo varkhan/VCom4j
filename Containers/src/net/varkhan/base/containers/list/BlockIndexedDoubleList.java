@@ -932,7 +932,6 @@ public class BlockIndexedDoubleList extends AbstractBlockIndexedList implements 
                 i=(blockpos+1)<<blockshift;
                 continue;
             }
-            @SuppressWarnings("unchecked")
             double val=list[blockpos][(int) (i&blockmask)];
             if(val!=defVal) {
                 if(first) first=false;

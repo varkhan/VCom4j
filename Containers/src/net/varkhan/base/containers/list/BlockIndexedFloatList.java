@@ -931,7 +931,6 @@ public class BlockIndexedFloatList extends AbstractBlockIndexedList implements I
                 i=(blockpos+1)<<blockshift;
                 continue;
             }
-            @SuppressWarnings("unchecked")
             float val=list[blockpos][(int) (i&blockmask)];
             if(val!=defVal) {
                 if(first) first=false;

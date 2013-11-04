@@ -408,6 +408,7 @@ public class SparseIndexedDoubleList extends AbstractSparseIndexedList implement
      **  List entries iterators
      **/
 
+
     /**
      * Iterates over all elements in the list.
      *

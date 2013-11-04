@@ -1,53 +1,38 @@
-/**
- *
- */
 package net.varkhan.base.containers.list;
 
 import junit.framework.TestCase;
-import net.varkhan.base.containers.*;
-import net.varkhan.base.containers.Iterable;
+import net.varkhan.base.containers.Index;
+import net.varkhan.base.containers.Indexable;
+import net.varkhan.base.containers.type.IndexedLongVisitable;
+import net.varkhan.base.containers.type.LongIterable;
+import net.varkhan.base.containers.type.LongVisitable;
 
 import java.io.*;
 import java.util.*;
-import java.util.Iterator;
 
 
 /**
+ * <b></b>.
+ * <p/>
+ *
  * @author varkhan
- * @date Mar 12, 2009
- * @time 6:20:13 PM
+ * @date 11/3/13
+ * @time 12:36 PM
  */
-public abstract class AbstractIndexedListTest extends TestCase {
+public abstract class AbstractIndexedLongListTest extends TestCase {
 
-    protected static Integer[] genIntegerList(Random rand, int size, double sparsityratio) {
-        Integer[] lst=new Integer[size];
+    protected static long[] genLongList(Random rand, int size, double sparsityratio, long defVal) {
+        long[] lst=new long[size];
         for(int i=0;i<size;i++) {
-            if(rand.nextFloat()<sparsityratio) lst[i]=null;
+            if(rand.nextFloat()<sparsityratio) lst[i]=defVal;
             else {
-                lst[i]=i;
+                lst[i]=rand.nextLong();
             }
         }
         return lst;
     }
 
-    protected static String[] genStringList(Random rand, int size, double sparsityratio) {
-        String[] lst=new String[size];
-        for(int i=0;i<size;i++) {
-            if(rand.nextFloat()<sparsityratio) lst[i]=null;
-            else {
-                lst[i]=genString(rand,rand.nextInt(10), "abcdefghijklmnopqrstuvwxyz01223456789".toCharArray())+"_"+i;
-            }
-        }
-        return lst;
-    }
-
-    protected static String genString(Random rand, int len, char[] chr) {
-        char[] buf = new char[len];
-        for(int i=0; i<len; i++) buf[i] = chr[rand.nextInt(chr.length)];
-        return new String(buf);
-    }
-
-    public <T> void featureTestAdd(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestAdd(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         Set<Integer> add=new HashSet<Integer>();
         long size=0;
         long head=0;
@@ -56,7 +41,7 @@ public abstract class AbstractIndexedListTest extends TestCase {
             int i=rand.nextInt(vals.length);
             if(add.contains(i)) continue;
             add.add(i);
-            if(vals[i]==null) {
+            if(vals[i]==defVal) {
                 pos[i] = -1;
                 continue;
             }
@@ -71,12 +56,12 @@ public abstract class AbstractIndexedListTest extends TestCase {
         assertEquals("size()", size, ilst.size());
         assertEquals("head()", head, ilst.head());
         for(int i=0; i<pos.length; i++) {
-            if(pos[i]>=0) assertSame("get(i)",vals[i],ilst.get(pos[i]));
+            if(pos[i]>=0) assertEquals("get(i)", vals[i], ilst.getLong(pos[i]));
         }
         System.out.println("add(T) OK");
     }
 
-    public <T> void featureTestSet(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestSet(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         Set<Integer> add=new HashSet<Integer>();
         long size=0;
         long head=0;
@@ -84,7 +69,7 @@ public abstract class AbstractIndexedListTest extends TestCase {
             int i=rand.nextInt(vals.length);
             if(add.contains(i)) continue;
             add.add(i);
-            if(vals[i]==null) {
+            if(vals[i]==defVal) {
                 continue;
             }
             size++;
@@ -98,8 +83,8 @@ public abstract class AbstractIndexedListTest extends TestCase {
             int i=rand.nextInt(vals.length);
             int j=rand.nextInt(vals.length);
             if(ref.containsKey(j)) continue;
-            ref.put(j, i);
-            if(vals[i]==null) {
+            ref.put(j,i);
+            if(vals[i]==defVal) {
                 continue;
             }
             if(i>=head) head=i+1;
@@ -108,38 +93,39 @@ public abstract class AbstractIndexedListTest extends TestCase {
         for(Map.Entry<Integer,Integer> e: ref.entrySet()) {
             int j= e.getKey();
             int i= e.getValue();
-            if(vals[i]!=null) assertSame("get("+j+")", vals[i], ilst.get(j));
+            if(vals[i]!=defVal) assertEquals("get("+j+")", vals[i], ilst.getLong(j));
         }
         System.out.println("set(long,T) OK");
     }
 
-    public <T> void featureTestHas(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestHas(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         for(int i=0;i<ilst.head();i++) {
-            if(vals[i]==null) assertFalse("has("+i+")", ilst.has(i));
+            if(vals[i]==defVal) assertFalse("has("+i+")", ilst.has(i));
             else assertTrue("has("+i+")", ilst.has(i));
         }
         System.out.println("has(long) OK");
     }
 
-    public <T> void featureTestGet(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestGet(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         for(int i=0;i<ilst.head();i++) {
-            assertEquals("get("+i+")", vals[i], ilst.get(i));
+            if(vals[i]==defVal) assertEquals("get("+i+")", vals[i], ilst.getLong(i));
+            else assertEquals("get("+i+")", vals[i], ilst.getLong(i));
         }
         System.out.println("get(long) OK");
     }
 
-    public <T> void featureTestDel(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestDel(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         Set<Integer> del=new HashSet<Integer>();
         while(del.size()<vals.length) {
             int i=rand.nextInt(vals.length);
             if(del.contains(i)) continue;
-            if(vals[i]==null) {
+            if(vals[i]==defVal) {
                 del.add(i);
                 assertFalse("has("+i+")", ilst.has(i));
                 continue;
@@ -149,7 +135,7 @@ public abstract class AbstractIndexedListTest extends TestCase {
             if(ilst.size()%10000==0) {
                 for(int j=0;j<ilst.head();j++) {
                     if(del.contains(j)) continue;
-                    assertEquals("get("+j+")", vals[j], ilst.get(j));
+                    assertEquals("get("+j+")", vals[j], ilst.getLong(j));
                 }
             }
         }
@@ -157,9 +143,9 @@ public abstract class AbstractIndexedListTest extends TestCase {
         System.out.println("del(long) OK");
     }
 
-    public <T> void featureTestClear(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestClear(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         ilst.clear();
         assertTrue("isEmpty", ilst.isEmpty());
         for(int i=0;i<vals.length;i++) {
@@ -170,14 +156,14 @@ public abstract class AbstractIndexedListTest extends TestCase {
         System.out.println("clear() OK");
     }
 
-    public <T> void featureTestIndexes(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestIndexes(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         Index it=ilst.indexes();
         assertFalse("hasPrevious()", it.hasPrevious());
         boolean prev=false;
         for(int i=0;i<vals.length;i++) {
-            if(vals[i]!=null) {
+            if(vals[i]!=defVal) {
                 assertTrue(i+": hasNext()", it.hasNext());
                 assertEquals(i+": next()", (long) i, it.next());
                 if(prev) assertTrue(i+": hasPrevious()", it.hasPrevious());
@@ -189,13 +175,13 @@ public abstract class AbstractIndexedListTest extends TestCase {
         System.out.println("indexes() OK");
     }
 
-    public <T> void featureTestIterateIndexes(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestIterateIndexes(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
-        java.lang.Iterable<Long> it=ilst.iterateIndexes();
-        java.util.Iterator<? extends Long> ii=it.iterator();
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
+        Iterable<Long> it=ilst.iterateIndexes();
+        Iterator<? extends Long> ii=it.iterator();
         for(int i=0;i<vals.length;i++) {
-            if(vals[i]!=null) {
+            if(vals[i]!=defVal) {
                 assertTrue(i+": hasNext()", ii.hasNext());
                 assertEquals(i+": next()", i, ii.next().intValue());
             }
@@ -204,30 +190,30 @@ public abstract class AbstractIndexedListTest extends TestCase {
         System.out.println("indexes() OK");
     }
 
-    public <T> void featureTestIterator(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestIterator(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
-        Iterator<? extends T> it=ilst.iterator();
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
+        LongIterable.LongIterator it=ilst.iterator();
         for(int i=0;i<vals.length;i++) {
-            if(vals[i]!=null) {
+            if(vals[i]!=defVal) {
                 assertTrue(i+": hasNext()", it.hasNext());
-                assertEquals(i+": next()", vals[i], it.next());
+                assertEquals(i+": next()", vals[i], it.nextValue());
             }
         }
         assertFalse("hasNext()", it.hasNext());
         System.out.println("iterator() OK");
     }
 
-    public <T> void featureTestVisit(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestVisit(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        java.util.Set<T> ref = new java.util.HashSet<T>();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) {
+        Set<Long> ref = new HashSet<Long>();
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) {
             ilst.set(i, vals[i]);
             ref.add(vals[i]);
         }
-        Visitable.Visitor<T,java.util.Set<T>> vv= new Visitable.Visitor<T,java.util.Set<T>>() {
+        LongVisitable.LongVisitor<Set<Long>> vv= new LongVisitable.LongVisitor<Set<Long>>() {
             @Override
-            public long invoke(T obj, java.util.Set<T> ts) {
+            public long invoke(long obj, Set<Long> ts) {
                 return ts.contains(obj)?1:-1;
             }
         };
@@ -235,16 +221,16 @@ public abstract class AbstractIndexedListTest extends TestCase {
         System.out.println("visit(Visitor) OK");
     }
 
-    public <T> void featureTestVisitIndexed(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestVisitIndexed(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        java.util.Map<Long,T> ref = new java.util.HashMap<Long,T>();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) {
+        Map<Long,Long> ref = new HashMap<Long,Long>();
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) {
             ilst.set(i, vals[i]);
             ref.put((long)i, vals[i]);
         }
-        IndexedVisitable.IndexedVisitor<T,java.util.Map<Long,T>> vv= new IndexedVisitable.IndexedVisitor<T,java.util.Map<Long,T>>() {
+        IndexedLongVisitable.IndexedLongVisitor<Map<Long,Long>> vv= new IndexedLongVisitable.IndexedLongVisitor<Map<Long,Long>>() {
             @Override
-            public long invoke(long idx, T obj, java.util.Map<Long,T> ts) {
+            public long invoke(long idx, long obj, Map<Long,Long> ts) {
                 return ts.get(idx)==obj?1:-1;
             }
         };
@@ -252,9 +238,9 @@ public abstract class AbstractIndexedListTest extends TestCase {
         System.out.println("visit(Visitor) OK");
     }
 
-    public <T> void featureTestIterateIndex(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestIterateIndex(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         long[] idx = new long[rand.nextInt((int)ilst.size())];
         for(int i=0; i<idx.length; i++) {
             int j = rand.nextInt((int)ilst.head());
@@ -262,40 +248,40 @@ public abstract class AbstractIndexedListTest extends TestCase {
             idx[i] = j;
         }
         Indexable iin = new Indexable.Enumerate(idx);
-        Iterable<? extends T> it=ilst.iterate(iin);
+        Iterable<? extends Long> it=ilst.iterate(iin);
         Index ix = iin.indexes();
-        java.util.Iterator<? extends T> ii=it.iterator();
+        Iterator<? extends Long> ii=it.iterator();
         while(ix.hasNext()) {
             long i = ix.next();
             assertTrue("hasNext()",ii.hasNext());
-            assertSame("get(i)==next()",ilst.get(i),ii.next());
+            assertEquals("get(i)==next()", ilst.get(i), ii.next());
         }
         assertFalse("hasNext()", ii.hasNext());
         System.out.println("iterate(Indexable) OK");
     }
 
-    public <T> void featureTestIterateIndexArray(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestIterateIndexArray(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         long[] idx = new long[rand.nextInt((int)ilst.size())];
         for(int i=0; i<idx.length; i++) {
             int j = rand.nextInt((int)ilst.head());
             while(!ilst.has(j)) j = rand.nextInt((int)ilst.head());
             idx[i] = j;
         }
-        Iterable<? extends T> it=ilst.iterate(idx);
-        java.util.Iterator<? extends T> ii=it.iterator();
+        LongIterable it=ilst.iterate(idx);
+        LongIterable.LongIterator ii=it.iterator();
         for(long i : idx) {
             assertTrue("hasNext()", ii.hasNext());
-            assertSame("get(i)==next()", ilst.get(i), ii.next());
+            assertEquals("get(i)==next()", ilst.getLong(i), ii.nextValue());
         }
         assertFalse("hasNext()", ii.hasNext());
         System.out.println("iterate(long[]) OK");
     }
 
-    public <T> void featureTestIterateIndexIterator(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestIterateIndexIterator(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         java.util.List<Long> iin = new java.util.ArrayList<Long>();
         int len = rand.nextInt((int)ilst.size());
         while(iin.size()<len) {
@@ -303,22 +289,22 @@ public abstract class AbstractIndexedListTest extends TestCase {
             while(!ilst.has(j)) j = rand.nextInt((int)ilst.head());
             iin.add(j);
         }
-        Iterable<? extends T> it=ilst.iterate(iin);
-        java.util.Iterator<Long> ix = iin.iterator();
-        java.util.Iterator<? extends T> ii=it.iterator();
+        LongIterable it=ilst.iterate(iin);
+        Iterator<Long> ix = iin.iterator();
+        LongIterable.LongIterator ii=it.iterator();
         while(ix.hasNext()) {
             long i = ix.next();
             assertTrue("hasNext()",ii.hasNext());
-            assertSame("get(i)==next()",ilst.get(i),ii.next());
+            assertEquals("get(i)==next()", ilst.getLong(i), ii.nextValue());
         }
         assertFalse("hasNext()", ii.hasNext());
         System.out.println("iterate(Iterable<Long>) OK");
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void featureTestSerialize(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+    public void featureTestSerialize(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
         ilst.clear();
-        for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         File t=null;
         try {
             t=File.createTempFile("serial-", ".ser");
@@ -331,18 +317,17 @@ public abstract class AbstractIndexedListTest extends TestCase {
                 if(os!=null) os.close();
             }
             ObjectInputStream is=null;
-            IndexedList<T> slst=null;
+            IndexedLongList slst=null;
             try {
                 is=new ObjectInputStream(new FileInputStream(t));
-                slst=(IndexedList<T>) is.readObject();
+                slst=(IndexedLongList) is.readObject();
             }
             finally {
                 if(is!=null) is.close();
             }
             assertTrue("serialize(lst)==lst", ilst.equals(slst));
-            assertEquals("size(lst)==lst", ilst.size(),slst.size());
             for(int i=0;i<ilst.head();i++) {
-                assertEquals("get("+i+")", vals[i], slst.get(i));
+                assertEquals("get("+i+")", vals[i], slst.getLong(i));
             }
             System.out.println("serial OK");
         }

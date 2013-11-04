@@ -15,7 +15,7 @@ import java.util.*;
  * @date 11/2/13
  * @time 3:47 PM
  */
-public class AbstractListTest extends TestCase {
+public abstract class AbstractListTest extends TestCase {
 
     protected static Integer[] genIntegerList(Random rand, int size, double sparsityratio) {
         Integer[] lst=new Integer[size];

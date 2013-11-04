@@ -932,7 +932,6 @@ public class BlockIndexedLongList extends AbstractBlockIndexedList implements In
                 i=(blockpos+1)<<blockshift;
                 continue;
             }
-            @SuppressWarnings("unchecked")
             long val=list[blockpos][(int) (i&blockmask)];
             if(val!=defVal) {
                 if(first) first=false;
