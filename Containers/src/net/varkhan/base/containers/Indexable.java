@@ -50,18 +50,18 @@ public interface Indexable {
 
 
     /**********************************************************************************
-     **  Static predefined iterators
+     **  Static predefined indexables
      **/
 
     /**
-     * An empty Indexable, that always yield an empty iterator.
+     * An empty Indexable, that always yield an empty Index.
      *
      * @see Index.Empty
      */
     public static final Indexable EMPTY = new Empty();
 
     /**
-     * An empty Indexable, that always yield an empty iterator.
+     * An empty Indexable, that always yield an empty Index.
      *
      * @see Index.Empty
      */
@@ -74,7 +74,7 @@ public interface Indexable {
 
 
     /**
-     * A singleton iterable, that returns a Singleton iterator,
+     * A singleton Indexable, that returns a Singleton Index,
      * iterating on a single index.
      *
      * @see Index.Singleton
@@ -83,9 +83,9 @@ public interface Indexable {
         private final long element;
 
         /**
-         * Create a singleton iterable.
+         * Create a singleton Indexable.
          *
-         * @param e the single index this iterable provides
+         * @param e the single index this Indexable provides
          */
         public Singleton(long e) { element=e; }
 
@@ -96,7 +96,7 @@ public interface Indexable {
     }
 
     /**
-     * A range iterable, that returns a Range iterator,
+     * A range Indexable, that returns a Range Index,
      * iterating on a range of index.
      *
      * @see Index.Range
@@ -106,7 +106,7 @@ public interface Indexable {
         private final long max;
 
         /**
-         * Create a range iterable.
+         * Create a range Indexable.
          *
          * @param min the lowest index to return
          * @param max the highest index to return
@@ -120,7 +120,7 @@ public interface Indexable {
     }
 
     /**
-     * An enumeration iterable, that returns an Enumeration iterator,
+     * An enumeration Indexable, that returns an Enumeration Index,
      * iterating on the indexes in an array.
      *
      * @see Index.Enumerate
@@ -129,9 +129,9 @@ public interface Indexable {
         private final long[] elements;
 
         /**
-         * Create an enumerated iterable.
+         * Create an enumerated Indexable.
          *
-         * @param e the array of elements this iterable provides
+         * @param e the array of elements this Indexable provides
          */
         public Enumerate(long... e) { elements=e; }
 
@@ -152,7 +152,7 @@ public interface Indexable {
     }
 
     /**
-     * A sequence iterable, that returns a Sequence iterator,
+     * A sequence Indexable, that returns a Sequence Index,
      * iterating on the indexes in an array.
      *
      * @see Index.Enumerate
@@ -161,7 +161,7 @@ public interface Indexable {
         private final Indexable[] segments;
 
         /**
-         * Create a sequence iterable.
+         * Create a sequence Indexable.
          *
          * @param s the array of Indexables
          */

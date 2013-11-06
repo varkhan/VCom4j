@@ -118,7 +118,7 @@ public interface Iterator<Type> extends java.util.Iterator<Type> {
          *
          * @param e the array of all the indexes to return
          */
-        public Enumerate(Type... e) { elements = e; }
+        public Enumerate(Type[] e) { elements = e; }
 
         public boolean hasNext() { return pos<elements.length; }
 
@@ -136,18 +136,20 @@ public interface Iterator<Type> extends java.util.Iterator<Type> {
      * A sequence iterator, that returns all the elements of a series of iterators, in order.
      */
     public static final class Sequence<Type> implements Iterator<Type> {
-        private final Iterator<Type>[] segments;
-        private volatile int pos = 0;
+        private final Iterator<? extends Type>[] segments;
+        private volatile int pos = -1;
 
         /**
          * Create a sequence iterator.
          *
          * @param s the array of all the subsequence iterators
          */
-        public Sequence(Iterator<Type>... s) { segments = s; }
+        public Sequence(Iterator<? extends Type>[] s) { segments = s; }
 
         public boolean hasNext() {
+            int pos = this.pos;
             if(pos<0) pos = 0;
+            while(pos<segments.length && !segments[pos].hasNext()) pos ++;
             return pos<segments.length && segments[pos].hasNext();
         }
 
@@ -159,7 +161,7 @@ public interface Iterator<Type> extends java.util.Iterator<Type> {
         }
 
         public void remove() {
-            if(pos>=segments.length) throw new IllegalStateException();
+            if(pos<0 || pos>=segments.length) throw new IllegalStateException();
             segments[pos].remove();
         }
 

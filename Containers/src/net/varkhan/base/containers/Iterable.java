@@ -35,4 +35,82 @@ public interface Iterable<Type> extends java.lang.Iterable/*<Type>*/  {
      */
     public Iterator<? extends Type> iterator();
 
+
+    /**********************************************************************************
+     **  Static predefined Iterables
+     **/
+
+    /**
+     * An empty Iterable, that always yield an empty iterator.
+     *
+     * @see Iterator.Empty
+     */
+    public static final class Empty<Type> implements Iterable<Type> {
+        public Iterator<Type> iterator() { return new Iterator.Empty<Type>(); }
+    }
+
+
+    /**
+     * A singleton Iterable, that returns a Singleton iterator,
+     * iterating on a single index.
+     *
+     * @see Iterator.Singleton
+     */
+    public static final class Singleton<Type> implements Iterable<Type> {
+        private final Type element;
+
+        /**
+         * Create a singleton Iterable.
+         *
+         * @param e the single index this Iterable provides
+         */
+        public Singleton(Type e) { element=e; }
+
+        public Iterator<Type> iterator() { return new Iterator.Singleton<Type>(element); }
+    }
+
+    /**
+     * An enumeration Iterable, that returns an Enumeration iterator,
+     * iterating on the indexes in an array.
+     *
+     * @see Iterator.Enumerate
+     */
+    public static final class Enumerate<Type> implements Iterable<Type> {
+        private final Type[] elements;
+
+        /**
+         * Create an enumerated Iterable.
+         *
+         * @param e the array of elements this Iterable provides
+         */
+        public Enumerate(Type[] e) { elements=e; }
+
+        public Iterator<Type> iterator() { return new Iterator.Enumerate<Type>(elements); }
+    }
+
+    /**
+     * A sequence Iterable, that returns a Sequence iterator,
+     * iterating on the indexes in an array.
+     *
+     * @see Iterator.Enumerate
+     */
+    public static final class Sequence<Type> implements Iterable<Type> {
+        private final Iterable<Type>[] segments;
+
+        /**
+         * Create a sequence Iterable.
+         *
+         * @param s the array of Iterables
+         */
+        public Sequence(Iterable<Type>... s) { segments=s; }
+
+        public Iterator<Type> iterator() {
+            if(segments==null || segments.length==0) return new Iterator.Empty<Type>();
+            @SuppressWarnings("unchecked")
+            Iterator<? extends Type>[] it = new Iterator[segments.length];
+            for(int i=0; i<segments.length; i++) it[i] = segments[i].iterator();
+            return new Iterator.Sequence<Type>(it);
+        }
+    }
+
 }
