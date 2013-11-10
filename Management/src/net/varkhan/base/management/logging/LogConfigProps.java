@@ -30,22 +30,22 @@ public class LogConfigProps implements LogConfig {
      * @param propdefs a list of { context name, filter key, logging mask } triplets
      */
     @SuppressWarnings({ "unchecked" })
-    public LogConfigProps(String[] levels, Configuration defcfg, Object... propdefs) {
+    public LogConfigProps(String[] levels, Configuration defcfg, Object... propdefs) throws ConfigurationError {
         this(levels, defcfg);
         // No prop defs? we are done
         if(propdefs==null || propdefs.length==0) return;
         if((propdefs.length%3)!=0)
             throw new IllegalArgumentException("Contextual properties definition array must have a multiple of 3 number of elements");
         for(int i=0;i+2<propdefs.length;i+=3) {
+            String ctx=propdefs[i]==null?"":propdefs[i].toString();
+            String key=propdefs[i+1].toString();
+            Object val=propdefs[i+2];
             if(!(propdefs[i] instanceof CharSequence))
                 throw new IllegalArgumentException("Context names must be strings");
             if(!(propdefs[i+1] instanceof CharSequence))
                 throw new IllegalArgumentException("Filter keys must be strings");
             if(!(propdefs[i+2] instanceof Number) && !(propdefs[i+2] instanceof CharSequence))
-                throw new IllegalArgumentException("Logging masks must be numbers or strings");
-            String ctx=propdefs[i]==null?"":propdefs[i].toString();
-            String key=propdefs[i+1].toString();
-            Object val=propdefs[i+2];
+                throw new ConfigurationError("Logging masks must be numbers or strings",ctx,key,val);
             if(ctx==null || ctx.length()==0) config.setEntry(key, parseLevelMask(val));
             else config.setEntry(ctx, key, parseLevelMask(val));
         }
