@@ -23,4 +23,7 @@ public class ConstFunctional<A,C> implements Functional<A,C> {
     public double invoke(A arg, C ctx) {
         return val;
     }
+
+    public static <A,C> ConstFunctional<A,C> as(double val) { return new ConstFunctional<A,C>(val); }
+
 }

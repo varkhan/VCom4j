@@ -20,6 +20,6 @@ public class IdentMapper<A,C> implements Mapper<A,A,C> {
     protected static final IdentMapper<Object,Object> ID = new IdentMapper<Object,Object>();
 
     @SuppressWarnings({ "unchecked" })
-    public static <A,C> Mapper<A,A,C> ID() { return (Mapper) ID;}
+    public static <A,C> Mapper<A,A,C> as() { return (Mapper) ID;}
 
 }

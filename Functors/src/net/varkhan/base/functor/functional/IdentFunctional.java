@@ -24,11 +24,11 @@ public final class IdentFunctional<C> implements Functional<Double,C> {
     protected static final IdentFunctional<?> ID=new IdentFunctional();
 
     @SuppressWarnings("unchecked")
-    public static <C> IdentFunctional<C> identity() {
+    public static <C> IdentFunctional<C> as() {
         return (IdentFunctional<C>) ID;
     }
 
-    public static <A,C> Functional<A,C> asFunctional(final Mapper<Double,A,C> mapr) {
+    public static <A,C> Functional<A,C> as(final Mapper<Double,A,C> mapr) {
         return new Functional<A,C>() {
             @Override
             public double invoke(A arg, C ctx) {
@@ -38,7 +38,7 @@ public final class IdentFunctional<C> implements Functional<Double,C> {
         };
     }
 
-    public static <A,C> Mapper<Double,A,C> asMapper(final Functional<A,C> func) {
+    public static <A,C> Mapper<Double,A,C> as(final Functional<A,C> func) {
         return new Mapper<Double,A,C>() {
             @Override
             public Double invoke(A arg, C ctx) {

@@ -24,7 +24,7 @@ public class MapperPredicate<A,C> implements Predicate<A,C> {
     }
 
     public boolean invoke(A arg, C ctx) {
-        return !pred.invoke(mapr.invoke(arg, ctx), ctx);
+        return pred.invoke(mapr.invoke(arg, ctx), ctx);
     }
 
 }

@@ -29,6 +29,11 @@ public class SetPredicate<A,C> implements Predicate<A,C> {
         while(vals.hasNext()) this.set.add(vals.next());
     }
 
+    public SetPredicate(Iterable<A> vals) {
+        this.set = new HashSet<A>();
+        for(A v: vals) this.set.add(v);
+    }
+
     public SetPredicate(Set<A> set) {
         this.set = set;
     }
@@ -36,4 +41,5 @@ public class SetPredicate<A,C> implements Predicate<A,C> {
     public boolean invoke(A arg, C ctx) {
         return set.contains(arg);
     }
+
 }

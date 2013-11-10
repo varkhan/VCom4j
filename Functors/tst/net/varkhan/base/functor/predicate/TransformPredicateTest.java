@@ -14,8 +14,8 @@ import junit.framework.TestCase;
 public class TransformPredicateTest extends TestCase {
 
     public void testNot() {
-        assertEquals("false", false, TransformPredicate.not(ConstPredicate.TRUE()).invoke("foo",null));
-        assertEquals("true", true, TransformPredicate.not(ConstPredicate.FALSE()).invoke("foo",null));
+        assertEquals("not(true)", false, TransformPredicate.not(ConstPredicate.TRUE()).invoke("foo",null));
+        assertEquals("not(false)", true, TransformPredicate.not(ConstPredicate.FALSE()).invoke("foo",null));
     }
 
 }
