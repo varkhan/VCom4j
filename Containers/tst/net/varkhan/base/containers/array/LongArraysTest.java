@@ -24,7 +24,7 @@ public class LongArraysTest extends TestCase {
             for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
             if(same) return;
         }
-        fail(message+";\n expected: ["+StringArrays.join(",", expected)+"];\n   actual: ["+StringArrays.join(",", actual)+"]");
+        fail(message+";\n expected: ["+LongArrays.join(",", expected)+"];\n   actual: ["+LongArrays.join(",", actual)+"]");
     }
 
     public static long[] reverse(long[] a) {
@@ -97,7 +97,7 @@ public class LongArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+LongArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.LongArrays.sort)");
     }
@@ -136,7 +136,7 @@ public class LongArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+LongArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.LongArrays.sort)");
     }
@@ -330,5 +330,29 @@ public class LongArraysTest extends TestCase {
         assertEquals("asList(...).iterator().next().next().next()", 3L, it.nextValue());
         assertFalse("asList(...).iterator().next().next().next().hasNext()", it.hasNext());
     }
+
+    public void testStrgLong() throws Exception {
+        assertEquals("[0|]",LongArrays.toString(new long[]{}));
+        assertEquals("[1|0]",LongArrays.toString(new long[]{0}));
+        assertEquals("[1|1]",LongArrays.toString(new long[]{1}));
+        assertEquals("[1|247]",LongArrays.toString(new long[]{0xF7}));
+        assertEquals("[5|0,1,2,243,4]",LongArrays.toString(new long[]{0,1,2,0xF3,4}));
+        assertEquals("[5|0,1,2,243,4]",LongArrays.toString(new StringBuilder(),new long[]{0,1,2,0xF3,4}).toString());
+        assertEquals("[5|0,1,2,243,4]",LongArrays.toString(new StringBuffer(),new long[]{0,1,2,0xF3,4}).toString());
+    }
+
+    public void testJoinLong() throws Exception {
+        assertEquals("",LongArrays.join(":",new long[]{}));
+        assertEquals("0",LongArrays.join(":",new long[]{0}));
+        assertEquals("1",LongArrays.join(":",new long[]{1}));
+        assertEquals("247",LongArrays.join(":",new long[]{0xF7}));
+        assertEquals("0:1:2:243:4",LongArrays.join(":",new long[]{0,1,2,0xF3,4}));
+        assertEquals("0:1:2:243:4",LongArrays.join(new StringBuilder(),":",new long[]{0,1,2,0xF3,4}).toString());
+        assertEquals("0:1:2:243:4",LongArrays.join(new StringBuffer(),":",new long[]{0,1,2,0xF3,4}).toString());
+        assertEquals("0122434",LongArrays.join(null,new long[]{0,1,2,0xF3,4}));
+        assertEquals("0122434",LongArrays.join(new StringBuilder(),null,new long[]{0,1,2,0xF3,4}).toString());
+        assertEquals("0122434",LongArrays.join(new StringBuffer(),null,new long[]{0,1,2,0xF3,4}).toString());
+    }
+
 
 }

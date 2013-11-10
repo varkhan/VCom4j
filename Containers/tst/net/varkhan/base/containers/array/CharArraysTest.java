@@ -22,7 +22,7 @@ public class CharArraysTest extends TestCase {
             for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
             if(same) return;
         }
-        fail(message+";\n expected: ["+StringArrays.join(",", expected)+"];\n   actual: ["+StringArrays.join(",", actual)+"]");
+        fail(message+";\n expected: \""+new String(expected)+"\";\n   actual: \""+new String( actual)+"\"");
     }
 
     private static void assertArrayEquals(String msg, String[] exp, String[] ret) {
@@ -55,13 +55,13 @@ public class CharArraysTest extends TestCase {
     private static String toString(CharSequence[] a) {
         if(a==null) return "null";
         if(a.length==0) return "[]";
-        return "[\""+StringArrays.join("\",\"", a)+"\"]";
+        return "[\""+Arrays.join("\",\"", a)+"\"]";
     }
 
     private static String toString(String[] a) {
         if(a==null) return "null";
         if(a.length==0) return "[]";
-        return "[\""+StringArrays.join("\",\"", a)+"\"]";
+        return "[\""+Arrays.join("\",\"", a)+"\"]";
     }
 
     public void testEquals() throws Exception {
@@ -139,7 +139,7 @@ public class CharArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+new String(a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.CharArrays.sort)");
     }
@@ -178,7 +178,7 @@ public class CharArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+new String(a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.CharArrays.sort)");
     }

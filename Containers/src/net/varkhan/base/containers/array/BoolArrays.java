@@ -3,6 +3,9 @@
  */
 package net.varkhan.base.containers.array;
 
+import java.io.IOException;
+
+
 /**
  * <b>Static boolean arrays manipulation utilities.</b>
  * <p/>
@@ -163,6 +166,114 @@ public class BoolArrays {
         boolean[] subary=new boolean[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
+    }
+
+
+    /*********************************************************************************
+     **  String transformation
+     **/
+
+    /**
+     * Builds a pretty string representation of a boolean array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the boolean array to stringify
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws java.io.IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <A extends Appendable> A toString(A buf, boolean[] array) throws IOException {
+        buf.append("[").append(Integer.toString(array.length)).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            buf.append(array[i] ? "1" : "0");
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Builds a pretty string representation of a boolean array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the boolean array to stringify
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static StringBuilder toString(StringBuilder buf, boolean[] array) {
+        buf.append("[").append(array.length).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            buf.append(array[i] ? "1" : "0");
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Returns a pretty string representation of a boolean array.
+     *
+     * @param array the boolean array to stringify
+     *
+     * @return a human-readable string exposing the contents of the array
+     */
+    public static String toString(boolean[] array) {
+        return toString(new StringBuilder(), array).toString();
+    }
+
+    /**
+     * Appends as strings the elements of a boolean array, separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator to use
+     * @param array the boolean array to concatenate
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <A extends Appendable> A join(A buf, String sep, boolean[] array) throws IOException {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            buf.append(array[i] ? "1" : "0");
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            buf.append(array[i] ? "1" : "0");
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of a boolean array, separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator to use
+     * @param array the boolean array to concatenate
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static StringBuilder join(StringBuilder buf, String sep, boolean[] array) {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            buf.append(array[i] ? "1" : "0");
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            buf.append(array[i] ? "1" : "0");
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of a boolean array, separating them with a given string.
+     *
+     * @param sep   the separator to use
+     * @param array the boolean array to concatenate
+     *
+     * @return a concatenation of the elements of the array, as string, and the separator
+     */
+    public static String join(String sep, boolean[] array) {
+        return join(new StringBuilder(), sep, array).toString();
     }
 
 }

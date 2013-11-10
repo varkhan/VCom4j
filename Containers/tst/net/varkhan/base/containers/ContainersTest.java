@@ -69,6 +69,19 @@ public class ContainersTest extends TestCase {
         assertFalse("!equals({a=>1,b=>3},{a=>1,c=>3})",Containers.equals(m22,m23));
     }
 
+    public void testJoin() throws Exception {
+        assertEquals("",Containers.join(":",Arrays.asList()));
+        assertEquals("0",Containers.join(":",Arrays.asList(0)));
+        assertEquals("1",Containers.join(":",Arrays.asList(1)));
+        assertEquals("",Containers.join(":",Arrays.asList((Object)null)));
+        assertEquals("247",Containers.join(":",Arrays.asList(0xF7)));
+        assertEquals("foo",Containers.join(":",Arrays.asList("foo")));
+        assertEquals("0:true:2.2::foo",Containers.join(":",Arrays.asList(0,true,2.2,null,"foo")));
+        assertEquals("<0>:<true>:<2.2>::<foo>",Containers.join(new StringBuilder(),":","<",">",Arrays.asList(0,true,2.2,null,"foo")).toString());
+        assertEquals("<0>:<true>:<2.2>::<foo>",Containers.join(new StringBuffer(),":","<",">",Arrays.asList(0,true,2.2,null,"foo")).toString());
+    }
+
+
     protected static class ArrayContainer<T> implements Container<T> {
         final T[] a;
         ArrayContainer(T[] a) { this.a=a; }

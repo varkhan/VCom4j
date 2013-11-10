@@ -24,7 +24,7 @@ public class FloatArraysTest extends TestCase {
             for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
             if(same) return;
         }
-        fail(message+";\n expected: ["+StringArrays.join(",", expected)+"];\n   actual: ["+StringArrays.join(",", actual)+"]");
+        fail(message+";\n expected: ["+FloatArrays.join(",", expected)+"];\n   actual: ["+FloatArrays.join(",", actual)+"]");
     }
 
     public static float[] reverse(float[] a) {
@@ -97,7 +97,7 @@ public class FloatArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+FloatArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.FloatArrays.sort)");
     }
@@ -136,7 +136,7 @@ public class FloatArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+FloatArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.FloatArrays.sort)");
     }
@@ -330,5 +330,29 @@ public class FloatArraysTest extends TestCase {
         assertEquals("asList(...).iterator().next().next().next()", 3.03f, it.nextValue());
         assertFalse("asList(...).iterator().next().next().next().hasNext()", it.hasNext());
     }
+
+    public void testStrgFloat() throws Exception {
+        assertEquals("[0|]",FloatArrays.toString(new float[]{}));
+        assertEquals("[1|0.000000]",FloatArrays.toString(new float[]{0}));
+        assertEquals("[1|1.000000]",FloatArrays.toString(new float[]{1}));
+        assertEquals("[1|247.000000]",FloatArrays.toString(new float[]{0xF7}));
+        assertEquals("[5|0.000000,1.000000,2.200000,243.000000,4.000000]",FloatArrays.toString(new float[]{0,1,2.2f,0xF3,4}));
+        assertEquals("[5|0.000000,1.000000,2.200000,243.000000,4.000000]",FloatArrays.toString(new StringBuilder(),new float[]{0,1,2.2f,0xF3,4}).toString());
+        assertEquals("[5|0.000000,1.000000,2.200000,243.000000,4.000000]",FloatArrays.toString(new StringBuffer(),new float[]{0,1,2.2f,0xF3,4}).toString());
+    }
+
+    public void testJoinFloat() throws Exception {
+        assertEquals("",FloatArrays.join(":",new float[]{}));
+        assertEquals("0.000000",FloatArrays.join(":",new float[]{0}));
+        assertEquals("1.000000",FloatArrays.join(":",new float[]{1}));
+        assertEquals("247.000000",FloatArrays.join(":",new float[]{0xF7}));
+        assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",FloatArrays.join(":",new float[]{0,1,2.2f,0xF3,4}));
+        assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",FloatArrays.join(new StringBuilder(),":",new float[]{0,1,2.2f,0xF3,4}).toString());
+        assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",FloatArrays.join(new StringBuffer(),":",new float[]{0,1,2.2f,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",FloatArrays.join(null,new float[]{0,1,2.2f,0xF3,4}));
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",FloatArrays.join(new StringBuilder(),null,new float[]{0,1,2.2f,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",FloatArrays.join(new StringBuffer(),null,new float[]{0,1,2.2f,0xF3,4}).toString());
+    }
+
 
 }

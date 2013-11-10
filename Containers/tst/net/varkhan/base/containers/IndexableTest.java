@@ -56,7 +56,7 @@ public class IndexableTest extends TestCase {
         assertTrue("indexes().hasNext()", ii.hasNext());
         assertEquals("indexes().next()==index",index,ii.next());
         assertEquals("indexes().current()==index",index,ii.current());
-        assertTrue("indexes().hasPrevious()",ii.hasPrevious());
+        assertFalse("indexes().hasPrevious()",ii.hasPrevious());
         assertFalse("indexes().hasNext()", ii.hasNext());
     }
 
@@ -73,7 +73,7 @@ public class IndexableTest extends TestCase {
         assertTrue("indexes().hasNext()", ii0.hasNext());
         assertEquals("indexes().next()==min",min0,ii0.next());
         assertEquals("indexes().current()==min", min0, ii0.current());
-        assertTrue("indexes().hasPrevious()",ii0.hasPrevious());
+        assertFalse("indexes().hasPrevious()",ii0.hasPrevious());
         assertFalse("indexes().hasNext()", ii0.hasNext());
         int min1=4, max1=5;
         Indexable ix1 = new Indexable.Range(min1, max1);
@@ -91,6 +91,7 @@ public class IndexableTest extends TestCase {
         assertEquals("indexes().current()==..", min1+1, ii1.current());
         assertTrue("indexes().hasPrevious()",ii1.hasPrevious());
         assertFalse("indexes().hasNext()", ii1.hasNext());
+        assertEquals("indexes().previous()",min1, ii1.previous());
         int min2=4, max2=6;
         Indexable ix2 = new Indexable.Range(min2, max2);
         assertFalse("isEmpty()", ix2.isEmpty());
@@ -109,6 +110,7 @@ public class IndexableTest extends TestCase {
         assertEquals("indexes().current()==..", min2+2, ii2.current());
         assertTrue("indexes().hasPrevious()",ii2.hasPrevious());
         assertFalse("indexes().hasNext()", ii2.hasNext());
+        assertEquals("indexes().previous()",min2+1, ii2.previous());
     }
 
     public void testEnumerate() throws Exception {
@@ -152,6 +154,7 @@ public class IndexableTest extends TestCase {
         assertEquals("indexes().current()==..", idx2[2], ii2.current());
         assertTrue("indexes().hasPrevious()",ii2.hasPrevious());
         assertFalse("indexes().hasNext()", ii2.hasNext());
+        assertEquals("indexes().previous()",idx2[1], ii2.previous());
     }
 
     public void testSequence() throws Exception {

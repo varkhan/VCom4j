@@ -8,6 +8,7 @@ import net.varkhan.base.containers.list.List;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
 import net.varkhan.base.containers.map.Map;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
@@ -731,6 +732,167 @@ public class Arrays {
             map.add((K) key,(V) val);
         }
         return map;
+    }
+
+
+    /*********************************************************************************
+     **  String transformation
+     **/
+
+    /**
+     * Builds a pretty string representation of an array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the array to stringify
+     * @param <T>   the element type
+     * @param <A>   the buffer type
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws java.io.IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <T,A extends Appendable> A toString(A buf, T... array) throws IOException {
+        buf.append("[").append(Integer.toString(array.length)).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            T t=array[i];
+            if(t!=null) buf.append(t.toString());
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Builds a pretty string representation of an array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the array to stringify
+     * @param <T>   the element type
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static <T> StringBuilder toString(StringBuilder buf, T... array) {
+        buf.append("[").append(array.length).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            T t=array[i];
+            if(t!=null) buf.append(t.toString());
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Returns a pretty string representation of an array.
+     *
+     * @param array the array to stringify
+     * @param <T>   the element type
+     *
+     * @return a human-readable string exposing the contents of the array
+     */
+    public static <T> String toString(T... array) {
+        StringBuilder buf=new StringBuilder();
+        return toString(buf, array).toString();
+    }
+
+    /**
+     * Appends as strings the elements of an array, wrapping each non-null
+     * element with delimiters and separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator between elements
+     * @param ldl   the left delimiter of elements
+     * @param rdl   the right delimiter of element
+     * @param array the array to join
+     * @param <T>   the element type
+     * @param <A>   the buffer type
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <T,A extends Appendable> A join(A buf, String sep, String ldl, String rdl, T... array) throws IOException {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            T elt=array[i];
+            if(elt!=null) {
+                if(ldl!=null) buf.append(ldl);
+                buf.append(elt.toString());
+                if(rdl!=null) buf.append(rdl);
+            }
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            T elt=array[i];
+            if(elt!=null) {
+                if(ldl!=null) buf.append(ldl);
+                buf.append(elt.toString());
+                if(rdl!=null) buf.append(rdl);
+            }
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of an array, wrapping each non-null
+     * element with delimiters and separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator between elements
+     * @param ldl   the left delimiter of elements
+     * @param rdl   the right delimiter of element
+     * @param array the array to join
+     * @param <T>   the element type
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static <T> StringBuilder join(StringBuilder buf, String sep, String ldl, String rdl, T... array) {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            T elt=array[i];
+            if(elt!=null) {
+                if(ldl!=null) buf.append(ldl);
+                buf.append(elt.toString());
+                if(rdl!=null) buf.append(rdl);
+            }
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            T elt=array[i];
+            if(elt!=null) {
+                if(ldl!=null) buf.append(ldl);
+                buf.append(elt.toString());
+                if(rdl!=null) buf.append(rdl);
+            }
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of an array, wrapping each non-null
+     * element with delimiters and separating them with a given string.
+     *
+     * @param sep   the separator between elements
+     * @param ldl   the left delimiter of elements
+     * @param rdl   the right delimiter of element
+     * @param array the array to join
+     * @param <T>   the element type
+     *
+     * @return a concatenation of the elements of the array, as strings wrapped in the delimiters, and the separator
+     */
+    public static <T> String join(String sep, String ldl, String rdl, T... array) {
+        return join(new StringBuilder(), sep, ldl, rdl, array).toString();
+    }
+
+    /**
+     * Appends as strings the elements of an array, separating them with a given string.
+     *
+     * @param sep   the separator between elements
+     * @param array the array to join
+     * @param <T>   the element type
+     *
+     * @return a concatenation of the elements of the array, as strings, and the separator
+     */
+    public static <T> String join(String sep, T... array) {
+        return join(new StringBuilder(), sep, null, null, array).toString();
     }
 
 }

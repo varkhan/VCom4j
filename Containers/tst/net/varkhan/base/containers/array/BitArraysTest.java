@@ -17,7 +17,7 @@ public class BitArraysTest extends TestCase {
             for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
             if(same) return;
         }
-        fail(message+";\n expected: ["+StringArrays.join(",",expected)+"];\n   actual: ["+StringArrays.join(",",actual)+"]");
+        fail(message+";\n expected: ["+BoolArrays.join(",",expected)+"];\n   actual: ["+BoolArrays.join(",",actual)+"]");
     }
 
     public void testFlipBoolean() {

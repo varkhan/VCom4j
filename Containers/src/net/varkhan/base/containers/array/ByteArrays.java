@@ -3,6 +3,9 @@
  */
 package net.varkhan.base.containers.array;
 
+import java.io.IOException;
+
+
 /**
  * <b>Static byte arrays manipulation utilities.</b>
  * <p/>
@@ -568,6 +571,122 @@ public class ByteArrays {
         byte[] subary=new byte[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
+    }
+
+
+    /*********************************************************************************
+     **  String transformation
+     **/
+
+    private static final char[] hexcode={ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+    /**
+     * Builds a pretty string representation of a byte array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the byte array to stringify
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws java.io.IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <A extends Appendable> A toString(A buf, byte[] array) throws IOException {
+        buf.append("[").append(Integer.toString(array.length)).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Builds a pretty string representation of a byte array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the byte array to stringify
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static StringBuilder toString(StringBuilder buf, byte[] array) {
+        buf.append("[").append(array.length).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Returns a pretty string representation of a byte array.
+     *
+     * @param array the byte array to stringify
+     *
+     * @return a human-readable string exposing the contents of the array
+     */
+    public static String toString(byte[] array) {
+        return toString(new StringBuilder(), array).toString();
+    }
+
+    /**
+     * Appends as strings the elements of a byte array, separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator to use
+     * @param array the byte array to concatenate
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <A extends Appendable> A join(A buf, String sep, byte[] array) throws IOException {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of a byte array, separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator to use
+     * @param array the byte array to concatenate
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static StringBuilder join(StringBuilder buf, String sep, byte[] array) {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            buf.append(hexcode[(array[i]>>>8)&0xF]);
+            buf.append(hexcode[array[i]&0xF]);
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of a byte array, separating them with a given string.
+     *
+     * @param sep   the separator to use
+     * @param array the byte array to concatenate
+     *
+     * @return a concatenation of the elements of the array, as string, and the separator
+     */
+    public static String join(String sep, byte[] array) {
+        return join(new StringBuilder(), sep, array).toString();
     }
 
 }

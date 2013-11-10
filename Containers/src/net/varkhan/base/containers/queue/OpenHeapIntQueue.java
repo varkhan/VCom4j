@@ -363,13 +363,13 @@ public class OpenHeapIntQueue implements IntQueue {
 
     /**
      * Iterate over each element of the queue, and pass it as argument to a
-     * visitor's {@link Visitor#visit(Type, Par)} method, until this method returns
+     * visitor's {@link Visitor#invoke(Object, Object)} method, until this method returns
      * a negative count.
      *
      *
      * @param vis the visitor
+     * @param par the control parameter
      *
-     * @param par
      * @return the sum of all positive return values from the visitor
      */
     public <Par> long visit(Visitor<Integer,Par> vis, Par par) {
@@ -388,13 +388,13 @@ public class OpenHeapIntQueue implements IntQueue {
 
     /**
      * Iterate over each element of the queue, and pass it as argument to a
-     * visitor's {@link Visitor#visit(Type, Par)} method, until this method returns
+     * visitor's {@link Visitor#invoke(Object, Object)} method, until this method returns
      * a negative count.
      *
      *
      * @param vis the visitor
+     * @param par the control parameter
      *
-     * @param par
      * @return the sum of all positive return values from the visitor
      */
     public <Par> long visit(IntVisitor<Par> vis, Par par) {
@@ -417,7 +417,7 @@ public class OpenHeapIntQueue implements IntQueue {
      * @return the string representation of the array of values in the queue
      */
     public String toString() {
-        return net.varkhan.base.containers.array.StringArrays.toString(heap);
+        return net.varkhan.base.containers.array.IntArrays.toString(heap);
     }
 
 

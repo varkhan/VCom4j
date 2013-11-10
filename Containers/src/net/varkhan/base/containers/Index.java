@@ -75,7 +75,7 @@ public interface Index {
         public long next() { throw new InvalidIndexException(); }
         public boolean hasPrevious() { return false; }
         public long previous() { throw new InvalidIndexException(); }
-    };
+    }
 
 
     /**
@@ -102,12 +102,10 @@ public interface Index {
             return element;
         }
 
-        public boolean hasPrevious() { return !available; }
+        public boolean hasPrevious() { return false; }
 
         public long previous() {
-            if(available) throw new InvalidIndexException();
-            available=true;
-            return element;
+            throw new InvalidIndexException();
         }
     }
 
@@ -136,11 +134,11 @@ public interface Index {
             return ++pos;
         }
 
-        public boolean hasPrevious() { return pos>=min; }
+        public boolean hasPrevious() { return pos>min; }
 
         public long previous() {
-            if(pos<min) throw new InvalidIndexException();
-            return pos--;
+            if(pos<=min) throw new InvalidIndexException();
+            return --pos;
         }
     }
 
@@ -170,8 +168,8 @@ public interface Index {
         public boolean hasPrevious() { return pos>0; }
 
         public long previous() {
-            if(pos<0) throw new Sequence.InvalidIndexException();
-            return elements[pos--];
+            if(pos<=0) throw new Sequence.InvalidIndexException();
+            return elements[--pos];
         }
     }
 
@@ -193,8 +191,10 @@ public interface Index {
         public long current() { return segments[pos].current(); }
 
         public boolean hasNext() {
+            int pos = this.pos;
             if(pos<0) pos = 0;
-            return pos<segments.length && segments[pos].hasNext();
+            while(pos<segments.length && !segments[pos].hasNext()) pos ++;
+            return pos<segments.length;
         }
 
         public long next() {
@@ -205,8 +205,10 @@ public interface Index {
         }
 
         public boolean hasPrevious() {
+            int pos = this.pos;
             if(pos>=segments.length) pos = segments.length-1;
-            return pos>=0 && segments[pos].hasPrevious();
+            while(pos>=0 && !segments[pos].hasPrevious()) pos --;
+            return pos>=0;
         }
 
         public long previous() {

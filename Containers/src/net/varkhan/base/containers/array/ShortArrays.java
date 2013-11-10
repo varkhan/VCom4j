@@ -3,6 +3,9 @@
  */
 package net.varkhan.base.containers.array;
 
+import java.io.IOException;
+
+
 /**
  * <b>Static short arrays manipulation utilities.</b>
  * <p/>
@@ -503,6 +506,114 @@ public class ShortArrays {
         short[] subary=new short[end-beg];
         if(end>beg) System.arraycopy(array, beg, subary, 0, end-beg);
         return subary;
+    }
+
+
+    /*********************************************************************************
+     **  String transformation
+     **/
+
+    /**
+     * Builds a pretty string representation of a short array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the short array to stringify
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws java.io.IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <A extends Appendable> A toString(A buf, short[] array) throws IOException {
+        buf.append("[").append(Integer.toString(array.length)).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            buf.append(Integer.toString(array[i]));
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Builds a pretty string representation of a short array.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param array the short array to stringify
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static StringBuilder toString(StringBuilder buf, short[] array) {
+        buf.append("[").append(array.length).append("|");
+        for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(",");
+            buf.append(Integer.toString(array[i]));
+        }
+        buf.append("]");
+        return buf;
+    }
+
+    /**
+     * Returns a pretty string representation of a short array.
+     *
+     * @param array the short array to stringify
+     *
+     * @return a human-readable string exposing the contents of the array
+     */
+    public static String toString(short[] array) {
+        return toString(new StringBuilder(), array).toString();
+    }
+
+    /**
+     * Appends as strings the elements of a short array, separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator to use
+     * @param array the short array to concatenate
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <A extends Appendable> A join(A buf, String sep, short[] array) throws IOException {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            buf.append(Integer.toString(array[i]));
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            buf.append(Integer.toString(array[i]));
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of a short array, separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param sep   the separator to use
+     * @param array the short array to concatenate
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static StringBuilder join(StringBuilder buf, String sep, short[] array) {
+        if(sep==null) for(int i=0;i<array.length;i++) {
+            buf.append(Integer.toString(array[i]));
+        }
+        else for(int i=0;i<array.length;i++) {
+            if(i>0) buf.append(sep);
+            buf.append(Integer.toString(array[i]));
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the elements of a short array, separating them with a given string.
+     *
+     * @param sep   the separator to use
+     * @param array the short array to concatenate
+     *
+     * @return a concatenation of the elements of the array, as string, and the separator
+     */
+    public static String join(String sep, short[] array) {
+        return join(new StringBuilder(), sep, array).toString();
     }
 
 }

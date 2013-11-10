@@ -20,7 +20,7 @@ public class BoolArraysTest extends TestCase {
             for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
             if(same) return;
         }
-        fail(message+";\n expected: ["+StringArrays.join(",",expected)+"];\n   actual: ["+StringArrays.join(",",actual)+"]");
+        fail(message+";\n expected: ["+BoolArrays.join(",",expected)+"];\n   actual: ["+BoolArrays.join(",",actual)+"]");
     }
 
     public void testEquals() throws Exception {
@@ -119,6 +119,27 @@ public class BoolArraysTest extends TestCase {
             fail("subarray([1,2,3,4,5,6],3,7)");
         } catch (ArrayIndexOutOfBoundsException e) {
         }
+    }
+
+    public void testStrgBool() throws Exception {
+        assertEquals("[0|]",BoolArrays.toString(new boolean[]{}));
+        assertEquals("[1|0]",BoolArrays.toString(new boolean[]{false}));
+        assertEquals("[1|1]",BoolArrays.toString(new boolean[]{true}));
+        assertEquals("[5|0,1,1,0,1]",BoolArrays.toString(new boolean[]{false,true,true,false,true}));
+        assertEquals("[5|0,1,1,0,1]",BoolArrays.toString(new StringBuilder(),new boolean[]{false,true,true,false,true}).toString());
+        assertEquals("[5|0,1,1,0,1]",BoolArrays.toString(new StringBuffer(),new boolean[]{false,true,true,false,true}).toString());
+    }
+
+    public void testJoinBool() throws Exception {
+        assertEquals("",BoolArrays.join(":",new boolean[]{}));
+        assertEquals("0",BoolArrays.join(":",new boolean[]{false}));
+        assertEquals("1",BoolArrays.join(":",new boolean[]{true}));
+        assertEquals("0:1:1:0:1",BoolArrays.join(":",new boolean[]{false,true,true,false,true}));
+        assertEquals("0:1:1:0:1",BoolArrays.join(new StringBuilder(),":",new boolean[]{false,true,true,false,true}).toString());
+        assertEquals("0:1:1:0:1",BoolArrays.join(new StringBuffer(),":",new boolean[]{false,true,true,false,true}).toString());
+        assertEquals("01101",BoolArrays.join(null,new boolean[]{false,true,true,false,true}));
+        assertEquals("01101",BoolArrays.join(new StringBuilder(),null,new boolean[]{false,true,true,false,true}).toString());
+        assertEquals("01101",BoolArrays.join(new StringBuffer(),null,new boolean[]{false,true,true,false,true}).toString());
     }
 
 }

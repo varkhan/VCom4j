@@ -24,7 +24,7 @@ public class DoubleArraysTest extends TestCase {
             for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
             if(same) return;
         }
-        fail(message+";\n expected: ["+StringArrays.join(",", expected)+"];\n   actual: ["+StringArrays.join(",", actual)+"]");
+        fail(message+";\n expected: ["+DoubleArrays.join(",", expected)+"];\n   actual: ["+DoubleArrays.join(",", actual)+"]");
     }
 
     public static double[] reverse(double[] a) {
@@ -97,7 +97,7 @@ public class DoubleArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+DoubleArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.DoubleArrays.sort)");
     }
@@ -136,7 +136,7 @@ public class DoubleArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+DoubleArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.DoubleArrays.sort)");
     }
@@ -329,6 +329,29 @@ public class DoubleArraysTest extends TestCase {
         assertEquals("asList(...).iterator().next().next()", 2.02, it.nextValue());
         assertEquals("asList(...).iterator().next().next().next()", 3.03, it.nextValue());
         assertFalse("asList(...).iterator().next().next().next().hasNext()", it.hasNext());
+    }
+
+    public void testStrgDouble() throws Exception {
+        assertEquals("[0|]",DoubleArrays.toString(new double[]{}));
+        assertEquals("[1|0.000000]",DoubleArrays.toString(new double[]{0}));
+        assertEquals("[1|1.000000]",DoubleArrays.toString(new double[]{1}));
+        assertEquals("[1|247.000000]",DoubleArrays.toString(new double[]{0xF7}));
+        assertEquals("[5|0.000000,1.000000,2.200000,243.000000,4.000000]",DoubleArrays.toString(new double[]{0,1,2.2,0xF3,4}));
+        assertEquals("[5|0.000000,1.000000,2.200000,243.000000,4.000000]",DoubleArrays.toString(new StringBuilder(),new double[]{0,1,2.2,0xF3,4}).toString());
+        assertEquals("[5|0.000000,1.000000,2.200000,243.000000,4.000000]",DoubleArrays.toString(new StringBuffer(),new double[]{0,1,2.2,0xF3,4}).toString());
+    }
+
+    public void testJoinDouble() throws Exception {
+        assertEquals("",DoubleArrays.join(":",new double[]{}));
+        assertEquals("0.000000",DoubleArrays.join(":",new double[]{0}));
+        assertEquals("1.000000",DoubleArrays.join(":",new double[]{1}));
+        assertEquals("247.000000",DoubleArrays.join(":",new double[]{0xF7}));
+        assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",DoubleArrays.join(":",new double[]{0,1,2.2,0xF3,4}));
+        assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",DoubleArrays.join(new StringBuilder(),":",new double[]{0,1,2.2,0xF3,4}).toString());
+        assertEquals("0.000000:1.000000:2.200000:243.000000:4.000000",DoubleArrays.join(new StringBuffer(),":",new double[]{0,1,2.2,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",DoubleArrays.join(null,new double[]{0,1,2.2,0xF3,4}));
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",DoubleArrays.join(new StringBuilder(),null,new double[]{0,1,2.2,0xF3,4}).toString());
+        assertEquals("0.0000001.0000002.200000243.0000004.000000",DoubleArrays.join(new StringBuffer(),null,new double[]{0,1,2.2,0xF3,4}).toString());
     }
 
 }

@@ -34,7 +34,7 @@ public class ByteArraysTest extends TestCase {
             int len=ByteArrays.lenVariadic(val);
             byte[] a=new byte[20];
             ByteArrays.setVariadic(a, 0, val);
-            System.out.println(val+" "+len+" "+StringArrays.toString(a));
+            System.out.println(val+" "+len+" "+ByteArrays.toString(a));
             assertEquals("setVariadic().len", 0, a[len]);
             assertTrue("setVariadic()[len]", a[len-1]>=0);
             assertTrue("setVariadic()[0]", len==1||a[0]<0);
@@ -50,7 +50,7 @@ public class ByteArraysTest extends TestCase {
             for(int i=0; i<expected.length; i++) if(expected[i]!=actual[i]) { same=false; break; }
             if(same) return;
         }
-        fail(message+";\n expected: ["+StringArrays.join(",",expected)+"];\n   actual: ["+StringArrays.join(",",actual)+"]");
+        fail(message+";\n expected: ["+ByteArrays.join(",",expected)+"];\n   actual: ["+ByteArrays.join(",",actual)+"]");
     }
 
     public static byte[] reverse(byte[] a) {
@@ -123,7 +123,7 @@ public class ByteArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+ByteArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.ByteArrays.sort)");
     }
@@ -162,7 +162,7 @@ public class ByteArraysTest extends TestCase {
         }
         long t2 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            assertArrayEquals("sort("+StringArrays.join(",",a[i])+")",a2[i],a1[i]);
+            assertArrayEquals("sort("+ByteArrays.join(",",a[i])+")",a2[i],a1[i]);
         }
         System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.ByteArrays.sort)");
     }
@@ -345,6 +345,29 @@ public class ByteArraysTest extends TestCase {
         }
         assertArrayEquals("subarray(['1','2','3','4','5','6'],0,6)", new byte[] { 1, 2, 3, 4, 5, 6 },
                           ByteArrays.subarray(new byte[] { 1, 2, 3, 4, 5, 6 }, 0, 6));
+    }
+
+    public void testStrgByte() throws Exception {
+        assertEquals("[0|]",ByteArrays.toString(new byte[]{}));
+        assertEquals("[1|00]",ByteArrays.toString(new byte[]{0}));
+        assertEquals("[1|01]",ByteArrays.toString(new byte[]{1}));
+        assertEquals("[1|F7]",ByteArrays.toString(new byte[]{(byte)0xF7}));
+        assertEquals("[5|00,01,02,F3,04]",ByteArrays.toString(new byte[]{0,1,2,(byte)0xF3,4}));
+        assertEquals("[5|00,01,02,F3,04]",ByteArrays.toString(new StringBuilder(),new byte[]{0,1,2,(byte)0xF3,4}).toString());
+        assertEquals("[5|00,01,02,F3,04]",ByteArrays.toString(new StringBuffer(),new byte[]{0,1,2,(byte)0xF3,4}).toString());
+    }
+
+    public void testJoinByte() throws Exception {
+        assertEquals("",ByteArrays.join(":",new byte[]{}));
+        assertEquals("00",ByteArrays.join(":",new byte[]{0}));
+        assertEquals("01",ByteArrays.join(":",new byte[]{1}));
+        assertEquals("F7",ByteArrays.join(":",new byte[]{(byte)0xF7}));
+        assertEquals("00:01:02:F3:04",ByteArrays.join(":",new byte[]{0,1,2,(byte)0xF3,4}));
+        assertEquals("00:01:02:F3:04",ByteArrays.join(new StringBuilder(),":",new byte[]{0,1,2,(byte)0xF3,4}).toString());
+        assertEquals("00:01:02:F3:04",ByteArrays.join(new StringBuffer(),":",new byte[]{0,1,2,(byte)0xF3,4}).toString());
+        assertEquals("000102F304",ByteArrays.join(null,new byte[]{0,1,2,(byte)0xF3,4}));
+        assertEquals("000102F304",ByteArrays.join(new StringBuilder(),null,new byte[]{0,1,2,(byte)0xF3,4}).toString());
+        assertEquals("000102F304",ByteArrays.join(new StringBuffer(),null,new byte[]{0,1,2,(byte)0xF3,4}).toString());
     }
 
 }
