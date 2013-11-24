@@ -1,5 +1,6 @@
 package net.varkhan.base.conversion.character;
 
+import net.varkhan.base.conversion.AbstractEncoder;
 import net.varkhan.base.conversion.Encoder;
 import net.varkhan.base.conversion.serializer.EncodingException;
 
@@ -20,7 +21,7 @@ import java.nio.ReadOnlyBufferException;
  * @date 1/30/11
  * @time 5:42 AM
  */
-public class AsciiEncoder<C> implements Encoder<CharSequence,C> {
+public class AsciiEncoder<C> extends AbstractEncoder<CharSequence,C> implements Encoder<CharSequence,C> {
 
 
     public long encode(CharSequence obj, OutputStream stm, C ctx) { return _encode(obj, stm); }
@@ -71,7 +72,7 @@ public class AsciiEncoder<C> implements Encoder<CharSequence,C> {
         try {
             int p=(int) pos;
             int i=0;
-            while(i<obj.length()) {
+            while(i<obj.length() && p<pos+len) {
                 char c=obj.charAt(i++);
                 dat[p++]=(byte) (0x7F&c);
             }

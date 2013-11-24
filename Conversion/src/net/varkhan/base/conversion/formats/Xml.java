@@ -1,10 +1,8 @@
 package net.varkhan.base.conversion.formats;
 
-import net.varkhan.base.containers.array.CharArrays;
-import net.varkhan.base.containers.map.Map;
-
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Map;
 
 
 /**
@@ -195,7 +193,7 @@ public class Xml {
     public static <A extends Appendable> A writeComm(A out, CharSequence txt) throws IOException {
         out.append("<!--");
         // Replace double-hyphen delimiters to something safe
-        if(txt!=null) CharArrays.repl(out, txt, "--", "- -");
+        if(txt!=null) repl(out, txt, "--", "- -");
         out.append("-->");
         return out;
     }
@@ -216,7 +214,7 @@ public class Xml {
             if(tt!=null) for(CharSequence t : tt) {
                 // Replace double-hyphen delimiters to something safe
                 if(t!=null) {
-                    CharArrays.repl(out, t, "--", "- -");
+                    repl(out, t, "--", "- -");
                     out.append('\n');
                 }
             }
@@ -244,7 +242,7 @@ public class Xml {
      */
     public static <A extends Appendable> A writeText(A out, CharSequence txt) throws IOException {
         // Replace common entities
-        if(txt!=null) CharArrays.repl(out, txt, XML_ENTITIES_CHARS, XML_ENTITIES_NAMES);
+        if(txt!=null) repl(out, txt, XML_ENTITIES_CHARS, XML_ENTITIES_NAMES);
         return out;
     }
 
@@ -267,7 +265,7 @@ public class Xml {
             if(tt!=null) for(CharSequence t : tt) {
                 // Replace common entities
                 if(t!=null) {
-                    CharArrays.repl(out, t, XML_ENTITIES_CHARS, XML_ENTITIES_NAMES);
+                    repl(out, t, XML_ENTITIES_CHARS, XML_ENTITIES_NAMES);
                     out.append('\n');
                 }
             }
@@ -345,7 +343,7 @@ public class Xml {
             while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
             // Empty attribute: next attribute with no intervening =, or EOL reached
             if(c!='=') {
-                if(atr!=null) atr.add(name.toString(), null);
+                if(atr!=null) atr.put(name.toString(), null);
                 continue;
             }
             while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
@@ -376,7 +374,7 @@ public class Xml {
                     c = in.read();
                 }
             }
-            if(atr!=null) atr.add(name.toString(), buf.toString());
+            if(atr!=null) atr.put(name.toString(), buf.toString());
         }
         return c;
     }
@@ -474,6 +472,55 @@ public class Xml {
      */
     public static boolean isWhiteSpace(int c) {
         return c==' '||c=='\n'||c=='\r'||c=='\t';
+    }
+
+    protected static <A extends Appendable> A repl(A buf, CharSequence str, CharSequence pat, CharSequence rep) throws IOException {
+        final int lp=pat.length();
+        final int ls=str.length();
+        // Pattern finding loop
+        find:
+        for(int i=0;i<ls;) {
+            // Look for a local match starting at i
+            for(int j=0;j<lp;j++) {
+                if(i+j>=ls||str.charAt(i+j)!=pat.charAt(j)) {
+                    // No match => add current char, restart match
+                    buf.append(str.charAt(i++));
+                    continue find;
+                }
+            }
+            // Match => add replacement
+            if(rep!=null) buf.append(rep);
+            i+=lp;
+        }
+        return buf;
+    }
+
+    protected static <A extends Appendable> A repl(A buf, CharSequence str, CharSequence[] pat, CharSequence[] rep) throws IOException {
+        final int np=pat.length;
+        final int ls=str.length();
+        // Pattern finding loop
+        find:
+        for(int i=0;i<ls;) {
+            match:
+            for(int k=0;k<np;k++) {
+                CharSequence sp=pat[k];
+                final int lp=sp.length();
+                // Look for a local match starting at i
+                for(int j=0;j<lp;j++) {
+                    if(i+j>=ls||str.charAt(i+j)!=sp.charAt(j)) {
+                        // No match for pattern => go to next pattern
+                        continue match;
+                    }
+                }
+                // Match => add replacement, skip pattern
+                if(rep!=null) buf.append(rep[k]);
+                i+=lp;
+                continue find;
+            }
+            // No match => add current char, restart match
+            buf.append(str.charAt(i++));
+        }
+        return buf;
     }
 
 }

@@ -77,6 +77,8 @@
         <include name="?*.tsv"/>
         <include name="?*.tsv.gz"/>
         <include name="?*.txt"/>
+        <include name="?*.json"/>
+        <include name="?*.xon"/>
     </patternset>
 
     <patternset id="ignored.files" includes="">

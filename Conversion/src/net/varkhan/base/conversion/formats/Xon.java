@@ -1,24 +1,20 @@
 package net.varkhan.base.conversion.formats;
 
-import net.varkhan.base.containers.Iterator;
-import net.varkhan.base.containers.array.CharArrays;
-import net.varkhan.base.containers.list.ArrayList;
-import net.varkhan.base.containers.list.List;
-import net.varkhan.base.containers.map.ArrayOpenHashMap;
-import net.varkhan.base.containers.map.Map;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.*;
 
 
 /**
  * <b>XON syntax parser and converter</b>.
  * <p/>
- * XON is an extension of JSON that recognizes arrays as a distinct type from lists,
- * distinguished by the use of parentheses as delimiters in place of square brackets,
- * and allows map syntax to omit field values, allowing their use as sets.
- * <p/>
+ * XON is an extension of JSON that:<ul>
+ * <li>recognizes both <em>arrays</em> (delimited by square brackets, as in JSON),
+ * and <em>collections</em> (unordered bags of values, delimited by parentheses),</li>
+ * <li>allows map syntax to omit field values for {@literal null} values, allowing
+ * their use as a set.</li>
+ * </ul><p/>
  * This class provides several static utilities, and helper objects, to serialize and deserialize
  * basic Java objects (boolean, number, String, arrays, List and Map) to and from their
  * representation as XON text.
@@ -32,13 +28,27 @@ public class Xon {
 
     protected Xon() { }
 
-    protected static final String LITERAL_TRUE  = "true";
-    protected static final String LITERAL_FALSE = "false";
-    protected static final String LITERAL_NULL  = "null";
+    /*********************************************************************************
+     **  Literals and separators
+     **/
+
+    protected static final char SEP_ENTRY   =':';
+    protected static final char SEP_ELEMENT =',';
+    protected static final char SEP_STRING  ='"';
+    protected static final char SEP_VECTOR_S='[';
+    protected static final char SEP_VECTOR_E=']';
+    protected static final char SEP_COLLEC_S='(';
+    protected static final char SEP_COLLEC_E=')';
+    protected static final char SEP_OBJECT_S='{';
+    protected static final char SEP_OBJECT_E='}';
+
+    protected static final String LITERAL_TRUE ="true";
+    protected static final String LITERAL_FALSE="false";
+    protected static final String LITERAL_NULL ="null";
 
 
     /*********************************************************************************
-     **  JSON writing
+     **  XON writing
      **/
 
     /**
@@ -47,10 +57,10 @@ public class Xon {
      * @param val the object to write
      * @return a JSON string representation of thr object
      */
-    public static String toXon(Object val) {
-        StringBuilder buf = new StringBuilder();
-        try { writeObject(buf,val); }
-        catch (IOException e) { /* ignore: StringBuilder doesn't throw this */ }
+    public static String write(Object val) {
+        StringBuilder buf=new StringBuilder();
+        try { write(buf, val); }
+        catch(IOException e) { /* ignore: StringBuilder doesn't throw this */ }
         return buf.toString();
     }
 
@@ -66,7 +76,7 @@ public class Xon {
      * @throws java.io.IOException if the output Appendable generated an exception
      */
     @SuppressWarnings("unchecked")
-    public static <A extends Appendable> A writeObject(A out, Object obj) throws IOException {
+    public static <A extends Appendable> A write(A out, Object obj) throws IOException {
         if(obj==null) {
             writeNull(out);
         }
@@ -77,34 +87,34 @@ public class Xon {
             writeNumber(out, (Number) obj);
         }
         else if(obj instanceof CharSequence) {
-            out.append('"');
+            out.append(SEP_STRING);
             writeString(out, (CharSequence) obj);
-            out.append('"');
+            out.append(SEP_STRING);
+        }
+//        else if(obj instanceof Map) {
+//            out.append('{');
+//            writeMap(out, (Map<CharSequence,Object>) obj);
+//            out.append('}');
+//        }
+//        else if(obj instanceof List) {
+//            out.append('(');
+//            writeList(out, (List<Object>) obj);
+//            out.append(')');
+//        }
+        else if(obj.getClass().isArray()) {
+            out.append(SEP_VECTOR_S);
+            writeVector(out, (Object[]) obj);
+            out.append(SEP_VECTOR_E);
         }
         else if(obj instanceof Map) {
             out.append('{');
-            writeMap(out, (Map<CharSequence,Object>) obj);
-            out.append('}');
+            writeObject(out, (Map<CharSequence,Object>) obj);
+            out.append(SEP_OBJECT_E);
         }
-        else if(obj instanceof List) {
-            out.append('[');
-            writeList(out, (List<Object>) obj);
-            out.append(']');
-        }
-        else if(obj.getClass().isArray()) {
-            out.append('(');
-            writeArray(out, (Object[]) obj);
-            out.append(')');
-        }
-        else if(obj instanceof java.util.Map) {
-            out.append('{');
-            writeMap(out, (java.util.Map<CharSequence,Object>) obj);
-            out.append('}');
-        }
-        else if(obj instanceof java.util.List) {
-            out.append('[');
-            writeList(out, (java.util.List<Object>) obj);
-            out.append(']');
+        else if(obj instanceof Collection) {
+            out.append(SEP_COLLEC_S);
+            writeCollec(out, (Collection<Object>) obj);
+            out.append(SEP_COLLEC_E);
         }
         else throw new IllegalArgumentException("Cannot serialize object to XON: unknown class "+obj.getClass().getCanonicalName());
         return out;
@@ -121,38 +131,38 @@ public class Xon {
      *
      * @throws java.io.IOException if the output Appendable generated an exception
      */
-    public static <A extends Appendable> A writeMap(A out, java.util.Map<? extends CharSequence,?> map) throws IOException {
+    public static <A extends Appendable> A writeObject(A out, Map<? extends CharSequence,?> map) throws IOException {
         @SuppressWarnings("unchecked")
-        java.util.Iterator<java.util.Map.Entry<CharSequence, Object>> it = ((java.util.Map<CharSequence,Object>) map).entrySet().iterator();
+        Iterator<Map.Entry<CharSequence, Object>> it = ((Map<CharSequence,Object>) map).entrySet().iterator();
         while(it.hasNext()) {
-            java.util.Map.Entry<CharSequence, ?> x = it.next();
+            Map.Entry<CharSequence, ?> x = it.next();
             writeField(out, x.getKey().toString(), x.getValue());
-            if(it.hasNext()) out.append(',');
+            if(it.hasNext()) out.append(SEP_ELEMENT);
         }
         return out;
     }
 
-    /**
-     * Writes a map to an {@link Appendable}.
-     *
-     * @param out the output Appendable
-     * @param map the map to write
-     * @param <A> the Appendable type
-     *
-     * @return the output Appendable (to facilitate chaining)
-     *
-     * @throws java.io.IOException if the output Appendable generated an exception
-     */
-    public static <A extends Appendable> A writeMap(A out, Map<? extends CharSequence,?> map) throws IOException {
-        @SuppressWarnings("unchecked")
-        Iterator<? extends Map.Entry<CharSequence,Object>> it = ((Map<CharSequence,Object>) map).iterator();
-        while(it.hasNext()) {
-            java.util.Map.Entry<CharSequence, ?> x = it.next();
-            writeField(out, x.getKey().toString(), x.getValue());
-            if(it.hasNext()) out.append(',');
-        }
-        return out;
-    }
+//    /**
+//     * Writes a map to an {@link Appendable}.
+//     *
+//     * @param out the output Appendable
+//     * @param map the map to write
+//     * @param <A> the Appendable type
+//     *
+//     * @return the output Appendable (to facilitate chaining)
+//     *
+//     * @throws java.io.IOException if the output Appendable generated an exception
+//     */
+//    public static <A extends Appendable> A writeMap(A out, Map<? extends CharSequence,?> map) throws IOException {
+//        @SuppressWarnings("unchecked")
+//        Iterator<? extends Map.Entry<CharSequence,Object>> it = ((Map<CharSequence,Object>) map).iterator();
+//        while(it.hasNext()) {
+//            Map.Entry<CharSequence, ?> x = it.next();
+//            writeField(out, x.getKey().toString(), x.getValue());
+//            if(it.hasNext()) out.append(',');
+//        }
+//        return out;
+//    }
 
     /**
      * Writes a list to an {@link Appendable}.
@@ -165,11 +175,12 @@ public class Xon {
      *
      * @throws java.io.IOException if the output Appendable generated an exception
      */
-    public static <A extends Appendable> A writeList(A out, java.util.List<?> lst) throws IOException {
-        java.util.Iterator<?> it = lst.iterator();
-        while(it.hasNext()) {
-            writeObject(out, it.next());
-            if(it.hasNext()) out.append(',');
+    public static <A extends Appendable> A writeCollec(A out, Collection<?> lst) throws IOException {
+        boolean f = true;
+        for(Object obj : lst) {
+            if(f) f=false;
+            else out.append(SEP_ELEMENT);
+            write(out, obj);
         }
         return out;
     }
@@ -185,42 +196,44 @@ public class Xon {
      *
      * @throws java.io.IOException if the output Appendable generated an exception
      */
-    public static <A extends Appendable> A writeArray(A out, Object... lst) throws IOException {
-        final int len = lst.length;
-        for(int i=0;i<len;i++) {
-            if(i>0) out.append(',');
-            writeObject(out, lst[i]);
+    public static <A extends Appendable> A writeVector(A out, Object... lst) throws IOException {
+        boolean f = true;
+        for(Object obj : lst) {
+            if(f) f=false;
+            else out.append(SEP_ELEMENT);
+            write(out, obj);
         }
         return out;
     }
 
-    /**
-     * Writes a list to an {@link Appendable}.
-     *
-     * @param out the output Appendable
-     * @param cnt the list to write
-     * @param <A> the Appendable type
-     *
-     * @return the output Appendable (to facilitate chaining)
-     *
-     * @throws java.io.IOException if the output Appendable generated an exception
-     */
-    public static <A extends Appendable> A writeList(A out, List<?> cnt) throws IOException {
-        Iterator<?> it = cnt.iterator();
-        while(it.hasNext()) {
-            writeObject(out, it.next());
-            if(it.hasNext()) out.append(',');
-        }
-        return out;
-    }
+//    /**
+//     * Writes a list to an {@link Appendable}.
+//     *
+//     * @param out the output Appendable
+//     * @param lst the list to write
+//     * @param <A> the Appendable type
+//     *
+//     * @return the output Appendable (to facilitate chaining)
+//     *
+//     * @throws java.io.IOException if the output Appendable generated an exception
+//     */
+//    public static <A extends Appendable> A writeList(A out, List<?> lst) throws IOException {
+//        boolean f = true;
+//        for(Object obj : lst) {
+//            if(f) f=false;
+//            else out.append(',');
+//            writeObject(out, obj);
+//        }
+//        return out;
+//    }
 
     public static <A extends Appendable> A writeField(A out, CharSequence key, Object val) throws IOException {
-        out.append('"');
+        out.append(SEP_STRING);
         writeName(out, key);
-        out.append('"');
+        out.append(SEP_STRING);
         if(val!=null) {
-            out.append(':');
-            writeObject(out, val);
+            out.append(SEP_ENTRY);
+            write(out, val);
         }
         return out;
     }
@@ -285,7 +298,7 @@ public class Xon {
 
 
     /*********************************************************************************
-     **  JSON reading
+     **  XON reading
      **/
 
     /**
@@ -330,50 +343,50 @@ public class Xon {
         }
     }
 
-    public static Object asXon(CharSequence str) throws FormatException {
+    public static Object read(CharSequence str) throws FormatException {
         if(str==null) return null;
-        try { return readObject(new StringReader(str.toString())); }
+        try { return read(new StringReader(str.toString())); }
         catch(IOException e) { return null; }
     }
 
-    public static Object readObject(Reader in) throws IOException, FormatException {
+    public static Object read(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         p.skipWhitespace();
-        return readObject(p);
+        return read(p);
     }
 
-    protected static Object readObject(Parser p) throws IOException, FormatException {
+    protected static Object read(Parser p) throws IOException, FormatException {
         int c=p.last();
         switch(c) {
-            case '{': {
+            case SEP_OBJECT_S: {
                 p.next();
-                Map<CharSequence,Object> obj=readMap(p, '"', ':', ',', '}');
+                Map<CharSequence,Object> obj=readObject(p, SEP_STRING, SEP_ENTRY, SEP_ELEMENT, SEP_OBJECT_E);
                 c=p.last();
-                if(c!='}') throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!=SEP_OBJECT_E) throw new FormatException("Unterminated object at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
                 p.next();
                 return obj;
             }
-            case '[': {
+            case SEP_COLLEC_S: {
                 p.next();
-                List<Object> obj=readList(p, ',', ']');
+                Collection<Object> obj=readCollec(p, SEP_ELEMENT, SEP_COLLEC_E);
                 c=p.last();
-                if(c!=']') throw new FormatException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!=SEP_COLLEC_E) throw new FormatException("Unterminated collection at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
                 p.next();
                 return obj;
             }
-            case '(': {
+            case SEP_VECTOR_S: {
                 p.next();
-                Object[] obj=readArray(p, ',', ')');
+                Object[] obj=readVector(p, SEP_ELEMENT, SEP_VECTOR_E);
                 c=p.last();
-                if(c!=')') throw new FormatException("Unterminated array at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!=SEP_VECTOR_E) throw new FormatException("Unterminated vector at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
                 p.next();
                 return obj;
             }
-            case '"': {
+            case SEP_STRING: {
                 p.next();
                 String obj=readString(p, c);
                 c=p.last();
-                if(c!='"') throw new FormatException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!=SEP_STRING) throw new FormatException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
                 p.next();
                 return obj;
             }
@@ -427,8 +440,8 @@ public class Xon {
             buf.append((char)c);
             c = p.next();
         }
-        if(CharArrays.equals(buf,LITERAL_FALSE)) return false;
-        if(CharArrays.equals(buf,LITERAL_TRUE)) return true;
+        if(isEqualSequence(buf, LITERAL_FALSE)) return false;
+        if(isEqualSequence(buf, LITERAL_TRUE)) return true;
         throw new FormatException("Invalid boolean format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
     }
 
@@ -443,9 +456,9 @@ public class Xon {
             buf.append((char)c);
             c = p.next();
         }
-        if(CharArrays.equals(buf,LITERAL_NULL)) return null;
-        if(CharArrays.equals(buf,LITERAL_FALSE)) return false;
-        if(CharArrays.equals(buf,LITERAL_TRUE)) return true;
+        if(isEqualSequence(buf, LITERAL_NULL)) return null;
+        if(isEqualSequence(buf, LITERAL_FALSE)) return false;
+        if(isEqualSequence(buf, LITERAL_TRUE)) return true;
         if(isInteger) try {
             return Long.parseLong(buf.toString());
         }
@@ -464,7 +477,7 @@ public class Xon {
     public static String readString(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        char t='"';
+        char t=SEP_STRING;
         if(c!=t) throw new FormatException("Invalid string format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip leading "
         p.next();
@@ -527,21 +540,21 @@ public class Xon {
         return buf.toString();
     }
 
-    public static List<Object> readList(Reader in) throws IOException, FormatException {
+    public static List<Object> readCollec(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!='[') throw new FormatException("Invalid list format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-        // Skip leading [
+        if(c!=SEP_COLLEC_S) throw new FormatException("Invalid collection format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        // Skip leading (
         p.next();
-        List<Object> obj=readList(p, ',', ']');
+        List<Object> obj=readCollec(p, SEP_ELEMENT, SEP_COLLEC_E);
         c=p.last();
-        if(c!=']') throw new FormatException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-        // Skip trailing ]
+        if(c!=SEP_COLLEC_E) throw new FormatException("Unterminated collection at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        // Skip trailing )
         p.next();
         return obj;
     }
 
-    protected static List<Object> readList(Parser p, char r, char t) throws IOException, FormatException {
+    protected static List<Object> readCollec(Parser p, char r, char t) throws IOException, FormatException {
         List<Object> lst = new ArrayList<Object>();
         int c = p.last();
         // Read all objects until t is found or the end of the stream is reached
@@ -549,7 +562,7 @@ public class Xon {
             // Skip leading whitespace
             c = p.skipWhitespace();
             if(c==t|| c<0) break;
-            Object val = readObject(p);
+            Object val = read(p);
             lst.add(val);
             // Skip trailing whitespace
             c = p.skipWhitespace();
@@ -557,26 +570,26 @@ public class Xon {
             if(c==t || c<0) break;
             // Validate and skip separator
             else if(c==r) c = p.next();
-            else throw new FormatException("Unexpected character in list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+            else throw new FormatException("Unexpected character in collection at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         }
         return lst;
     }
 
-    public static Object[] readArray(Reader in) throws IOException, FormatException {
+    public static Object[] readVector(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!='(') throw new FormatException("Invalid array format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_VECTOR_S) throw new FormatException("Invalid vector format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip leading [
         p.next();
-        Object[] obj=readArray(p, ',', ')');
+        Object[] obj=readVector(p, SEP_ELEMENT, SEP_VECTOR_E);
         c=p.last();
-        if(c!=')') throw new FormatException("Unterminated array at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_VECTOR_E) throw new FormatException("Unterminated vector at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip trailing ]
         p.next();
         return obj;
     }
 
-    protected static Object[] readArray(Parser p, char r, char t) throws IOException, FormatException {
+    protected static Object[] readVector(Parser p, char r, char t) throws IOException, FormatException {
         Object[] ary = new Object[16];
         int len = 0;
         int c = p.last();
@@ -585,7 +598,7 @@ public class Xon {
             // Skip leading whitespace
             c = p.skipWhitespace();
             if(c==t|| c<0) break;
-            Object val = readObject(p);
+            Object val = read(p);
             if(len>=ary.length) {
                 // Multiply capacity by 1.25
                 Object[] a = new Object[ary.length+(ary.length>>2)+1];
@@ -609,22 +622,22 @@ public class Xon {
         return ary;
     }
 
-    public static Map<CharSequence,Object> readMap(Reader in) throws IOException, FormatException {
+    public static Map<CharSequence,Object> readObject(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!='{') throw new FormatException("Invalid map format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_OBJECT_S) throw new FormatException("Invalid map format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip leading {
         p.next();
-        Map<CharSequence,Object> obj=readMap(p, '"', ':', ',', '}');
+        Map<CharSequence,Object> obj=readObject(p, SEP_STRING, SEP_ENTRY, SEP_ELEMENT, SEP_OBJECT_E);
         c=p.last();
-        if(c!='}') throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_OBJECT_E) throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
         // Skip trailing
         p.next();
         return obj;
     }
 
-    protected static Map<CharSequence,Object> readMap(Parser p, char f, char k, char r, char t) throws IOException, FormatException {
-        Map<CharSequence,Object> map = new ArrayOpenHashMap<CharSequence,Object>();
+    protected static Map<CharSequence,Object> readObject(Parser p, char f, char k, char r, char t) throws IOException, FormatException {
+        Map<CharSequence,Object> map = new LinkedHashMap<CharSequence,Object>();
         int c = p.last();
         // Read all objects until } is found or the end of the stream is reached
         while(c>=0) {
@@ -652,12 +665,12 @@ public class Xon {
             c = p.skipWhitespace();
             // Return on terminator
             if(c==t||c<0) {
-                map.add(key, null);
+                map.put(key, null);
                 break;
             }
             // Validate and skip entry separator, if no value specified
             else if(c==r) {
-                map.add(key, null);
+                map.put(key, null);
                 c = p.next();
                 continue;
             }
@@ -667,8 +680,8 @@ public class Xon {
             p.next();
             // Skip intermediary whitespace
             p.skipWhitespace();
-            Object val = readObject(p);
-            map.add(key, val);
+            Object val = read(p);
+            map.put(key, val);
             // Skip trailing whitespace
             c = p.skipWhitespace();
             // Return on terminator
@@ -741,7 +754,29 @@ public class Xon {
      * @return {@literal true} if the character is one of ,:[]{}'"
      */
     public static boolean isReservedChar(int c) {
-        return c==',' || c==':' || c=='[' || c==']' || c=='(' || c==')' || c=='{' || c=='}' || c=='\'' || c=='"';
+        return c=='\'' || c==SEP_STRING
+               || c==SEP_ELEMENT  || c==SEP_ENTRY
+               || c==SEP_COLLEC_S || c==SEP_COLLEC_E
+               || c==SEP_VECTOR_S || c==SEP_VECTOR_E
+               || c==SEP_OBJECT_S || c==SEP_OBJECT_E
+                ;
+    }
+
+    /**
+     * Checks whether two character sequences are identical.
+     *
+     * @param o1 the first sequence
+     * @param o2 the second sequence
+     * @return {@literal true} iff the two sequences are both {@literal null},
+     * or have the same length and identical characters at each respective index
+     */
+    protected static boolean isEqualSequence(CharSequence o1, CharSequence o2) {
+        if(o1==o2) return true;
+        if(o1==null || o2==null) return false;
+        int l1=o1.length();
+        if(l1!=o2.length()) return false;
+        for(int i=0; i<l1; i++) if(o1.charAt(i)!=o2.charAt(i)) return false;
+        return true;
     }
 
 

@@ -1,5 +1,6 @@
 package net.varkhan.base.conversion.character;
 
+import net.varkhan.base.conversion.AbstractEncoder;
 import net.varkhan.base.conversion.Encoder;
 import net.varkhan.base.conversion.serializer.EncodingException;
 
@@ -21,7 +22,7 @@ import java.nio.ReadOnlyBufferException;
  * @date 1/30/11
  * @time 5:42 AM
  */
-public class UTF8Encoder<C> implements Encoder<CharSequence,C> {
+public class UTF8Encoder<C> extends AbstractEncoder<CharSequence,C> implements Encoder<CharSequence,C> {
 
 
     public long encode(CharSequence obj, OutputStream stm, C ctx) { return _encode(obj, stm); }

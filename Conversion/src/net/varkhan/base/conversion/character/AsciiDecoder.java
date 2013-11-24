@@ -1,5 +1,6 @@
 package net.varkhan.base.conversion.character;
 
+import net.varkhan.base.conversion.AbstractDecoder;
 import net.varkhan.base.conversion.Decoder;
 import net.varkhan.base.conversion.serializer.DecodingException;
 
@@ -20,12 +21,24 @@ import java.nio.ReadOnlyBufferException;
  * @date 1/30/11
  * @time 5:42 AM
  */
-public class AsciiDecoder<C> implements Decoder<String,C> {
+public class AsciiDecoder<C> extends AbstractDecoder<String,C> implements Decoder<String,C> {
 
+    public static final AsciiDecoder<?> STRICT = new AsciiDecoder<Object>(false);
+    public static final AsciiDecoder<?> SQUASH = new AsciiDecoder<Object>(true);
+
+    protected final boolean squash;
+
+    public AsciiDecoder() {
+        this(false);
+    }
+
+    public AsciiDecoder(boolean squash) {
+        this.squash = squash;
+    }
 
     public String decode(InputStream stm, C ctx) {
         try {
-            return _decode(new StringBuilder(),stm).toString();
+            return _decode(new StringBuilder(), stm, squash).toString();
         }
         catch(IOException e) {
             /* Never happens -- return null to make compiler happy*/
@@ -35,7 +48,7 @@ public class AsciiDecoder<C> implements Decoder<String,C> {
 
     public String decode(ByteBuffer buf, C ctx) {
         try {
-            return _decode(new StringBuilder(),buf).toString();
+            return _decode(new StringBuilder(), buf, squash).toString();
         }
         catch(IOException e) {
             /* Never happens -- return null to make compiler happy*/
@@ -45,7 +58,7 @@ public class AsciiDecoder<C> implements Decoder<String,C> {
 
     public String decode(byte[] dat, long pos, long len, C ctx) {
         try {
-            return _decode(new StringBuilder(),dat, pos, len).toString();
+            return _decode(new StringBuilder(), dat, pos, len, squash).toString();
         }
         catch(IOException e) {
             /* Never happens -- return null to make compiler happy*/
@@ -54,14 +67,12 @@ public class AsciiDecoder<C> implements Decoder<String,C> {
     }
 
 
-    public static <A extends Appendable> A _decode(A out, InputStream stm) throws IOException {
-        int r=stm.read();
-        while(r>=0) {
+    public static <A extends Appendable> A _decode(A out, InputStream stm, boolean squash) throws IOException {
+        int b=stm.read();
+        while(b>=0) {
             try {
-                int b=0xFF&r;
-                if(b<0x80) {
-                    out.append((char) (b&0x7F));
-                }
+                if(squash) out.append((char) (b&0x7F));
+                else if(b<0x80) out.append((char) (b&0x7F));
                 else throw new DecodingException("Invalid ASCII character");
             }
             catch(IOException e) {
@@ -71,13 +82,12 @@ public class AsciiDecoder<C> implements Decoder<String,C> {
         return out;
     }
 
-    public static <A extends Appendable> A _decode(A out, ByteBuffer buf) throws IOException {
+    public static <A extends Appendable> A _decode(A out, ByteBuffer buf, boolean squash) throws IOException {
         while(buf.position()<buf.limit()) {
             try {
-                int b=0xFF&buf.get();
-                if(b<0x80) {
-                    out.append((char) (b&0x7F));
-                }
+                int b=buf.get();
+                if(squash) out.append((char) (b&0x7F));
+                else if(b<0x80) out.append((char) (b&0x7F));
                 else throw new DecodingException("Invalid ASCII character");
             }
             catch(BufferOverflowException e) {
@@ -90,14 +100,13 @@ public class AsciiDecoder<C> implements Decoder<String,C> {
         return out;
     }
 
-    public static <A extends Appendable> A _decode(A out, byte[] dat, long pos, long len) throws IOException {
+    public static <A extends Appendable> A _decode(A out, byte[] dat, long pos, long len, boolean squash) throws IOException {
         int p = (int)pos;
         while(p<len) {
             try {
-                int b=0xFF&dat[p++];
-                if(b<0x80) {
-                    out.append((char) (b&0x7F));
-                }
+                int b=dat[p++];
+                if(squash) out.append((char) (b&0x7F));
+                else if(b<0x80) out.append((char) (b&0x7F));
                 else throw new DecodingException("Invalid ASCII character");
             }
             catch(ArrayIndexOutOfBoundsException e) {

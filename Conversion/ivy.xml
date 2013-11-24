@@ -9,6 +9,5 @@
         <artifact name="VCom4j-Conversion" ext="pom" type="pom"/>
     </publications>
     <dependencies>
-        <dependency org="net.varkhan" name="VCom4j-Containers" rev="0.6.+"/>
     </dependencies>
 </ivy-module>

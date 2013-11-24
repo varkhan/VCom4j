@@ -1,16 +1,9 @@
 package net.varkhan.base.conversion.formats;
 
-import net.varkhan.base.containers.Iterator;
-import net.varkhan.base.containers.array.CharArrays;
-
-import net.varkhan.base.containers.list.ArrayList;
-import net.varkhan.base.containers.list.List;
-import net.varkhan.base.containers.map.ArrayOpenHashMap;
-import net.varkhan.base.containers.map.Map;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.*;
 
 
 /**
@@ -78,6 +71,11 @@ public class Json {
             writeString(out, (CharSequence) obj);
             out.append('"');
         }
+        else if(obj.getClass().isArray()) {
+            out.append('[');
+            writeArray(out, (Object[]) obj);
+            out.append(']');
+        }
         else if(obj instanceof Map) {
             out.append('{');
             writeMap(out, (Map<CharSequence,Object>) obj);
@@ -86,21 +84,6 @@ public class Json {
         else if(obj instanceof List) {
             out.append('[');
             writeList(out, (List<Object>) obj);
-            out.append(']');
-        }
-        else if(obj.getClass().isArray()) {
-            out.append('[');
-            writeArray(out, (Object[]) obj);
-            out.append(']');
-        }
-        else if(obj instanceof java.util.Map) {
-            out.append('{');
-            writeMap(out, (java.util.Map<CharSequence,Object>) obj);
-            out.append('}');
-        }
-        else if(obj instanceof java.util.List) {
-            out.append('[');
-            writeList(out, (java.util.List<Object>) obj);
             out.append(']');
         }
         else throw new IllegalArgumentException("Cannot serialize object to JSON: unknown class "+obj.getClass().getCanonicalName());
@@ -118,33 +101,11 @@ public class Json {
      *
      * @throws IOException if the output Appendable generated an exception
      */
-    public static <A extends Appendable> A writeMap(A out, java.util.Map<? extends CharSequence,?> map) throws IOException {
-        @SuppressWarnings("unchecked")
-        java.util.Iterator<java.util.Map.Entry<CharSequence, Object>> it = ((java.util.Map<CharSequence,Object>) map).entrySet().iterator();
-        while(it.hasNext()) {
-            java.util.Map.Entry<CharSequence, ?> x = it.next();
-            writeField(out, x.getKey().toString(), x.getValue());
-            if(it.hasNext()) out.append(',');
-        }
-        return out;
-    }
-
-    /**
-     * Writes a map to an {@link Appendable}.
-     *
-     * @param out the output Appendable
-     * @param map the map to write
-     * @param <A> the Appendable type
-     *
-     * @return the output Appendable (to facilitate chaining)
-     *
-     * @throws IOException if the output Appendable generated an exception
-     */
     public static <A extends Appendable> A writeMap(A out, Map<? extends CharSequence,?> map) throws IOException {
         @SuppressWarnings("unchecked")
-        Iterator<? extends Map.Entry<CharSequence,Object>> it = ((Map<CharSequence,Object>) map).iterator();
+        Iterator<Map.Entry<CharSequence, Object>> it = ((Map<CharSequence,Object>) map).entrySet().iterator();
         while(it.hasNext()) {
-            java.util.Map.Entry<CharSequence, ?> x = it.next();
+            Map.Entry<CharSequence, ?> x = it.next();
             writeField(out, x.getKey().toString(), x.getValue());
             if(it.hasNext()) out.append(',');
         }
@@ -162,8 +123,8 @@ public class Json {
      *
      * @throws IOException if the output Appendable generated an exception
      */
-    public static <A extends Appendable> A writeList(A out, java.util.List<?> lst) throws IOException {
-        java.util.Iterator<?> it = lst.iterator();
+    public static <A extends Appendable> A writeList(A out, List<?> lst) throws IOException {
+        Iterator<?> it = lst.iterator();
         while(it.hasNext()) {
             writeObject(out, it.next());
             if(it.hasNext()) out.append(',');
@@ -187,26 +148,6 @@ public class Json {
         for(int i=0;i<len;i++) {
             if(i>0) out.append(',');
             writeObject(out, lst[i]);
-        }
-        return out;
-    }
-
-    /**
-     * Writes a list to an {@link Appendable}.
-     *
-     * @param out the output Appendable
-     * @param cnt the list to write
-     * @param <A> the Appendable type
-     *
-     * @return the output Appendable (to facilitate chaining)
-     *
-     * @throws IOException if the output Appendable generated an exception
-     */
-    public static <A extends Appendable> A writeList(A out, List<?> cnt) throws IOException {
-        Iterator<?> it = cnt.iterator();
-        while(it.hasNext()) {
-            writeObject(out, it.next());
-            if(it.hasNext()) out.append(',');
         }
         return out;
     }
@@ -413,8 +354,8 @@ public class Json {
             buf.append((char)c);
             c = p.next();
         }
-        if(CharArrays.equals(buf,LITERAL_FALSE)) return false;
-        if(CharArrays.equals(buf,LITERAL_TRUE)) return true;
+        if(isEqualSequence(buf, LITERAL_FALSE)) return false;
+        if(isEqualSequence(buf, LITERAL_TRUE)) return true;
         throw new FormatException("Invalid boolean at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
     }
 
@@ -429,9 +370,9 @@ public class Json {
             buf.append((char)c);
             c = p.next();
         }
-        if(CharArrays.equals(buf,LITERAL_NULL)) return null;
-        if(CharArrays.equals(buf,LITERAL_FALSE)) return false;
-        if(CharArrays.equals(buf,LITERAL_TRUE)) return true;
+        if(isEqualSequence(buf, LITERAL_NULL)) return null;
+        if(isEqualSequence(buf, LITERAL_FALSE)) return false;
+        if(isEqualSequence(buf, LITERAL_TRUE)) return true;
         if(isInteger) try {
             return Long.parseLong(buf.toString());
         }
@@ -563,7 +504,7 @@ public class Json {
     }
 
     protected static Map<CharSequence,Object> readMap(Parser p, char f, char k, char r, char t) throws IOException, FormatException {
-        Map<CharSequence,Object> map = new ArrayOpenHashMap<CharSequence,Object>();
+        Map<CharSequence,Object> map = new LinkedHashMap<CharSequence,Object>();
         int c = p.last();
         // Read all objects until } is found or the end of the stream is reached
         while(c>=0) {
@@ -596,7 +537,7 @@ public class Json {
             // Skip intermediary whitespace
             p.skipWhitespace();
             Object val = readObject(p);
-            map.add(key, val);
+            map.put(key, val);
             // Skip trailing whitespace
             c = p.skipWhitespace();
             // Return on terminator
@@ -670,6 +611,23 @@ public class Json {
      */
     public static boolean isReservedChar(int c) {
         return c==',' || c==':' || c=='[' || c==']' || c=='{' || c=='}' || c=='\'' || c=='"';
+    }
+
+    /**
+     * Checks whether two character sequences are identical.
+     *
+     * @param o1 the first sequence
+     * @param o2 the second sequence
+     * @return {@literal true} iff the two sequences are both {@literal null},
+     * or have the same length and identical characters at each respective index
+     */
+    protected static boolean isEqualSequence(CharSequence o1, CharSequence o2) {
+        if(o1==o2) return true;
+        if(o1==null || o2==null) return false;
+        int l1=o1.length();
+        if(l1!=o2.length()) return false;
+        for(int i=0; i<l1; i++) if(o1.charAt(i)!=o2.charAt(i)) return false;
+        return true;
     }
 
 

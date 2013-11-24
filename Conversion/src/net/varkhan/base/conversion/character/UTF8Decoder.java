@@ -1,5 +1,6 @@
 package net.varkhan.base.conversion.character;
 
+import net.varkhan.base.conversion.AbstractDecoder;
 import net.varkhan.base.conversion.Decoder;
 import net.varkhan.base.conversion.serializer.DecodingException;
 
@@ -21,11 +22,10 @@ import java.nio.ReadOnlyBufferException;
  * @date 1/30/11
  * @time 5:42 AM
  */
-public class UTF8Decoder<C> implements Decoder<String,C> {
+public class UTF8Decoder<C> extends AbstractDecoder<String,C> implements Decoder<String,C> {
 
 
     public String decode(InputStream stm, C ctx) {
-        StringBuilder buf = new StringBuilder();
         try {
             return _decode(new StringBuilder(),stm).toString();
         }

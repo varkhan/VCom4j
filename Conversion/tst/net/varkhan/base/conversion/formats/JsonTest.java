@@ -1,10 +1,12 @@
 package net.varkhan.base.conversion.formats;
 
 import junit.framework.TestCase;
-import net.varkhan.base.containers.array.Arrays;
-import net.varkhan.base.containers.map.Map;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -18,21 +20,21 @@ import java.io.*;
 public class JsonTest extends TestCase {
 
     public void testWriteObject() throws Exception {
-        assertEquals("{\"a\":2,\"b\":true,\"c\":null,\"d\":\"D\"}",Json.writeObject(new StringBuilder(), Arrays.asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", "D")).toString());
-        assertEquals("[\"a\",\"b\",\"c\",\"d\"]",Json.writeObject(new StringBuilder(), Arrays.asList("a", "b", "c", "d")).toString());
+        assertEquals("{\"a\":2,\"b\":true,\"c\":null,\"d\":\"D\"}", Json.writeObject(new StringBuilder(), asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", "D")).toString());
+        assertEquals("[\"a\",\"b\",\"c\",\"d\"]", Json.writeObject(new StringBuilder(), Arrays.asList("a", "b", "c", "d")).toString());
         assertEquals("\"abc _\\t\\f\\r\\u4a9dgh\\u0003\"",Json.writeObject(new StringBuilder(),"abc _\t\f\r\u4a9dgh\3").toString());
         assertEquals("{\"a\":2,\"b\":true,\"c\":null,\"d\":[\"x\",\"y\",1.2,\"abc _\\t\\f\\r\\u4a9dgh\\u0003\"]}",
                      Json.writeObject(new StringBuilder(),
-                                      Arrays.asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", Arrays.asList("x", "y", 1.2, "abc _\t\f\r\u4a9dgh\3"))
+                                      asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", Arrays.asList("x", "y", 1.2, "abc _\t\f\r\u4a9dgh\3"))
                                      ).toString());
     }
 
     public void testWriteMap() throws Exception {
-        assertEquals("\"a\":2,\"b\":true,\"c\":null,\"d\":\"D\"",Json.writeMap(new StringBuilder(), Arrays.asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", "D")).toString());
+        assertEquals("\"a\":2,\"b\":true,\"c\":null,\"d\":\"D\"", Json.writeMap(new StringBuilder(), asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", "D")).toString());
     }
 
     public void testWriteList() throws Exception {
-        assertEquals("\"a\",\"b\",\"c\",\"d\"",Json.writeList(new StringBuilder(), Arrays.asList("a", "b", "c", "d")).toString());
+        assertEquals("\"a\",\"b\",\"c\",\"d\"", Json.writeList(new StringBuilder(), Arrays.asList("a", "b", "c", "d")).toString());
 
     }
 
@@ -55,7 +57,7 @@ public class JsonTest extends TestCase {
         String json="{\"a\":2,\"b\":true,\"c\":null,\"d\":[\"x\",\"y\",1.2,\"abc _\\t\\f\\r\\u4a9dgh\\u0003\"]}";
         assertEquals(json,
                      Json.toJson(Json.readObject(new StringReader(json))),
-                     Json.toJson(Arrays.asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", Arrays.asList("x", "y", 1.2, "abc _\t\f\r\u4a9dgh\3")))
+                     Json.toJson(asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", Arrays.asList("x", "y", 1.2, "abc _\t\f\r\u4a9dgh\3")))
                     );
     }
 
@@ -80,6 +82,7 @@ public class JsonTest extends TestCase {
         catch(Exception e) {
             in = this.getClass().getResourceAsStream("/test.json");
         }
+        if(in==null) throw new RuntimeException("Could not find test.json");
         Reader r1 = new InputStreamReader(in);
         Object o1 = Json.readObject(r1);
         Json.writeObject(System.out,o1);
@@ -91,5 +94,21 @@ public class JsonTest extends TestCase {
         Json.writeObject(w2,o2);
         assertEquals("ReadWrite",w1.toString(),w2.toString());
     }
+
+    @SuppressWarnings("unchecked")
+    public static <K,V> Map<K,V> asMap(final Class<K> kclass, final Class<V> vclass, final Object... values) {
+        Map<K,V> map = new LinkedHashMap<K,V>();
+        if(values==null) return map;
+        if((values.length&1)!=0) throw new IllegalArgumentException("Key/Value array must be of even size");
+        for(int i=0; i<values.length; i+=2) {
+            Object key=values[i];
+            if(key!=null && !kclass.isAssignableFrom(key.getClass())) throw new IllegalArgumentException("Invalid key type at "+i);
+            Object val=values[i+1];
+            if(val!=null && !vclass.isAssignableFrom(val.getClass())) throw new IllegalArgumentException("Invalid value type at "+(i+1));
+            map.put((K) key, (V) val);
+        }
+        return map;
+    }
+
 
 }
