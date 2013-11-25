@@ -12,10 +12,12 @@ import net.varkhan.base.functor.Mapper;
 * @date 11/24/13
 * @time 7:07 PM
 */
-class MapperExpander<R,A,C> implements Expander<R,A,C> {
+public class MapperExpander<R,A,C> implements Expander<R,A,C> {
     protected final Mapper<Iterable<R>,A,C> mapr;
 
     public MapperExpander(Mapper<Iterable<R>,A,C> mapr) {this.mapr=mapr;}
+
+    public Mapper<Iterable<R>,A,C> source() { return mapr; }
 
     public Iterable<R> invoke(A arg, C ctx) { return mapr.invoke(arg, ctx); }
 }

@@ -22,9 +22,8 @@ public class ComposedMapper<R,A,C> implements Mapper<R,A,C> {
         this.r= (Mapper) r;
     }
 
-    public Mapper<R,Object,C> left() { return l; }
-
-    public Mapper<Object,A,C> right() { return r; }
+    public Mapper<R,?,C> left() { return l; }
+    public Mapper<?,A,C> right() { return r; }
 
     public R invoke(A arg, C ctx) {
         return l.invoke(r.invoke(arg, ctx), ctx);

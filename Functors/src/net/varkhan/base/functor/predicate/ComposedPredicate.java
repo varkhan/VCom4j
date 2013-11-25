@@ -23,6 +23,9 @@ public class ComposedPredicate<A,C> implements Predicate<A,C> {
         this.mapr = (Mapper<Object, A, C>) mapr;
     }
 
+    public Predicate<?,C> left() { return pred; }
+    public Mapper<?,A,C> right() { return mapr; }
+
     public boolean invoke(A arg, C ctx) {
         return pred.invoke(mapr.invoke(arg, ctx), ctx);
     }

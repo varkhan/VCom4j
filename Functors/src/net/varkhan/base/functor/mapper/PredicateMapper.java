@@ -12,10 +12,12 @@ import net.varkhan.base.functor.Predicate;
 * @date 11/24/13
 * @time 7:03 PM
 */
-class PredicateMapper<A,C> implements Mapper<Boolean,A,C> {
+public class PredicateMapper<A,C> implements Mapper<Boolean,A,C> {
     protected final Predicate<A,C> pred;
 
     public PredicateMapper(Predicate<A,C> pred) {this.pred=pred;}
+
+    public Predicate<A,C> source() { return pred; }
 
     @Override
     public Boolean invoke(A arg, C ctx) {

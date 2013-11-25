@@ -17,9 +17,12 @@ public class MapperPredicate<A,C> implements Predicate<A,C> {
 
     public MapperPredicate(Mapper<Boolean,A,C> mapr) {this.mapr=mapr;}
 
+    public Mapper<Boolean,A,C> source() { return mapr; }
+
     @Override
     public boolean invoke(A arg, C ctx) {
         Boolean v=mapr.invoke(arg, ctx);
         return v==null ? false : v;
     }
+
 }

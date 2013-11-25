@@ -14,14 +14,17 @@ import net.varkhan.base.functor.Mapper;
  */
 public class ComposedFunctional<A,C> implements Functional<A,C> {
 
-    private final Mapper<Object,A,C>   mapr;
-    private final Functional<Object,C> func;
+    protected final Mapper<Object,A,C>   mapr;
+    protected final Functional<Object,C> func;
 
     @SuppressWarnings({ "unchecked" })
     public <R> ComposedFunctional(Functional<R,C> func, Mapper<R,A,C> mapr) {
         this.func=(Functional<Object,C>) func;
         this.mapr=(Mapper<Object,A,C>) mapr;
     }
+
+    public Functional<?,C> left() { return func; }
+    public Mapper<?,A,C> right() { return mapr; }
 
     public double invoke(A arg, C ctx) {
         return func.invoke(mapr.invoke(arg, ctx), ctx);
