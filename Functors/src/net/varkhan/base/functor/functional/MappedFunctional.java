@@ -12,13 +12,13 @@ import net.varkhan.base.functor.Mapper;
  * @date 2/11/12
  * @time 3:21 PM
  */
-public class MapperFunctional<A,C> implements Functional<A,C> {
+public class MappedFunctional<A,C> implements Functional<A,C> {
 
     private final Mapper<Object,A,C>   mapr;
     private final Functional<Object,C> func;
 
     @SuppressWarnings({ "unchecked" })
-    public <R> MapperFunctional(Functional<R,C> func, Mapper<R,A,C> mapr) {
+    public <R> MappedFunctional(Functional<R,C> func, Mapper<R,A,C> mapr) {
         this.func=(Functional<Object,C>) func;
         this.mapr=(Mapper<Object,A,C>) mapr;
     }

@@ -12,13 +12,13 @@ import net.varkhan.base.functor.Predicate;
  * @date 2/11/12
  * @time 3:21 PM
  */
-public class MapperPredicate<A,C> implements Predicate<A,C> {
+public class MappedPredicate<A,C> implements Predicate<A,C> {
 
     private final Mapper<Object,A,C> mapr;
     private final Predicate<Object,C> pred;
 
     @SuppressWarnings({ "unchecked" })
-    public <R> MapperPredicate(Predicate<R,C> pred, Mapper<R,A,C> mapr) {
+    public <R> MappedPredicate(Predicate<R,C> pred, Mapper<R,A,C> mapr) {
         this.pred = (Predicate<Object, C>) pred;
         this.mapr = (Mapper<Object, A, C>) mapr;
     }
