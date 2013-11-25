@@ -17,14 +17,14 @@ public class ComposedMapper<R,A,C> implements Mapper<R,A,C> {
     private final Mapper<Object,A,C> r;
 
     @SuppressWarnings({ "unchecked" })
-    public <T> ComposedMapper(Mapper<R, T, C> l, Mapper<T, A, C> r) {
-        this.l= (Mapper<R, Object, C>) l;
-        this.r= (Mapper<Object, A, C>) r;
+    public <T> ComposedMapper(Mapper<R, ? super T, C> l, Mapper<? extends T, A, C> r) {
+        this.l= (Mapper) l;
+        this.r= (Mapper) r;
     }
 
-    public Mapper<R,Object,C> getLeft() { return l; }
+    public Mapper<R,Object,C> left() { return l; }
 
-    public Mapper<Object,A,C> getRight() { return r; }
+    public Mapper<Object,A,C> right() { return r; }
 
     public R invoke(A arg, C ctx) {
         return l.invoke(r.invoke(arg, ctx), ctx);

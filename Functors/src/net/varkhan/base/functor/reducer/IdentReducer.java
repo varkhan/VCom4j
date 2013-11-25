@@ -23,10 +23,4 @@ public class IdentReducer<A,C> implements Reducer<Iterable<A>,A,C> {
     @SuppressWarnings({ "unchecked" })
     public static <A,C> Reducer<Iterable<A>,A,C> as() { return (Reducer) ID;}
 
-    public static <R,A,C> Reducer<R,A,C> as(final Mapper<R, Iterable<A>, C> mapr) {
-        return new Reducer<R,A,C>() {
-            public R invoke(Iterable<A> arg, C ctx) { return mapr.invoke(arg, ctx); }
-        };
-    }
-
 }
