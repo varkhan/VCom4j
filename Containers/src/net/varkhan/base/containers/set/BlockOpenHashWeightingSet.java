@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializable {
+public class BlockOpenHashWeightingSet<Key> implements WeightingSet<Key>, Serializable {
 
     public static final long serialVersionUID=1L;
 
@@ -41,9 +41,9 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
     protected Object[][] keys;
 
     /**
-     * The array of valuess
+     * The array of weights
      */
-    protected long[][] vals;
+    protected float[][] vals;
 
     /**
      * The acceptable load factor
@@ -71,9 +71,9 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
     protected long size;
 
     /**
-     * Total count of entries in the map
+     * Total weight of entries in the map
      */
-    protected long count;
+    protected double weight;
 
     /**
      * Number of free entries in the table (may be less than the {@link #capa} - {@link #size} because of deleted entries)
@@ -99,7 +99,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
      * @param growfact   the growth factor (strictly greater than 1)
      * @param strategy   the hashing strategy
      */
-    public BlockOpenHashCountingSet(long size, int blockshift, float loadfact, float growfact, final HashingStrategy<Key> strategy) {
+    public BlockOpenHashWeightingSet(long size, int blockshift, float loadfact, float growfact, final HashingStrategy<Key> strategy) {
 //        if(loadfact<=0 || loadfact>1) throw new IllegalArgumentException("Load factor must be between 0 exclusive and 1 inclusive");
 //        if(growfact<=1) throw new IllegalArgumentException("Growth factor must be strictly greater than 1");
 //        if(size<0) throw new IllegalArgumentException("Hash table size must be nonnegative");
@@ -118,10 +118,10 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         this.fill=(long) (capa*loadfact);
         this.free=this.capa;
         this.size=0;
-        this.count=0;
+        this.weight=0;
         int bnum=(int) (this.capa>>>this.blockshift)+1;
         this.keys=new Object[bnum][];
-        this.vals=new long[bnum][];
+        this.vals=new float[bnum][];
     }
 
     /**
@@ -130,7 +130,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
      * @param size the expected number of elements in the set
      */
     @SuppressWarnings("unchecked")
-    public BlockOpenHashCountingSet(long size) {
+    public BlockOpenHashWeightingSet(long size) {
         this(size, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
@@ -138,7 +138,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
      * Creates a new hash set.
      */
     @SuppressWarnings("unchecked")
-    public BlockOpenHashCountingSet() {
+    public BlockOpenHashWeightingSet() {
         this(11, 10, .75f, 1.5f, (HashingStrategy<Key>) Hashes.DefaultHashingStrategy);
     }
 
@@ -151,13 +151,13 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
 
     public boolean isEmpty() { return size==0; }
 
-    public long count() { return count; }
+    public double weight() { return weight; }
 
     public void clear() {
         if(free==capa) return;
         free=capa;
         size=0;
-        count=0;
+        weight=0;
         for(int i=0;i<keys.length;i++) keys[i]=null;
         for(int i=0;i<vals.length;i++) vals[i]=null;
     }
@@ -195,7 +195,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         return (kblock==null) ? NULL : kblock[kblockoff];
     }
 
-    private void _setEntry(long index, Object k, long v) {
+    private void _setEntry(long index, Object k, double v) {
         int kblockpos=(int) (index>>>blockshift);
         int kblockoff=(int) (index&blockmask);
         Object[] kblock=keys[kblockpos];
@@ -203,41 +203,41 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
             keys[kblockpos]=kblock=new Object[blocksize];
             for(int j=0;j<blocksize;j++) kblock[j]=NULL;
         }
-        long[] vblock=vals[kblockpos];
+        float[] vblock=vals[kblockpos];
         if(vblock==null) {
-            vals[kblockpos]=vblock=new long[blocksize];
+            vals[kblockpos]=vblock=new float[blocksize];
         }
         kblock[kblockoff]=k;
-        vblock[kblockoff]=v;
+        vblock[kblockoff]=(float)v;
     }
 
-    private long _getVal(long index) {
+    private float _getVal(long index) {
         int kblockpos=(int) (index>>>blockshift);
         int kblockoff=(int) (index&blockmask);
-        long[] vblock=vals[kblockpos];
+        float[] vblock=vals[kblockpos];
         // No block == NULL key
         return (vblock==null) ? 0 : vblock[kblockoff];
     }
 
-    private long _decVal(long index) {
-        int kblockpos=(int) (index>>>blockshift);
-        int kblockoff=(int) (index&blockmask);
-        long[] vblock=vals[kblockpos];
-        if(vblock==null) {
-            vals[kblockpos]=new long[blocksize];
-            return 0;
-        }
-        return --vblock[kblockoff];
-    }
+//    private double _decVal(long index) {
+//        int kblockpos=(int) (index>>>blockshift);
+//        int kblockoff=(int) (index&blockmask);
+//        double[] vblock=vals[kblockpos];
+//        if(vblock==null) {
+//            vals[kblockpos]=new double[blocksize];
+//            return 0;
+//        }
+//        return --vblock[kblockoff];
+//    }
 
-    private long _incVal(long index) {
+    private double _incVal(long index, double weight) {
         int kblockpos=(int) (index>>>blockshift);
         int kblockoff=(int) (index&blockmask);
-        long[] vblock=vals[kblockpos];
+        float[] vblock=vals[kblockpos];
         if(vblock==null) {
-            vals[kblockpos]=vblock=new long[blocksize];
+            vals[kblockpos]=vblock=new float[blocksize];
         }
-        return ++vblock[kblockoff];
+        return vblock[kblockoff]+=weight;
     }
 
     @SuppressWarnings("unchecked")
@@ -265,8 +265,13 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         return kval!=DEL&&kval!=NULL; // If OCCUPIED, necessarily, key_match(key, hash, kval).
     }
 
-    @SuppressWarnings("unchecked")
     public boolean add(final Key key) {
+        return add(key,1.0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean add(final Key key, double wgh) {
+        if(wgh==0) return false;
         final long capa=this.capa;
         final long mixr=this.mixr;
         final long hash=this.strategy.hash(key);
@@ -290,8 +295,12 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         final long pos=slot; // Remember first available slot for later.
         // Key found
         if(kval!=DEL&&kval!=NULL) {
-            _incVal(pos);
-            count++;
+            weight+=wgh;
+            if(_incVal(pos,wgh)==0) {
+                _setEntry(slot,DEL,0L);
+                size--;
+                return true;
+            }
             return false; // If OCCUPIED, necessarily, key_match(key, hash, kval).
         }
         // If this slot is REMOVED, keep looking for the key until we find it or get to an empty slot
@@ -307,8 +316,12 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
             }
             while(kval==DEL||(kval!=NULL&&!(hash==this.strategy.hash((Key) kval)&&this.strategy.equal(key, (Key) kval))));
             if(kval!=DEL&&kval!=NULL) {
-                _incVal(pos);
-                count++;
+                weight+=wgh;
+                if(_incVal(pos,wgh)==0) {
+                    _setEntry(slot,DEL,0L);
+                    size--;
+                    return true;
+                }
                 return false; // If OCCUPIED, necessarily, key_match(key, hash, kval).
             }
         }
@@ -317,8 +330,8 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
             free--;
         }
         // Mark slot as OCCUPIED
-        _setEntry(pos, key, 1L);
-        count++;
+        _setEntry(pos, key, wgh);
+        weight+=wgh;
         if(++size>=fill)
             rehash(getCapa((long) (size*gfact)));    // Too many elements for the capacity, rehash at an increased capa
         if(free==0)
@@ -327,7 +340,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
     }
 
     @SuppressWarnings("unchecked")
-    public long count(final Key key) {
+    public double weight(final Key key) {
         final long capa=this.capa;
         final long mixr=this.mixr;
         final long hash=this.strategy.hash((Key) key);
@@ -377,8 +390,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         }
         if(kval==DEL||kval==NULL) return false; // If OCCUPIED, necessarily, key_match(key, hash, kval).
         // At this point we necessarily have an OCCUPIED slot
-        count--;
-        if(_decVal(slot)>0) return false;
+        weight-=_getVal(slot);
         _setEntry(slot,DEL,0L);
         size--;
         return true;
@@ -449,7 +461,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         long fill=(long) (capa*this.lfact);
         long pos=0, s=size;
         final Object[][] keys=new Object[(int) (capa>>>blockshift)+1][];
-        final long[][] vals=new long[(int) (capa>>>blockshift)+1][];
+        final float[][] vals=new float[(int) (capa>>>blockshift)+1][];
         long count=0;
         while(s-->0) {
             Object key;
@@ -473,9 +485,9 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
                 keys[kblockpos]=kblock=new Object[blocksize];
                 for(int t=0;t<blocksize;t++) kblock[t]=NULL;
             }
-            long[] vblock=vals[kblockpos];
+            float[] vblock=vals[kblockpos];
             if(vblock==null) {
-                vals[kblockpos]=vblock=new long[blocksize];
+                vals[kblockpos]=vblock=new float[blocksize];
             }
             kblock[kblockoff]=key;
             count+=(vblock[kblockoff]=_getVal(pos));
@@ -487,7 +499,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
         this.fill=fill;
         this.keys=keys;
         this.vals=vals;
-        this.count=count;
+        this.weight=count;
     }
 
 
@@ -572,28 +584,27 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
 
             {
                 Object k;
-                if(c!=0) while(pos<BlockOpenHashCountingSet.this.capa&&((k=_getKey(pos))==NULL||k==DEL)) pos++;
+                if(c!=0) while(pos<BlockOpenHashWeightingSet.this.capa&&((k=_getKey(pos))==NULL||k==DEL)) pos++;
             }
 
             public boolean hasNext() {
-                return c!=0&&pos<BlockOpenHashCountingSet.this.capa;
+                return c!=0&&pos<BlockOpenHashWeightingSet.this.capa;
             }
 
             @SuppressWarnings("unchecked")
             public Key next() {
                 if(!hasNext()) throw new NoSuchElementException();
                 Key key=(Key) _getKey(last=pos);
-                long val=_getVal(pos);
+                double val=_getVal(pos);
                 Object k;
-                if(--c!=0) do pos++; while(pos<BlockOpenHashCountingSet.this.capa&&((k=_getKey(pos))==NULL||k==DEL));
+                if(--c!=0) do pos++; while(pos<BlockOpenHashWeightingSet.this.capa&&((k=_getKey(pos))==NULL||k==DEL));
                 return key;
             }
 
             public void remove() {
                 Object k;
                 if(last==-1||(k=_getKey(pos))==NULL||k==DEL) throw new IllegalStateException();
-                count--;
-                if(_decVal(last)>0) return;
+                weight-=_getVal(last);
                 _setEntry(last, DEL, 0);
                 size--;
             }
@@ -625,9 +636,9 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
      */
     @SuppressWarnings("unchecked")
     public Object clone() {
-        BlockOpenHashCountingSet<Key> c;
+        BlockOpenHashWeightingSet<Key> c;
         try {
-            c=(BlockOpenHashCountingSet<Key>) super.clone();
+            c=(BlockOpenHashWeightingSet<Key>) super.clone();
         }
         catch(CloneNotSupportedException cantHappen) {
             throw new InternalError();
@@ -659,10 +670,10 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
     @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
         if(this==o) return true;
-        if(o instanceof CountingSet){
-            CountingSet that=(CountingSet) o;
+        if(o instanceof WeightingSet){
+            WeightingSet that=(WeightingSet) o;
             if(this.size!=that.size()) return false;
-            if(this.count!=that.count()) return false;
+            if(this.weight!=that.weight()) return false;
             int pos=0;
             while(pos<capa) {
                 Object k=_getKey(pos);
@@ -670,8 +681,8 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
                     pos++;
                     continue;
                 }
-                long v=_getVal(pos);
-                long w=that.count(k);
+                double v=_getVal(pos);
+                double w=that.weight(k);
                 if(v!=w) return false;
                 pos++;
             }
@@ -691,7 +702,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
                 pos++;
                 continue;
             }
-            long v=_getVal(pos);
+            double v=_getVal(pos);
             if(first) first=false;
             else buf.append(',');
             buf.append(k).append(':').append(v).append(' ');

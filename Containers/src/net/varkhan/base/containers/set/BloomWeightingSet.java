@@ -16,27 +16,27 @@ import java.io.Serializable;
  * @date 2/11/12
  * @time 3:45 PM
  */
-public class BloomCountingSet<Key> implements CountingSet<Key>, Serializable, Cloneable {
+public class BloomWeightingSet<Key> implements WeightingSet<Key>, Serializable, Cloneable {
 
     protected final HashingStrategy<Key> hash;
-    protected long size = 0;
-    protected long count = 0;
-    protected final int num;
-    protected final int len;
-    protected final long msk;
-    protected /*final*/ int[] filter;
+    protected long   size  =0;
+    protected double weight=0;
+    protected final int     num;
+    protected final int     len;
+    protected final long    msk;
+    protected /*final*/ float[] filter;
 
     @SuppressWarnings("unchecked")
-    public BloomCountingSet(int num, int len) {
-        this((HashingStrategy<Key>) Hashes.DefaultHashingStrategy,num,len);
+    public BloomWeightingSet(int num, int len) {
+        this((HashingStrategy<Key>) Hashes.DefaultHashingStrategy, num, len);
     }
 
-    public BloomCountingSet(HashingStrategy<Key> hash, int num, int len) {
+    public BloomWeightingSet(HashingStrategy<Key> hash, int num, int len) {
         this.hash=hash;
-        this.num = num>512?512:num;
-        this.len = (1<<BitArrays.lsb(len));
-        this.msk = (1<<BitArrays.lsb(len))-1;
-        this.filter = new int[this.len];
+        this.num=num>512 ? 512 : num;
+        this.len=(1<<BitArrays.lsb(len));
+        this.msk=(1<<BitArrays.lsb(len))-1;
+        this.filter = new float[this.len];
     }
 
     protected int hash(long h, int i) {
@@ -48,69 +48,82 @@ public class BloomCountingSet<Key> implements CountingSet<Key>, Serializable, Cl
     }
 
     public boolean isEmpty() {
-        return count==0;
+        return weight==0;
     }
 
-    public long count() {
-        return count;
+    public double weight() {
+        return weight;
     }
 
     public void clear() {
         size = 0;
-        count = 0;
+        weight= 0;
         for(int i=0; i<filter.length; i++) filter[i] = 0;
     }
 
     public boolean add(Key key) {
+        return add(key,1.0);
+    }
+
+    public boolean add(Key key, double wgh) {
+        if(wgh==0) return false;
         long h = hash.hash(key);
         boolean a = false;
+        boolean d = false;
         for(int i=0; i<num; i++) {
             int p = hash(h, i);
-            // Mark as add if count is 0, then increment count
-            if(filter[p]++ == 0) a = true;
+            if(filter[p]==0) a = true;
+            if((filter[p] += wgh)==0) d = true;
         }
         if(a) size++;
-        count ++;
-        return a;
+        if(d) size--;
+        weight += wgh;
+        return a||d;
     }
 
     public boolean del(Key key) {
         long h = hash.hash(key);
+        float wp = +Float.MAX_VALUE;
+        float wm = -Float.MAX_VALUE;
         for(int i=0; i<num; i++) {
             int p = hash(h, i);
-            int x = filter[p];
-            if(x==0) return false;
+            float x = filter[p];
+            if(wp>x && x>0) wp=x;
+            if(wm<x && x<0) wm=x;
         }
-        boolean d = false;
+        if(wp==0||wm==0) return false;
+        float w = (wp>-wm)?wm:wp;
         for(int i=0; i<num; i++) {
             int p = hash(h, i);
-            // Decrement count, then mark as del if count is 0
-            if(--filter[p] == 0) d = true;
+            filter[p]-=w;
         }
-        if(d) size--;
-        count --;
-        return d;
+        size--;
+        weight -= w;
+        return true;
     }
 
     public boolean has(Key key) {
         long h = hash.hash(key);
         for(int i=0; i<num; i++) {
             int p = hash(h, i);
-            int x = filter[p];
+            float x = filter[p];
             if(x==0) return false;
         }
         return true;
     }
 
-    public long count(Key key) {
+    public double weight(Key key) {
         long h = hash.hash(key);
-        long c = Long.MAX_VALUE;
+        float wp = +Float.MAX_VALUE;
+        float wm = -Float.MAX_VALUE;
         for(int i=0; i<num; i++) {
             int p = hash(h, i);
-            int x = filter[p];
-            if(c>x) c=x;
+            float x = filter[p];
+            if(wp>x && x>0) wp=x;
+            if(wm<x && x<0) wm=x;
         }
-        return c;
+        if(wp>-wm) return wm;
+        else return wp;
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -126,16 +139,16 @@ public class BloomCountingSet<Key> implements CountingSet<Key>, Serializable, Cl
         StringBuilder buf = new StringBuilder();
         for(int i=0; i<this.filter.length; i++) {
             if(i>0) buf.append('|');
-            buf.append(filter[i]>0 ? String.format("%3d", filter[i]) : "   ");
+            buf.append(filter[i]>0 ? String.format("%3f", filter[i]) : "   ");
         }
         return buf.toString();
     }
 
     @SuppressWarnings("unchecked")
-    public BloomCountingSet<Key> clone() {
-        BloomCountingSet<Key> c;
+    public BloomWeightingSet<Key> clone() {
+        BloomWeightingSet<Key> c;
         try {
-            c=(BloomCountingSet<Key>) super.clone();
+            c=(BloomWeightingSet<Key>) super.clone();
         }
         catch(CloneNotSupportedException e) {
             throw new InternalError();

@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.varkhan.base.containers.set;
 
 import junit.framework.TestCase;
@@ -12,23 +9,16 @@ import java.util.Random;
 
 
 /**
+ * <b></b>.
+ * <p/>
+ *
  * @author varkhan
- * @date Feb 10, 2010
- * @time 6:24:10 AM
+ * @date 11/28/13
+ * @time 1:05 PM
  */
-public class ObjectSetTest extends TestCase {
-    long baseseed=1234567890987654321L;
+public abstract class AbstractSetTest extends TestCase {
 
-    public void testArrayOpenHashSet() throws Exception {
-        featureTest(100000, new ArrayOpenHashSet<String>(), 0);
-    }
-
-    public void testBlockOpenHashSet() throws Exception {
-        featureTest(100000, new BlockOpenHashSet<String>(), 0);
-    }
-
-
-    private String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
+    protected String[] genKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
         java.util.Set<String> keys=new HashSet<String>(num);
         while(keys.size()<num) {
             StringBuilder buf=new StringBuilder();
@@ -37,21 +27,6 @@ public class ObjectSetTest extends TestCase {
             keys.add(buf.toString());
         }
         return keys.toArray(new String[num]);
-    }
-
-    public void featureTest(int num, Set<String> set, int verb) throws Exception {
-        Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, num, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
-        System.out.println("Test "+set.getClass().getSimpleName()+" ["+baseseed+"]");
-        featureTestAdd(rand, vals, set, verb);
-        featureTestHas(rand, vals, set, verb);
-//        featureTestIdx(rand,vals,set,verb);
-//        featureTestGet(rand,vals,set,verb);
-        featureTestDel(rand, vals, set, verb);
-        featureTestClear(rand, vals, set, verb);
-        featureTestIterate(rand, vals, set, verb);
-        try { featureTestSerialize(rand, vals, set, verb); } catch(NotSerializableException e) { /* ignore */ }
-        System.out.println();
     }
 
     public <T> void featureTestAdd(Random rand, T[] vals, Set<T> set, int verb) throws Exception {
@@ -186,5 +161,4 @@ public class ObjectSetTest extends TestCase {
             if(t!=null) t.delete();
         }
     }
-
 }

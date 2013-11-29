@@ -53,7 +53,7 @@ public class HashesTest extends TestCase {
 
     public void testMix64() throws Exception {
         Random r = new Random();
-        long n= 10000;
+        long n = 10000;
         long c = 0;
         for(int i=0; i<n; i++) {
             long p = r.nextLong();

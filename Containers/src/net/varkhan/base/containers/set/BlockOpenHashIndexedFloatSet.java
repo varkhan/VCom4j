@@ -107,7 +107,7 @@ public class BlockOpenHashIndexedFloatSet implements IndexedFloatSet, Serializab
      * Creates a new hash set.
      *
      * @param size       the expected number of elements in the set
-     * @param blockshift the base-2 logarithm of the block size (such that the block size is {@code 1<<blockshift})
+     * @param blockshift the base-2 logarithm of the block size (such that the block size is {@code 1&lt;&lt;blockshift})
      * @param loadfact   the load factor (between 0 exclusive and 1 inclusive)
      * @param growfact   the growth factor (strictly greater than 1)
      * @param strategy   the hashing strategy
