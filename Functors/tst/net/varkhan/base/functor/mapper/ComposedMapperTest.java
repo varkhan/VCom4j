@@ -34,7 +34,7 @@ public class ComposedMapperTest extends TestCase {
         assertEquals(2,(int)m.invoke(3L,null));
         assertEquals(3,(int)m.invoke(4L,null));
         assertEquals(3,(int)m.invoke(5L,null));
-        assertEquals("1010",m.right().invoke(10L,null));
-        assertEquals(3,(int)m.left().invoke("123",null));
+        assertEquals("1010",((Mapper<String,Long,Object>)m.right()).invoke(10L,null));
+        assertEquals(3,(int)((Mapper<Integer,CharSequence,Object>)m.left()).invoke("123",null));
     }
 }
