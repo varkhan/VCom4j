@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
+import java.nio.charset.Charset;
 
 
 /**
@@ -23,6 +24,7 @@ import java.nio.ReadOnlyBufferException;
  */
 public class AsciiDecoder<C> extends AbstractDecoder<String,C> implements Decoder<String,C> {
 
+    public static final Charset ASCII = Charset.forName("US-ASCII");
     public static final AsciiDecoder<?> STRICT = new AsciiDecoder<Object>(false);
     public static final AsciiDecoder<?> SQUASH = new AsciiDecoder<Object>(true);
 

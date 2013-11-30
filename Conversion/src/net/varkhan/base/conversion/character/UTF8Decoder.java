@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
+import java.nio.charset.Charset;
 
 
 /**
@@ -24,10 +25,11 @@ import java.nio.ReadOnlyBufferException;
  */
 public class UTF8Decoder<C> extends AbstractDecoder<String,C> implements Decoder<String,C> {
 
+    public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     public String decode(InputStream stm, C ctx) {
         try {
-            return _decode(new StringBuilder(),stm).toString();
+            return _decode(new StringBuilder(), stm).toString();
         }
         catch(IOException e) {
             /* Never happens -- return null to make compiler happy*/
@@ -37,7 +39,7 @@ public class UTF8Decoder<C> extends AbstractDecoder<String,C> implements Decoder
 
     public String decode(ByteBuffer buf, C ctx) {
         try {
-            return _decode(new StringBuilder(),buf).toString();
+            return _decode(new StringBuilder(), buf).toString();
         }
         catch(IOException e) {
             /* Never happens -- return null to make compiler happy*/
@@ -47,7 +49,7 @@ public class UTF8Decoder<C> extends AbstractDecoder<String,C> implements Decoder
 
     public String decode(byte[] dat, long pos, long len, C ctx) {
         try {
-            return _decode(new StringBuilder(),dat, pos, len).toString();
+            return _decode(new StringBuilder(), dat, pos, len).toString();
         }
         catch(IOException e) {
             /* Never happens -- return null to make compiler happy*/

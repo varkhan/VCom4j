@@ -46,20 +46,20 @@ public class UTF8Encoder<C> extends AbstractEncoder<CharSequence,C> implements E
                 }
                 else if(c<0x800) {
                     stm.write((byte) (0xC0|(0x1F&(c>>>6))));
-                    stm.write((byte) (0x3F&c));
+                    stm.write((byte) (0x80|(0x3F&c)));
                     len+=2;
                 }
                 else if(c<0x10000) {
                     stm.write((byte) (0xE0|(0x0F&(c>>>12))));
-                    stm.write((byte) (0x3F&(c>>>6)));
-                    stm.write((byte) (0x3F&c));
+                    stm.write((byte) (0x80|(0x3F&(c>>>6))));
+                    stm.write((byte) (0x80|(0x3F&c)));
                     len+=3;
                 }
                 else {
                     stm.write((byte) (0xF0|(0x07&(c>>>18))));
-                    stm.write((byte) (0x3F&(c>>>12)));
-                    stm.write((byte) (0x3F&(c>>>6)));
-                    stm.write((byte) (0x3F&c));
+                    stm.write((byte) (0x80|(0x3F&(c>>>12))));
+                    stm.write((byte) (0x80|(0x3F&(c>>>6))));
+                    stm.write((byte) (0x80|(0x3F&c)));
                     len+=4;
                 }
             }
@@ -82,20 +82,20 @@ public class UTF8Encoder<C> extends AbstractEncoder<CharSequence,C> implements E
                 }
                 else if(c<0x800) {
                     buf.put((byte) (0xC0|(0x1F&(c>>>6))));
-                    buf.put((byte) (0x3F&c));
+                    buf.put((byte) (0x80|(0x3F&c)));
                     len+=2;
                 }
                 else if(c<0x10000) {
                     buf.put((byte) (0xE0|(0x0F&(c>>>12))));
-                    buf.put((byte) (0x3F&(c>>>6)));
-                    buf.put((byte) (0x3F&c));
+                    buf.put((byte) (0x80|(0x3F&(c>>>6))));
+                    buf.put((byte) (0x80|(0x3F&c)));
                     len+=3;
                 }
                 else {
                     buf.put((byte) (0xF0|(0x07&(c>>>18))));
-                    buf.put((byte) (0x3F&(c>>>12)));
-                    buf.put((byte) (0x3F&(c>>>6)));
-                    buf.put((byte) (0x3F&c));
+                    buf.put((byte) (0x80|(0x3F&(c>>>12))));
+                    buf.put((byte) (0x80|(0x3F&(c>>>6))));
+                    buf.put((byte) (0x80|(0x3F&c)));
                     len+=4;
                 }
             }
@@ -122,23 +122,23 @@ public class UTF8Encoder<C> extends AbstractEncoder<CharSequence,C> implements E
                 else if(c<0x800) {
                     dat[p++]=(byte) (0xC0|(0x1F&(c>>>6)));
                     if(p-pos>=len) throw new EncodingException();
-                    dat[p++]=(byte) (0x3F&c);
+                    dat[p++]=(byte) (0x80|(0x3F&c));
                 }
                 else if(c<0x10000) {
                     dat[p++]=(byte) (0xE0|(0x0F&(c>>>12)));
                     if(p-pos>=len) throw new EncodingException();
-                    dat[p++]=(byte) (0x3F&(c>>>6));
+                    dat[p++]=(byte) (0x80|(0x3F&(c>>>6)));
                     if(p-pos>=len) throw new EncodingException();
-                    dat[p++]=(byte) (0x3F&c);
+                    dat[p++]=(byte) (0x80|(0x3F&c));
                 }
                 else {
                     dat[p++]=(byte) (0xF0|(0x07&(c>>>18)));
                     if(p-pos>=len) throw new EncodingException();
-                    dat[p++]=(byte) (0x3F&(c>>>12));
+                    dat[p++]=(byte) (0x80|(0x3F&(c>>>12)));
                     if(p-pos>=len) throw new EncodingException();
-                    dat[p++]=(byte) (0x3F&(c>>>6));
+                    dat[p++]=(byte) (0x80|(0x3F&(c>>>6)));
                     if(p-pos>=len) throw new EncodingException();
-                    dat[p++]=(byte) (0x3F&c);
+                    dat[p++]=(byte) (0x80|(0x3F&c));
                 }
             }
             return p-pos;
