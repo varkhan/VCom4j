@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="VCom4j-Concurrent" default="all">
-    <dirname property="module.base.dir" file="${ant.file.VCom4j-Concurrent}"/>
-    <property name="project.base.dir" value="${module.base.dir}/../"/>
+<project name="VCom4j-Core-Concurrent" default="all">
+    <dirname property="module.base.dir" file="${ant.file.VCom4j-Core-Concurrent}"/>
+    <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
     <property name="module.vers" value="0.6.1"/>
     <property name="module.desc" value="Logging, management and supervision"/>
