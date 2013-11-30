@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
-    <info organisation="net.varkhan" module="VCom4j-Functors" branch="prod" revision="0.7.0" status="release"/>
+    <info organisation="net.varkhan" module="VCom4j-Base-Functors" branch="prod" revision="0.7.0" status="release"/>
     <publications>
-        <artifact name="VCom4j-Functors" ext="jar" type="src"/>
-        <artifact name="VCom4j-Functors" ext="jar" type="bin"/>
-        <artifact name="VCom4j-Functors" ext="jar" type="doc"/>
-        <artifact name="VCom4j-Functors" ext="ivy" type="ivy"/>
-        <artifact name="VCom4j-Functors" ext="pom" type="pom"/>
+        <artifact name="VCom4j-Base-Functors" ext="jar" type="src"/>
+        <artifact name="VCom4j-Base-Functors" ext="jar" type="bin"/>
+        <artifact name="VCom4j-Base-Functors" ext="jar" type="doc"/>
+        <artifact name="VCom4j-Base-Functors" ext="ivy" type="ivy"/>
+        <artifact name="VCom4j-Base-Functors" ext="pom" type="pom"/>
     </publications>
     <dependencies>
     </dependencies>
