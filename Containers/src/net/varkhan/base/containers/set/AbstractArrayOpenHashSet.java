@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-abstract class AbstractArrayOpenHashSet<Key> implements Set<Key>, Serializable {
+abstract class AbstractArrayOpenHashSet<Key> implements Set<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 

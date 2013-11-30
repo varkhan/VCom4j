@@ -33,7 +33,7 @@ import java.util.NoSuchElementException;
  * @date Mar 12, 2009
  * @time 6:16:09 AM
  */
-public class SparseIndexedIntList extends AbstractSparseIndexedList implements IndexedIntList, Externalizable {
+public class SparseIndexedIntList extends AbstractSparseIndexedList implements IndexedIntList, Externalizable, Cloneable {
 
     private static final long serialVersionUID=1L;
 
@@ -859,6 +859,8 @@ public class SparseIndexedIntList extends AbstractSparseIndexedList implements I
                 for(int j=0;j<blockhead;j++) if(thismask[j]!=thatmask[j]) return false;
                 final int[] thisblock=this.list[i];
                 final int[] thatblock=that.list[i];
+                if(thisblock==null&&thatblock==null) continue;
+                if(thisblock==null||thatblock==null) return false;
                 for(int j=0;j<len;j++) if(thisblock[j]!=thatblock[j]) return false;
             }
         }

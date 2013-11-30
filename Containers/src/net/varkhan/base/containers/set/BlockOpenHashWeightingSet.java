@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-public class BlockOpenHashWeightingSet<Key> implements WeightingSet<Key>, Serializable {
+public class BlockOpenHashWeightingSet<Key> implements WeightingSet<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 

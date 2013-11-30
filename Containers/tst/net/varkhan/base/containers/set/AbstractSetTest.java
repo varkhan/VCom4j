@@ -41,6 +41,19 @@ public abstract class AbstractSetTest extends TestCase {
         System.out.println("add(T) OK");
     }
 
+    public <T> void featureTestSize(Random rand, T[] vals, Set<T> set, int verb, boolean exact) throws Exception {
+        long s=0;
+        // Testing key adding
+        for(int i=0;i<vals.length;i++) {
+            T v=vals[i];
+            if(set.add(v)) s++;
+            if(verb>0) System.err.println("Added "+i+" "+v);
+            if(verb>1) System.err.println(set);
+        }
+        assertEquals("size()",s,set.size());
+        System.out.println("size(T) OK");
+    }
+
     public <T> void featureTestHas(Random rand, T[] vals, Set<T> set, int verb) throws Exception {
         set.clear();
         for(int i=0;i<vals.length;i++) set.add(vals[i]);
@@ -150,7 +163,8 @@ public abstract class AbstractSetTest extends TestCase {
             finally {
                 if(is!=null) is.close();
             }
-//            assertTrue("serialize(lst)==lst",iset.equals(sset));
+//            assertTrue("serialize(lst)==lst",sset.equals(sset));
+            assertEquals("size(set)==set", set.size(),sset.size());
             for(int i=0;i<vals.length;i++) {
                 T v=vals[i];
                 assertTrue("has("+v+")", sset.has(v));
@@ -161,4 +175,42 @@ public abstract class AbstractSetTest extends TestCase {
             if(t!=null) t.delete();
         }
     }
+
+    public <T> void featureTestEquals(Random rand, T[] vals, Set<T> set, Set<T> eql) throws Exception {
+        for(int i=0;i<vals.length;i++) if(vals[i]!=null) set.add(vals[i]);
+        assertFalse("lst.equals(eql)", set.equals(eql));
+        for(int i=0;i<vals.length;i++) if(vals[i]!=null) eql.add(vals[i]);
+        assertTrue("lst.equals(eql)", set.equals(eql));
+        assertEquals("lst.hashCode()", set.hashCode(), eql.hashCode());
+        for(int i=0; i<100; i++) {
+            int p = rand.nextInt(vals.length);
+            if(set.del(vals[p])) assertFalse("lst.equals(eql)", set.equals(eql));
+            else assertTrue("lst.equals(eql)", set.equals(eql));
+            eql.del(vals[p]);
+            assertTrue("lst.equals(eql)", set.equals(eql));
+            assertEquals("lst.hashCode()", set.hashCode(), eql.hashCode());
+        }
+        System.out.println("equals OK");
+    }
+
+    public <T,S extends Set<T> & Cloneable> void featureTestClone(Random rand, T[] vals, S set) throws Exception {
+        for(int i=0;i<vals.length;i++) if(vals[i]!=null) set.add(vals[i]);
+        Set<T> cln = clone(set);
+        assertEquals("size(set)==set", set.size(),cln.size());
+        for(int i=0;i<vals.length;i++) {
+            assertEquals("has("+i+")", set.has(vals[i]), cln.has(vals[i]));
+        }
+        System.out.println("clone OK");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <C extends Cloneable> C clone(C obj) {
+        try {
+            return (C) obj.getClass().getMethod("clone").invoke(obj);
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
+
 }

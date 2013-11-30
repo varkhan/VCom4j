@@ -150,4 +150,21 @@ public class BlockIndexedLongListTest extends AbstractIndexedLongListTest {
         featureTestSerialize(rand, vals, ilst, defVal);
     }
 
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        long defVal = 0;//rand.nextLong();
+        long[] vals=genLongList(rand, 1000000, 0.9, defVal);
+        IndexedLongList ilst = new BlockIndexedLongList();
+        IndexedLongList ilst2 = new BlockIndexedLongList();
+        featureTestEquals(rand, vals, ilst, ilst2, defVal);
+    }
+
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        long defVal = 0;//rand.nextLong();
+        long[] vals=genLongList(rand, 1000000, 0.9, defVal);
+        BlockIndexedLongList ilst = new BlockIndexedLongList();
+        featureTestClone(rand, vals, ilst, defVal);
+    }
+
 }

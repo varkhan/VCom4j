@@ -119,4 +119,20 @@ public class BlockIndexedListTest extends AbstractIndexedListTest {
         IndexedList<Integer> ilst = new BlockIndexedList<Integer>();
         featureTestSerialize(rand, vals, ilst);
     }
+
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        IndexedList<Integer> ilst = new BlockIndexedList<Integer>();
+        IndexedList<Integer> ilst2 = new BlockIndexedList<Integer>();
+        featureTestEquals(rand, vals, ilst, ilst2);
+    }
+
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        BlockIndexedList<Integer> ilst = new BlockIndexedList<Integer>();
+        featureTestClone(rand, vals, ilst);
+    }
+
 }

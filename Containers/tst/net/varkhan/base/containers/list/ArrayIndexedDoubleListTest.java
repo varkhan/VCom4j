@@ -150,4 +150,21 @@ public class ArrayIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestSerialize(rand, vals, ilst, defVal);
     }
 
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new ArrayIndexedDoubleList();
+        IndexedDoubleList ilst2 = new ArrayIndexedDoubleList();
+        featureTestEquals(rand, vals, ilst, ilst2, defVal);
+    }
+
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        ArrayIndexedDoubleList ilst = new ArrayIndexedDoubleList();
+        featureTestClone(rand, vals, ilst, defVal);
+    }
+
 }

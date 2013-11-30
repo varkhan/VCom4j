@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  * @date Mar 12, 2009
  * @time 5:44:48 AM
  */
-public class BlockIndexedFloatList extends AbstractBlockIndexedList implements IndexedFloatList, Externalizable {
+public class BlockIndexedFloatList extends AbstractBlockIndexedList implements IndexedFloatList, Externalizable, Cloneable {
 
     private static final long serialVersionUID=1L;
 
@@ -882,11 +882,11 @@ public class BlockIndexedFloatList extends AbstractBlockIndexedList implements I
                 if(thisnum!=thatnum) return false;
                 final float[] thisblock=this.list[i];
                 final float[] thatblock=that.list[i];
-                if(thisblock==null&&thatblock!=null) return false;
-                else if(thatblock==null) return false;
-                else for(int j=0;j<blocksize;j++) {
-                        if(thisblock[j]!=thatblock[j]) return false;
-                    }
+                if(thisblock==null&&thatblock==null) continue;
+                if(thisblock==null||thatblock==null) return false;
+                for(int j=0;j<blocksize;j++) {
+                    if(thisblock[j]!=thatblock[j]) return false;
+                }
             }
         }
         return true;

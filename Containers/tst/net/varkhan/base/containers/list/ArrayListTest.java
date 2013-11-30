@@ -66,4 +66,19 @@ public class ArrayListTest extends AbstractListTest {
         featureTestSerialize(rand, vals, ilst);
     }
 
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        List<Integer> ilst = new ArrayList<Integer>();
+        List<Integer> ilst2 = new ArrayList<Integer>();
+        featureTestEquals(rand, vals, ilst, ilst2);
+    }
+
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        ArrayList<Integer> ilst = new ArrayList<Integer>();
+        featureTestClone(rand, vals, ilst);
+    }
+
 }

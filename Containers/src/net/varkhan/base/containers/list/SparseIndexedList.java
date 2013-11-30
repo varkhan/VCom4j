@@ -658,7 +658,8 @@ public class SparseIndexedList<Type> extends AbstractSparseIndexedList implement
                     int len=getSparseLength(mask);
                     final Object[] block=list[i];
                     for(int j=0;j<len;j++) {
-                        hash^=block[j].hashCode();
+                        Object val=block[j];
+                        if(val!=null) hash^=val.hashCode();
                     }
                 }
             }
@@ -686,14 +687,14 @@ public class SparseIndexedList<Type> extends AbstractSparseIndexedList implement
                 for(int j=0;j<blockhead;j++) if(thismask[j]!=thatmask[j]) return false;
                 final Object[] thisblock=this.list[i];
                 final Object[] thatblock=that.list[i];
+                if(thisblock==null&&thatblock==null) continue;
+                if(thisblock==null||thatblock==null) return false;
                 for(int j=0;j<len;j++) {
-                    if(thisblock[j]==null) {
-                        if(thatblock[j]!=null) return false;
-                    }
-                    else {
-                        if(thatblock[j]==null) return false;
-                        else if(!thisblock[j].equals(thatblock[j])) return false;
-                    }
+                    Object thisval=thisblock[j];
+                    Object thatval=thatblock[j];
+                    if(thisval==thatval) continue;
+                    if(thisval==null || thatval==null) return false;
+                    if(!thisval.equals(thatval)) return false;
                 }
             }
         }

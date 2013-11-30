@@ -719,7 +719,8 @@ public class BlockIndexedList<Type> extends AbstractBlockIndexedList implements 
                 hash^=bits[i];
                 final Object[] block=list[i];
                 if(block!=null) for(int j=0;j<blocksize;j++) {
-                    hash^=block[j].hashCode();
+                    Object val=block[j];
+                    if(val!=null) hash^=val.hashCode();
                 }
             }
         }
@@ -741,17 +742,15 @@ public class BlockIndexedList<Type> extends AbstractBlockIndexedList implements 
                 if(thisnum!=thatnum) return false;
                 final Object[] thisblock=this.list[i];
                 final Object[] thatblock=that.list[i];
-                if(thisblock==null&&thatblock!=null) return false;
-                else if(thatblock==null) return false;
-                else for(int j=0;j<blocksize;j++) {
-                        if(thisblock[j]==null) {
-                            if(thatblock[j]!=null) return false;
-                        }
-                        else {
-                            if(thatblock[j]==null) return false;
-                            else if(!thisblock[j].equals(thatblock[j])) return false;
-                        }
-                    }
+                if(thisblock==null&&thatblock==null) continue;
+                if(thisblock==null||thatblock==null) return false;
+                for(int j=0;j<blocksize;j++) {
+                    Object thisval=thisblock[j];
+                    Object thatval=thatblock[j];
+                    if(thisval==thatval) continue;
+                    if(thisval==null || thatval==null) return false;
+                    if(!thisval.equals(thatval)) return false;
+                }
             }
         }
         return true;

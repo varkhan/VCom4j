@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * @date May 28, 2009
  * @time 9:43:13 PM
  */
-abstract class AbstractBlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializable {
+abstract class AbstractBlockOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializable, Cloneable {
 
     public static final long serialVersionUID=1L;
 

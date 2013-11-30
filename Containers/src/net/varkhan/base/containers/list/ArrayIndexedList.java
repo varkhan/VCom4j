@@ -648,7 +648,8 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
         hash^=head^(head>>>32);
         if(head>0) {
             for(int i=0;i<head;i++) {
-                hash^=list[i].hashCode();
+                Object val=list[i];
+                if(val!=null) hash^=val.hashCode();
             }
         }
         return hash;
@@ -662,9 +663,11 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
         if(this.defVal!=that.defVal) return false;
         if(head>0) {
             for(int i=0;i<head;i++) {
-                if(this.list[i]==that.list[i]) continue;
-                if(this.list[i]==null||that.list[i]==null) return false;
-                if(!this.list[i].equals(that.list[i])) return false;
+                Object thisval=this.list[i];
+                Object thatval=that.list[i];
+                if(thisval==thatval) continue;
+                if(thisval==null||thatval==null) return false;
+                if(!thisval.equals(thatval)) return false;
             }
         }
         return true;

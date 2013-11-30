@@ -150,4 +150,21 @@ public class SparseIndexedIntListTest extends AbstractIndexedIntListTest {
         featureTestSerialize(rand, vals, ilst, defVal);
     }
 
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        int defVal = 0;//rand.nextInt();
+        int[] vals=genIntegerList(rand, 1000000, 0.9, defVal);
+        IndexedIntList ilst = new SparseIndexedIntList();
+        IndexedIntList ilst2 = new SparseIndexedIntList();
+        featureTestEquals(rand, vals, ilst, ilst2, defVal);
+    }
+
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        int defVal = 0;//rand.nextInt();
+        int[] vals=genIntegerList(rand, 1000000, 0.9, defVal);
+        SparseIndexedIntList ilst = new SparseIndexedIntList();
+        featureTestClone(rand, vals, ilst, defVal);
+    }
+
 }

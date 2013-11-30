@@ -1,49 +1,33 @@
-/**
- *
- */
 package net.varkhan.base.containers.set;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Index;
-import net.varkhan.base.containers.Iterator;
 
 import java.io.*;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 
 /**
+ * <b></b>.
+ * <p/>
+ *
  * @author varkhan
- * @date May 21, 2009
- * @time 12:13:22 AM
+ * @date 11/29/13
+ * @time 5:27 PM
  */
-public class IndexedObjectSetTest extends TestCase {
-    long baseseed=1234567890987654321L;
-
-
-    public void testArrayOpenHashIndexedSet() throws Exception {
-        featureTest(100000, new ArrayOpenHashIndexedSet<String>(), 0);
+public abstract class AbstractIndexedSetTest extends TestCase {
+    @SuppressWarnings("unchecked")
+    public static <C extends Cloneable> C clone(C obj) {
+        try {
+            return (C) obj.getClass().getMethod("clone").invoke(obj);
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 
-    public void testAbstractArrayOpenHashIndexedSet() throws Exception {
-        featureTest(100000, new AbstractArrayOpenHashIndexedSet<String>() {
-            private static final long serialVersionUID=1L;
-        }, 0);
-    }
-
-    public void testBlockOpenHashIndexedSet() throws Exception {
-        featureTest(100000, new BlockOpenHashIndexedSet<String>(), 0);
-    }
-
-    public void testAbstractBlockOpenHashIndexedSet() throws Exception {
-        featureTest(100000, new AbstractBlockOpenHashIndexedSet<String>() {
-            private static final long serialVersionUID=1L;
-        }, 0);
-    }
-
-
-    private String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
+    protected String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
         java.util.Set<String> keys=new HashSet<String>(num);
         while(keys.size()<num) {
             StringBuilder buf=new StringBuilder();
@@ -52,22 +36,6 @@ public class IndexedObjectSetTest extends TestCase {
             keys.add(buf.toString());
         }
         return keys.toArray(new String[num]);
-    }
-
-    public void featureTest(int num, IndexedSet<String> iset, int verb) throws Exception {
-        Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, num, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
-        System.out.println("Test "+iset.getClass().getSimpleName()+" ["+baseseed+"]");
-        featureTestAdd(rand, vals, iset, verb);
-        featureTestHas(rand, vals, iset, verb);
-        featureTestIdx(rand, vals, iset, verb);
-        featureTestGet(rand, vals, iset, verb);
-        featureTestDel(rand, vals, iset, verb);
-        featureTestClear(rand, vals, iset, verb);
-        featureTestIndexes(rand, vals, iset, verb);
-        featureTestIterate(rand, vals, iset, verb);
-        try { featureTestSerialize(rand, vals, iset, verb); } catch(NotSerializableException e) { /* ignore */ }
-        System.out.println();
     }
 
     public <T> void featureTestAdd(Random rand, T[] vals, IndexedSet<T> iset, int verb) throws Exception {
@@ -171,7 +139,7 @@ public class IndexedObjectSetTest extends TestCase {
         iset.clear();
         for(int i=0;i<vals.length;i++) idx[i]=iset.add(vals[i]);
         // Testing random delete (implies auto resize)
-        Set<Integer> del=new HashSet<Integer>();
+        java.util.Set<Integer> del=new HashSet<Integer>();
         while(del.size()<vals.length) {
             int i=rand.nextInt(vals.length);
             if(del.contains(i)) continue;
@@ -216,7 +184,8 @@ public class IndexedObjectSetTest extends TestCase {
             finally {
                 if(is!=null) is.close();
             }
-//            assertTrue("serialize(lst)==lst",iset.equals(sset));
+//            assertTrue("serialize(set)==set",iset.equals(sset));
+            assertEquals("size(set)==set", iset.size(),sset.size());
             for(int i=0;i<vals.length;i++) {
                 T v=vals[i];
                 long x=idx[i];
@@ -267,7 +236,7 @@ public class IndexedObjectSetTest extends TestCase {
         iset.clear();
         for(int i=0;i<vals.length;i++) idx[i]=iset.add(vals[i]);
         @SuppressWarnings("unchecked")
-        Iterator<T> it=(Iterator<T>) iset.iterator();
+        net.varkhan.base.containers.Iterator<T> it=(net.varkhan.base.containers.Iterator<T>) iset.iterator();
         for(int i=0;i<iset.size();i++) {
             assertTrue(i+": hasNext()", it.hasNext());
             it.next();
@@ -276,4 +245,38 @@ public class IndexedObjectSetTest extends TestCase {
         System.out.println("iterate() OK");
     }
 
+    public <T> void featureTestEquals(Random rand, T[] vals, IndexedSet<T> iset, IndexedSet<T> eql, int verb) throws Exception {
+        long[] idx=new long[vals.length];
+        iset.clear();
+        for(int i=0;i<vals.length;i++) idx[i]=iset.add(vals[i]);
+        assertFalse("lst.equals(eql)", iset.equals(eql));
+        for(int i=0;i<vals.length;i++) if(vals[i]!=null) eql.add(vals[i]);
+        assertTrue("lst.equals(eql)", iset.equals(eql));
+        assertEquals("lst.hashCode()", iset.hashCode(), eql.hashCode());
+        for(int i=0; i<100; i++) {
+            int p = rand.nextInt(vals.length);
+            if(!iset.has(p)) continue;
+            iset.del(p);
+            assertFalse("lst.equals(eql)", iset.equals(eql));
+            eql.del(p);
+            assertTrue("lst.equals(eql)", iset.equals(eql));
+            assertEquals("lst.hashCode()", iset.hashCode(), eql.hashCode());
+        }
+        System.out.println("equals OK");
+    }
+
+    public <T,S extends IndexedSet<T> & Cloneable> void featureTestClone(Random rand, T[] vals, S iset, int verb) throws Exception {
+        long[] idx=new long[vals.length];
+        iset.clear();
+        for(int i=0;i<vals.length;i++) idx[i]=iset.add(vals[i]);
+        IndexedSet<T> cln = clone(iset);
+        assertEquals("size(set)==set", iset.size(),cln.size());
+        for(int i=0;i<vals.length;i++) {
+            T v=vals[i];
+            long x=idx[i];
+            assertEquals("index("+v+") = "+x, x, iset.index(v));
+            assertEquals("get("+x+")", v, iset.get(x));
+        }
+        System.out.println("clone OK");
+    }
 }

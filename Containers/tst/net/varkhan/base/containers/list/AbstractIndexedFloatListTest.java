@@ -325,7 +325,8 @@ public abstract class AbstractIndexedFloatListTest extends TestCase {
             finally {
                 if(is!=null) is.close();
             }
-            assertTrue("serialize(lst)==lst", ilst.equals(slst));
+//            assertTrue("serialize(lst)==lst", ilst.equals(slst));
+            assertEquals("size(lst)==lst", ilst.size(), slst.size());
             for(int i=0;i<ilst.head();i++) {
                 assertEquals("get("+i+")", vals[i], slst.getFloat(i));
             }
@@ -335,5 +336,43 @@ public abstract class AbstractIndexedFloatListTest extends TestCase {
             if(t!=null) t.delete();
         }
     }
+
+    public <T> void featureTestEquals(Random rand, float[] vals, IndexedFloatList ilst, IndexedFloatList eql, float defVal) throws Exception {
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
+        assertFalse("lst.equals(eql)", ilst.equals(eql));
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) eql.set(i, vals[i]);
+        assertTrue("lst.equals(eql)", ilst.equals(eql));
+        assertEquals("lst.hashCode()", ilst.hashCode(), eql.hashCode());
+        for(int i=0; i<100; i++) {
+            int p = rand.nextInt();
+            if(!ilst.has(p)) continue;
+            assertFalse("lst.equals(eql)", ilst.equals(eql));
+            eql.del(p);
+            assertTrue("lst.equals(eql)", ilst.equals(eql));
+            assertEquals("lst.hashCode()", ilst.hashCode(), eql.hashCode());
+        }
+        System.out.println("equals OK");
+    }
+
+    public <L extends IndexedFloatList & Cloneable> void featureTestClone(Random rand, float[] vals, L ilst, float defVal) throws Exception {
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
+        IndexedFloatList cln = clone(ilst);
+        assertEquals("size(lst)==lst", ilst.size(),cln.size());
+        for(int i=0;i<ilst.size();i++) {
+            assertEquals("get("+i+")", ilst.get(i), cln.get(i));
+        }
+        System.out.println("clone OK");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <C extends Cloneable> C clone(C obj) {
+        try {
+            return (C) obj.getClass().getMethod("clone").invoke(obj);
+        }
+        catch(Exception e) {
+            return null;
+        }
+    }
+
 
 }

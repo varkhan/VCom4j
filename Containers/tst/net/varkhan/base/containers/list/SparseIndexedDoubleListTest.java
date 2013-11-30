@@ -150,4 +150,22 @@ public class SparseIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestSerialize(rand, vals, ilst, defVal);
     }
 
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new SparseIndexedDoubleList();
+        IndexedDoubleList ilst2 = new SparseIndexedDoubleList();
+        featureTestEquals(rand, vals, ilst, ilst2, defVal);
+    }
+
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        SparseIndexedDoubleList ilst = new SparseIndexedDoubleList();
+        featureTestClone(rand, vals, ilst, defVal);
+    }
+
+
 }

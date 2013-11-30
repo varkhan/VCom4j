@@ -57,6 +57,19 @@ public class ArrayOpenHashSetTest extends AbstractSetTest {
         try { featureTestSerialize(rand, vals, set, 0); } catch(NotSerializableException e) { /* ignore */ }
     }
 
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        Set<String> set = new ArrayOpenHashSet<String>();
+        Set<String> set2 = new ArrayOpenHashSet<String>();
+        featureTestEquals(rand, vals, set, set2);
+    }
 
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        ArrayOpenHashSet<String> set = new ArrayOpenHashSet<String>();
+        featureTestClone(rand, vals, set);
+    }
 
 }

@@ -150,4 +150,21 @@ public class ArrayIndexedFloatListTest extends AbstractIndexedFloatListTest {
         featureTestSerialize(rand, vals, ilst, defVal);
     }
 
+    public void testEquals() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal = 0;//rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        IndexedFloatList ilst = new ArrayIndexedFloatList();
+        IndexedFloatList ilst2 = new ArrayIndexedFloatList();
+        featureTestEquals(rand, vals, ilst, ilst2, defVal);
+    }
+
+    public void testClone() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal = 0;//rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        ArrayIndexedFloatList ilst = new ArrayIndexedFloatList();
+        featureTestClone(rand, vals, ilst, defVal);
+    }
+
 }
