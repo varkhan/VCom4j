@@ -42,11 +42,24 @@ public class UTF8EncoderTest extends TestCase {
         UTF8Encoder<Object> enc = new UTF8Encoder<Object>();
         for (int i = 0; i < ss.length; i++) {
             String s = ss[i];
+            byte[] buf=encode_native(s);
+            assertEquals("decode_jdk().length<>length(): \""+s+"\"", buf.length, enc.length(s, null));
             assertArrayEquals("encode_native(decode()) \""+s+"\" "+
-                              "\n\t"+Arrays.toString(encode_native(s))+
+                              "\n\t"+Arrays.toString(buf)+
                               "\n\t"+Arrays.toString(enc.encode(s, null))+
-                              "\n", encode_native(s), enc.encode(s, null));
-            assertEquals("decode_jdk().length<>length(): \""+s+"\"", encode_native(s).length, enc.length(s, null));
+                              "\n", buf, enc.encode(s, null));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            assertEquals("encode_native(decode()) \""+s+"\" "+
+                              "\n\t"+Arrays.toString(buf)+
+                              "\n\t"+Arrays.toString(enc.encode(s, null))+
+                              "\n", buf.length, enc.encode(s, out, null));
+            assertEquals(s,new String(out.toByteArray(),Charset.forName("UTF-8")));
+            ByteBuffer bby = ByteBuffer.allocate(50);
+            assertEquals("encode_native(decode()) \""+s+"\" "+
+                              "\n\t"+Arrays.toString(buf)+
+                              "\n\t"+Arrays.toString(enc.encode(s, null))+
+                              "\n", buf.length, enc.encode(s, bby, null));
+            assertEquals(s,new String(bby.array(),bby.arrayOffset(),bby.arrayOffset()+bby.position(),Charset.forName("UTF-8")));
         }
     }
 

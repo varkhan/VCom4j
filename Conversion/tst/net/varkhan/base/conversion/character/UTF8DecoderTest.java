@@ -22,16 +22,15 @@ import java.util.Arrays;
  */
 public class UTF8DecoderTest extends TestCase {
     public void testDecode() throws Exception {
-        AsciiDecoder<Object> dec = new AsciiDecoder<Object>(true);
-        assertEquals("Foo bar baz",dec.decode("Foo bar baz".getBytes(Charset.forName("US-ASCII")),null));
-        byte[] buf ="Foo bar $$$".getBytes(Charset.forName("ASCII"));
-        buf[buf.length-1] = (byte)0xFE;
-        assertEquals("Foo bar $$~",dec.decode(buf,0,buf.length,null));
-        assertEquals("Foo bar $$~",dec.decode(new ByteArrayInputStream(buf),null));
-        assertEquals("Foo bar $$~",dec.decode(ByteBuffer.wrap(buf),null));
+        UTF8Decoder<Object> dec = new UTF8Decoder<Object>();
+        assertEquals("Foo bar baz",dec.decode("Foo bar baz".getBytes(Charset.forName("UTF-8")),null));
+        byte[] buf ="Foo bar $$þ".getBytes(Charset.forName("UTF-8"));
+        assertEquals("Foo bar $$þ",dec.decode(buf,0,buf.length,null));
+        assertEquals("Foo bar $$þ",dec.decode(new ByteArrayInputStream(buf),null));
+        assertEquals("Foo bar $$þ",dec.decode(ByteBuffer.wrap(buf),null));
     }
 
-    public void testDecodeOtherRanges() throws Exception {
+    public void testDecode2() throws Exception {
         String[] ss = { "دبي", "الشرقيه",
                         "aköy", "zığ", "büyük", "Çor", "niğ",
                         "一", "你好", "龵", "ホ", "࿊",
@@ -40,10 +39,19 @@ public class UTF8DecoderTest extends TestCase {
         UTF8Decoder<Object> dec = new UTF8Decoder<Object>();
         for (int i = 0; i < ss.length; i++) {
             String s = ss[i];
+            byte[] buf=encode_native(s);
             assertEquals("encode(decode_native()) \"" + s + "\" " +
                          "\n\t" + s +
-                         "\n\t" + dec.decode(encode_native(s),null) +
-                         "\n", s, dec.decode(encode_native(s), null));
+                         "\n\t" + dec.decode(buf,null) +
+                         "\n", s, dec.decode(buf, null));
+            assertEquals("encode(decode_native()) \"" + s + "\" " +
+                         "\n\t" + s +
+                         "\n\t" + dec.decode(new ByteArrayInputStream(buf),null) +
+                         "\n", s, dec.decode(new ByteArrayInputStream(buf), null));
+            assertEquals("encode(decode_native()) \"" + s + "\" " +
+                         "\n\t" + s +
+                         "\n\t" + dec.decode(ByteBuffer.wrap(buf),null) +
+                         "\n", s, dec.decode(ByteBuffer.wrap(buf), null));
         }
     }
 
