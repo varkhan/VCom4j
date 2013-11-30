@@ -74,6 +74,7 @@ public class AsciiDecoder<C> extends AbstractDecoder<String,C> implements Decode
                 if(squash) out.append((char) (b&0x7F));
                 else if(b<0x80) out.append((char) (b&0x7F));
                 else throw new DecodingException("Invalid ASCII character");
+                b=stm.read();
             }
             catch(IOException e) {
                 throw new DecodingException(e);

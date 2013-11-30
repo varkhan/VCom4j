@@ -48,6 +48,93 @@ public class Xon {
 
 
     /*********************************************************************************
+     **  XON equality testing
+     **/
+
+
+    /**
+     * Tests for deep equality of two XON objects.
+     *
+     * @param val1 the first object
+     * @param val2 the second object
+     * @return {@literal true} <i>iff</i> the two objects have the same XON type, and
+     * either have the same value, or contain equal objects in the same positions or fields.
+     */
+    @SuppressWarnings("unchecked")
+    public static boolean equals(Object val1, Object val2) {
+        if(val1==val2) return true;
+        if(val1==null || val2==null) return false;
+        if(val1 instanceof Boolean && val2 instanceof Boolean)
+            return equalsBoolean((Boolean) val1, (Boolean) val2);
+        if(val1 instanceof Number && val2 instanceof Number)
+            return equalsNumber((Number) val1, (Number) val2);
+        if(val1 instanceof CharSequence && val2 instanceof CharSequence)
+            return equalsString((CharSequence) val1, (CharSequence) val2);
+//        if(obj instanceof Map)
+//            return equals((Map)val1, (Map)val2);
+//        else if(obj instanceof List) {
+//            return equals((List)val1, (List)val2);
+//        }
+        if(val1.getClass().isArray() && val2.getClass().isArray())
+            return equalsVector((Object[]) val1, (Object[]) val2);
+        if(val1 instanceof Map && val2 instanceof Map)
+            return equalsObject((Map<CharSequence,Object>) val1, (Map<CharSequence,Object>) val2);
+        if(val1 instanceof Collection && val2 instanceof Collection)
+            return equalsCollec((Collection<Object>) val1, (Collection<Object>) val2);
+        // Incompatible types, no equality
+        return false;
+    }
+
+    public static boolean equalsBoolean(Boolean val1, Boolean val2) {
+        if(val1==val2) return true;
+        if(val1==null || val2==null) return false;
+        return val1.booleanValue()==val2.booleanValue();
+    }
+
+    public static boolean equalsNumber(Number val1, Number val2) {
+        if(val1==val2) return true;
+        if(val1==null || val2==null) return false;
+        return val1.longValue()==val2.longValue() && val1.doubleValue()==val2.doubleValue();
+    }
+
+    public static boolean equalsString(CharSequence val1, CharSequence val2) {
+        if(val1==val2) return true;
+        if(val1==null || val2==null) return false;
+        int len=val1.length();
+        if(len!=val2.length()) return false;
+        for(int i=0; i<len; i++) if(val1.charAt(i)!=val2.charAt(i)) return false;
+        return true;
+    }
+
+    public static <T> boolean equalsVector(T[] val1, T[] val2) {
+        if(val1==val2) return true;
+        if(val1==null || val2==null) return false;
+        int len=val1.length;
+        if(len!=val2.length) return false;
+        for(int i=0; i<len; i++) if(!equals(val1[i],val2[i])) return false;
+        return true;
+    }
+
+    public static <K,V> boolean equalsObject(Map<K,V> val1, Map<K,V> val2) {
+        if(val1==val2) return true;
+        if(val1==null || val2==null) return false;
+        if(val1.size()!=val2.size()) return false;
+        for(Map.Entry<K,V> e: val1.entrySet()) if(!equals(e.getValue(),val2.get(e.getKey()))) return false;
+        for(Map.Entry<K,V> e: val2.entrySet()) if(!equals(val1.get(e.getKey()),e.getValue())) return false;
+        return true;
+    }
+
+    public static <T> boolean equalsCollec(Collection<T> val1, Collection<T> val2) {
+        if(val1==val2) return true;
+        if(val1==null || val2==null) return false;
+        Iterator<T> itr1 = val1.iterator();
+        Iterator<T> itr2 = val2.iterator();
+        while(itr1.hasNext() && itr2.hasNext()) if(!equals(itr1.next(),itr2.next())) return false;
+        return !(itr1.hasNext()||itr2.hasNext());
+    }
+
+
+    /*********************************************************************************
      **  XON writing
      **/
 
@@ -165,10 +252,10 @@ public class Xon {
 //    }
 
     /**
-     * Writes a list to an {@link Appendable}.
+     * Writes a collection to an {@link Appendable}.
      *
      * @param out the output Appendable
-     * @param lst the list to write
+     * @param lst the collection to write
      * @param <A> the Appendable type
      *
      * @return the output Appendable (to facilitate chaining)
@@ -186,7 +273,7 @@ public class Xon {
     }
 
     /**
-     * Writes an array to an {@link Appendable}.
+     * Writes a vector to an {@link Appendable}.
      *
      * @param out the output Appendable
      * @param lst the variadic array to write

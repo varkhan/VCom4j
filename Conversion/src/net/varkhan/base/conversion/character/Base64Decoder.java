@@ -108,6 +108,7 @@ public class Base64Decoder<C> extends AbstractDecoder<String,C> implements Decod
                         break;
                 }
                 i++;
+                r=stm.read();
             }
             switch(i%3) {
                 case 0:

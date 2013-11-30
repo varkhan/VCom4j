@@ -93,6 +93,7 @@ public class UTF8Decoder<C> extends AbstractDecoder<String,C> implements Decoder
                     out.append((char) (((b&0x07)<<18)|((b2&0x3F)<<12)|((b3&0x3F)<<6)|(b4&0x3F)));
                 }
                 else { throw new DecodingException("Incomplete Unicode sequence"); }
+                r=stm.read();
             }
             catch(IOException e) {
                 throw new DecodingException(e);

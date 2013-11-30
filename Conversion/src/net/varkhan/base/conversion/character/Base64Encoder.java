@@ -71,28 +71,28 @@ public class Base64Encoder<C> extends AbstractEncoder<CharSequence,C> implements
                 switch(i%4) {
                     case 0:
                         // ******.. ........ ........
-                        b0 |=  0x3F&v;
+                        b0 |= (0x3F&v)<<2;
                         break;
                     case 1:
                         // ======** ****.... ........
-                        b0 |= (0x03&v)<<6;
-                        b1 |= (0x3C&v)>>>2;
+                        b0 |= (0x30&v)>>>4;
+                        b1 |= (0x0F&v)<<4;
                         stm.write(b0);
                         len++;
                         break;
                     case 2:
                         // ________ ====**** **......
-                        b1 |= (0x0F&v)<<4;
-                        b2 |= (0x30&v)>>>4;
+                        b1 |= (0x3C&v)>>>2;
+                        b2 |= (0x03&v)<<6;
                         stm.write(b1);
                         len++;
                         break;
                     case 3:
                         // ________ ________ ==******
-                        b2 |= (0x3F&v)<<2;
+                        b2 |=  0x3F&v;
                         stm.write(b2);
-                        len++;
                         b0=b1=b2=0;
+                        len++;
                         break;
                 }
                 i++;
@@ -119,28 +119,28 @@ public class Base64Encoder<C> extends AbstractEncoder<CharSequence,C> implements
                 switch(i%4) {
                     case 0:
                         // ******.. ........ ........
-                        b0 |=  0x3F&v;
+                        b0 |= (0x3F&v)<<2;
                         break;
                     case 1:
                         // ======** ****.... ........
-                        b0 |= (0x03&v)<<6;
-                        b1 |= (0x3C&v)>>>2;
+                        b0 |= (0x30&v)>>>4;
+                        b1 |= (0x0F&v)<<4;
                         buf.put(b0);
                         len++;
                         break;
                     case 2:
                         // ________ ====**** **......
-                        b1 |= (0x0F&v)<<4;
-                        b2 |= (0x30&v)>>>4;
+                        b1 |= (0x3C&v)>>>2;
+                        b2 |= (0x03&v)<<6;
                         buf.put(b1);
                         len++;
                         break;
                     case 3:
                         // ________ ________ ==******
-                        b2 |= (0x3F&v)<<2;
+                        b2 |=  0x3F&v;
                         buf.put(b2);
-                        len++;
                         b0=b1=b2=0;
+                        len++;
                         break;
                 }
                 i++;

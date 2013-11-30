@@ -20,6 +20,47 @@ import java.util.Map;
  */
 public class XonTest extends TestCase {
 
+    public void testEquals() throws Exception {
+        assertTrue("null | null",Xon.equals(null,null));
+        assertTrue("true | true",Xon.equals(true,true));
+        assertTrue("false | false",Xon.equals(false,false));
+        assertFalse("true | false",Xon.equals(true,false));
+        assertTrue("1 | 1.0",Xon.equals(1,1.0));
+        assertFalse("1 | 1.000001",Xon.equals(1,1.000001));
+        assertTrue("'' | ''",Xon.equals("",""));
+        assertTrue("'d' | 'd'",Xon.equals("d","d"));
+        assertFalse("'d' | ''",Xon.equals("d",""));
+        assertFalse("'d' | 'e'",Xon.equals("d","e"));
+        assertFalse("'d' | 'dd'",Xon.equals("d","dd"));
+        assertTrue("[]|[]",Xon.equals(new Object[] {},new Object[] {}));
+        assertFalse("[null]|[]",Xon.equals(new Object[] {null},new Object[] {}));
+        assertTrue("[null, false, true, 1, 1.0, \"a\"]|[null, false, true, 1, 1.0, \"a\"]",Xon.equals(
+                new Object[] { null, false, true, 1, 1.0, "a" },
+                new Object[] { null, false, true, 1, 1.0, "a" }
+                                                                                                     ));
+        assertTrue("()|()",Xon.equals(Arrays.asList(),Arrays.asList()));
+        assertFalse("(null)|()",Xon.equals(Arrays.asList((Object)null),Arrays.asList()));
+        assertTrue("(null, false, true, 1, 1.0, \"a\")|(null, false, true, 1, 1.0, \"a\")",Xon.equals(
+                Arrays.asList(null, false, true, 1, 1.0, "a"),
+                Arrays.asList(null, false, true, 1, 1.0, "a")
+                                                                                                     ));
+        assertTrue("{}|{}",Xon.equals(asMap(CharSequence.class,Object.class), asMap(CharSequence.class,Object.class)));
+        assertTrue("{\"n\",null,\"f\",false,\"t\",true,\"1\",1,\"1.0\",1.0,\"a\",\"a\"}|{\"n\",null,\"f\",false,\"t\",true,\"1\",1,\"1.0\",1.0,\"a\",\"a\"}",
+                   Xon.equals(
+                           asMap(CharSequence.class,Object.class, "n",null,"f",false,"t",true,"1",1,"1.0",1.0,"a","a"),
+                           asMap(CharSequence.class,Object.class, "n",null,"f",false,"t",true,"1",1,"1.0",1.0,"a","a")
+                             ));
+        assertTrue("{...}|{...}",
+                   Xon.equals(
+                           asMap(CharSequence.class,Object.class, "n",null,"f",false,"t",true,"1",1,"1.0",1.0,"a","a",
+                                 "x",new Object[] { null, false, true, 1, 1.0, "a" },
+                                 "y",Arrays.asList(null, false, true, 1, 1.0, "a")),
+                           asMap(CharSequence.class,Object.class, "n",null,"f",false,"t",true,"1",1,"1.0",1.0,"a","a",
+                                 "x",new Object[] { null, false, true, 1, 1.0, "a" },
+                                 "y",Arrays.asList(null, false, true, 1, 1.0, "a"))
+                             ));
+    }
+
     public void testWrite() throws Exception {
         assertEquals("{\"a\":2,\"b\":true,\"c\",\"d\":\"D\"}", Xon.write(new StringBuilder(), asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", "D")).toString());
         assertEquals("(\"a\",\"b\",\"c\",\"d\")",Xon.write(new StringBuilder(), Arrays.asList("a", "b", "c", "d")).toString());
