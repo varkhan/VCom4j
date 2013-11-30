@@ -2,7 +2,9 @@ package net.varkhan.base.containers.map;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Index;
+import net.varkhan.base.containers.IndexedVisitable;
 import net.varkhan.base.containers.Iterator;
+import net.varkhan.base.containers.Visitable;
 
 import java.io.*;
 import java.util.HashSet;
@@ -29,7 +31,7 @@ public abstract class AbstractIndexedMapTest extends TestCase {
         }
     }
 
-    protected String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
+    protected String[] genKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
         java.util.Set<String> keys=new HashSet<String>(num);
         while(keys.size()<num) {
             StringBuilder buf=new StringBuilder();
@@ -179,6 +181,30 @@ public abstract class AbstractIndexedMapTest extends TestCase {
         System.out.println("del(long) OK");
     }
 
+    public <K,V> void featureTestVisit(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
+        long[] idx=new long[vals.length];
+        imap.clear();
+        for(int i=0;i<keys.length;i++) idx[i]=imap.add(keys[i],vals[i]);
+        assertEquals("visit()", imap.size(), imap.visit(new Visitable.Visitor<IndexedMap.Entry<K,V>,IndexedMap<K,V>>() {
+            @Override
+            public long invoke(IndexedMap.Entry<K,V> obj, IndexedMap<K,V> map) {
+                assertTrue(map.index(obj.getKey())>=0);
+                assertEquals(obj.getValue(),map.getValue(map.index(obj.getKey())));
+                return 1;
+            }
+        }, imap));
+        assertEquals("visit()", imap.size(), imap.visit(new IndexedVisitable.IndexedVisitor<IndexedMap.Entry<K,V>,IndexedMap<K,V>>() {
+            @Override
+            public long invoke(long idx, IndexedMap.Entry<K,V> obj, IndexedMap<K,V> map) {
+                assertTrue(map.has(idx));
+                assertEquals(idx, map.index(obj.getKey()));
+                assertEquals(obj.getValue(),map.getValue(idx));
+                return 1;
+            }
+        }, imap));
+        System.out.println("visit() OK");
+    }
+
     @SuppressWarnings("unchecked")
     public <K,V> void featureTestSerialize(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
         long[] idx=new long[keys.length];
@@ -293,12 +319,12 @@ public abstract class AbstractIndexedMapTest extends TestCase {
         for(int i=0;i<keys.length;i++) idx[i]=imap.add(keys[i],vals[i]);
         IndexedMap<K,V> cln = clone(imap);
         assertEquals("size(set)==set", imap.size(),cln.size());
-        for(int i=0;i<vals.length;i++) {
+        for(int i=0;i<keys.length;i++) {
             K k=keys[i];
             V v=vals[i];
             long x=idx[i];
             assertEquals("index("+k+") = "+x, x, imap.index(k));
-            assertEquals("get("+x+")", v, imap.get(x));
+            assertEquals("get("+x+")", v, imap.getValue(x));
         }
         System.out.println("clone OK");
     }

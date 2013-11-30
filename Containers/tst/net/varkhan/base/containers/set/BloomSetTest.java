@@ -43,6 +43,4 @@ public class BloomSetTest extends AbstractSetTest {
         try { featureTestSerialize(rand, vals, set, 0); } catch(NotSerializableException e) { /* ignore */ }
     }
 
-
-
 }

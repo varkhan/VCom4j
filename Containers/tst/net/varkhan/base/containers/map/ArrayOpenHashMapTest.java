@@ -63,6 +63,14 @@ public class ArrayOpenHashMapTest extends AbstractMapTest {
         featureTestIterate(rand, keys, vals, map, 0);
     }
 
+    public void testVisit() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        Map<String,String> map = new ArrayOpenHashMap<String,String>();
+        featureTestVisit(rand, keys, vals, map, 0);
+    }
+
     public void testSerialize() throws Exception {
         Random rand=new Random(baseseed);
         String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());

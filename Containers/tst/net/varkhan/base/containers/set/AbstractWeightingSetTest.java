@@ -162,13 +162,7 @@ public abstract class AbstractWeightingSetTest extends TestCase {
                 cset.add(k,vals[i]);
             }
         }
-        int num = 0;
-        for(Iterator<? extends K> iterator=cset.iterator();iterator.hasNext();) {
-            K k=iterator.next();
-            assertTrue("next()",cmap.containsKey(k));
-            num ++;
-        }
-        assertEquals("",cmap.size(),cset.visit(new Visitable.Visitor<K,Map<K,Double>>() {
+        assertEquals("visit()",cmap.size(),cset.visit(new Visitable.Visitor<K,Map<K,Double>>() {
             @Override
             public long invoke(K obj, Map<K,Double> map) {
                 assertTrue(map.containsKey(obj));

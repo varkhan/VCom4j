@@ -2,6 +2,7 @@ package net.varkhan.base.containers.map;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Iterator;
+import net.varkhan.base.containers.Visitable;
 
 import java.io.*;
 import java.util.HashSet;
@@ -156,6 +157,20 @@ public abstract class AbstractMapTest extends TestCase {
         }
         assertFalse("hasNext()", it.hasNext());
         System.out.println("iterate() OK");
+    }
+
+    public <K,V> void featureTestVisit(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
+        map.clear();
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
+        assertEquals("visit()", map.size(), map.visit(new Visitable.Visitor<Map.Entry<K,V>,Map<K,V>>() {
+            @Override
+            public long invoke(Map.Entry<K,V> obj, Map<K,V> set) {
+                assertTrue(set.has(obj.getKey()));
+                assertEquals(obj.getValue(),set.get(obj.getKey()));
+                return 1;
+            }
+        }, map));
+        System.out.println("visit() OK");
     }
 
     @SuppressWarnings("unchecked")

@@ -2,6 +2,8 @@ package net.varkhan.base.containers.set;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Index;
+import net.varkhan.base.containers.IndexedVisitable;
+import net.varkhan.base.containers.Visitable;
 
 import java.io.*;
 import java.util.HashSet;
@@ -27,7 +29,7 @@ public abstract class AbstractIndexedSetTest extends TestCase {
         }
     }
 
-    protected String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
+    protected String[] genKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
         java.util.Set<String> keys=new HashSet<String>(num);
         while(keys.size()<num) {
             StringBuilder buf=new StringBuilder();
@@ -243,6 +245,28 @@ public abstract class AbstractIndexedSetTest extends TestCase {
         }
         assertFalse("!hasNext()", it.hasNext());
         System.out.println("iterate() OK");
+    }
+
+    public <T> void featureTestVisit(Random rand, T[] vals, IndexedSet<T> iset, int verb) throws Exception {
+        long[] idx=new long[vals.length];
+        iset.clear();
+        for(int i=0;i<vals.length;i++) idx[i]=iset.add(vals[i]);
+        assertEquals("visit()", iset.size(), iset.visit(new Visitable.Visitor<T,IndexedSet<T>>() {
+            @Override
+            public long invoke(T obj, IndexedSet<T> set) {
+                assertTrue(set.index(obj)>=0);
+                return 1;
+            }
+        }, iset));
+        assertEquals("visit()", iset.size(), iset.visit(new IndexedVisitable.IndexedVisitor<T,IndexedSet<T>>() {
+            @Override
+            public long invoke(long idx, T obj, IndexedSet<T> set) {
+                assertTrue(set.has(idx));
+                assertEquals(idx, set.index(obj));
+                return 1;
+            }
+        }, iset));
+        System.out.println("visit() OK");
     }
 
     public <T> void featureTestEquals(Random rand, T[] vals, IndexedSet<T> iset, IndexedSet<T> eql, int verb) throws Exception {

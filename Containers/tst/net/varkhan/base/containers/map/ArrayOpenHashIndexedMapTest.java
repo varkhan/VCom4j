@@ -17,7 +17,7 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testAdd() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestAdd(rand, keys, vals, imap, 0);
@@ -25,7 +25,7 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testHas() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestHas(rand, keys, vals, imap, 0);
@@ -33,7 +33,7 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testIdx() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestIdx(rand, keys, vals, imap, 0);
@@ -41,7 +41,7 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testGet() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestGet(rand, keys, vals, imap, 0);
@@ -49,7 +49,7 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testDel() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestDel(rand, keys, vals, imap, 0);
@@ -57,7 +57,7 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testClear() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestClear(rand, keys, vals, imap, 0);
@@ -65,7 +65,7 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestIndexes(rand, keys, vals, imap, 0);
@@ -73,15 +73,23 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testIterate() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestIterate(rand, keys, vals, imap, 0);
     }
 
+    public void testVisit() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
+        featureTestVisit(rand, keys, vals, imap, 0);
+    }
+
     public void testSerialize() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         try { featureTestSerialize(rand, keys, vals, imap, 0); } catch(NotSerializableException e) { /* ignore */ }
@@ -89,15 +97,15 @@ public class ArrayOpenHashIndexedMapTest extends AbstractIndexedMapTest {
 
     public void testEquals() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestEquals(rand, keys, vals, imap, new ArrayOpenHashIndexedMap<String,String>(), 0);
     }
 
-    public void tesClone() throws Exception {
+    public void testClone() throws Exception {
         Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] keys=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         String[] vals=generateValueStrings(rand, 100000, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         ArrayOpenHashIndexedMap<String,String> imap = new ArrayOpenHashIndexedMap<String,String>();
         featureTestClone(rand, keys, vals, imap, 0);

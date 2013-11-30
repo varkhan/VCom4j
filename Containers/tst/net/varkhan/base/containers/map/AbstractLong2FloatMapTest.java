@@ -2,6 +2,7 @@ package net.varkhan.base.containers.map;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Iterator;
+import net.varkhan.base.containers.Visitable;
 
 import java.io.*;
 import java.util.HashSet;
@@ -13,27 +14,21 @@ import java.util.Random;
  * <p/>
  *
  * @author varkhan
- * @date 2/9/11
- * @time 8:43 PM
+ * @date 11/29/13
+ * @time 7:02 PM
  */
-public class PrimitiveMapTest extends TestCase {
-
-    long baseseed=1234567890987654321L;
-
-//    public void testValues() {
-//        System.err.println(0x7fffffffffffffffL);
-//        System.err.println(0x8000000000000000L);
-//    }
-
-    public void testArrayOpenHashMap() throws Exception {
-        featureTest(100000, new ArrayOpenHashLong2FloatMap(), 0);
+public abstract class AbstractLong2FloatMapTest extends TestCase {
+    @SuppressWarnings("unchecked")
+    public static <C extends Cloneable> C clone(C obj) {
+        try {
+            return (C) obj.getClass().getMethod("clone").invoke(obj);
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 
-    public void testBlockOpenHashMap() throws Exception {
-        featureTest(100000, new BlockOpenHashLong2FloatMap(), 0);
-    }
-
-    private long[] generateKeyLongs(Random rand, int num) {
+    protected long[] genKeyLongs(Random rand, int num) {
         java.util.Set<Long> keys=new HashSet<Long>(num);
         while(keys.size()<num) {
             long l=rand.nextLong();
@@ -45,7 +40,7 @@ public class PrimitiveMapTest extends TestCase {
         return a;
     }
 
-    private float[] generateValueFloats(Random rand, int num, double sparse, float minVal, float maxVal) {
+    protected float[] genValueFloats(Random rand, int num, double sparse, float minVal, float maxVal) {
         float[] a=new float[num];
         for(int i=0;i<num;i++) {
             if(rand.nextFloat()<sparse) {
@@ -57,24 +52,9 @@ public class PrimitiveMapTest extends TestCase {
         return a;
     }
 
-    public void featureTest(int num, Long2FloatMap map, int verb) throws Exception {
-        Random rand=new Random(baseseed);
-        long[] keys=generateKeyLongs(rand, num);
-        float[] vals=generateValueFloats(rand, num, .1, 1f, 10000f);
-        System.out.println("Test "+map.getClass().getSimpleName()+" ["+baseseed+"]");
-        featureTestAdd(rand, keys, vals, map, verb);
-        featureTestHas(rand, keys, vals, map, verb);
-        featureTestGet(rand,keys, vals,map,verb);
-        featureTestDel(rand, keys, vals, map, verb);
-        featureTestClear(rand, keys, vals, map, verb);
-        featureTestIterate(rand, keys, vals, map, verb);
-        try { featureTestSerialize(rand, keys, vals, map, verb); } catch(NotSerializableException e) { /* ignore */ }
-        System.out.println();
-    }
-
     public void featureTestAdd(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
         // Testing key adding
-        for(int i=0;i<vals.length;i++) {
+        for(int i=0;i<keys.length;i++) {
             long k=keys[i];
             float v=vals[i];
             map.add(k,v);
@@ -87,10 +67,10 @@ public class PrimitiveMapTest extends TestCase {
 
     public void featureTestHas(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         if(verb>0) System.err.println("Ready");
         // Testing if keys are seen
-        for(int i=0;i<vals.length;i++) {
+        for(int i=0;i<keys.length;i++) {
             long k=keys[i];
             assertTrue("has("+k+")", map.has(k));
             if(verb>0) System.err.println("Checked "+i+" "+k);
@@ -99,7 +79,7 @@ public class PrimitiveMapTest extends TestCase {
         System.out.println("has(T) OK");
     }
 
-    private void featureTestGet(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
+    protected void featureTestGet(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
         map.clear();
         for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         // Testing if keys/values can be retrieved
@@ -115,10 +95,10 @@ public class PrimitiveMapTest extends TestCase {
 
     public void featureTestDel(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         if(verb>0) System.err.println("Ready");
         // Testing forward delete (no resize)
-        for(int i=0;i<vals.length;i++) {
+        for(int i=0;i<keys.length;i++) {
             long k=keys[i];
             float v=vals[i];
             // This may have been deleted before
@@ -130,7 +110,7 @@ public class PrimitiveMapTest extends TestCase {
         }
         System.out.println("del(T) forward OK");
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         if(verb>0) System.err.println("Ready");
         // Testing backward delete (implies auto resize)
         for(int i=vals.length-1;i>=0;i--) {
@@ -145,11 +125,11 @@ public class PrimitiveMapTest extends TestCase {
         }
         System.out.println("del() backward OK");
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         if(verb>0) System.err.println("Ready");
         // Testing random delete (implies auto resize)
         java.util.Set<Integer> del=new HashSet<Integer>();
-        while(del.size()<vals.length) {
+        while(del.size()<keys.length) {
             int i=rand.nextInt(vals.length);
             if(del.contains(i)) continue;
             long k=keys[i];float v=vals[i];
@@ -162,7 +142,7 @@ public class PrimitiveMapTest extends TestCase {
 
     public void featureTestClear(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         map.clear();
         if(verb>0) System.err.println("Ready");
         assertTrue("isEmpty", map.isEmpty());
@@ -176,7 +156,7 @@ public class PrimitiveMapTest extends TestCase {
 
     public void featureTestIterate(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         @SuppressWarnings("unchecked")
         Iterator<Long2FloatMap.Entry> it=(Iterator<Long2FloatMap.Entry>) map.iterator();
         for(int i=0;i<map.size();i++) {
@@ -187,10 +167,24 @@ public class PrimitiveMapTest extends TestCase {
         System.out.println("iterate() OK");
     }
 
+    public void featureTestVisit(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
+        map.clear();
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
+        assertEquals("visit()", map.size(), map.visit(new Visitable.Visitor<Map.Entry<Long,Float>,Map<Long,Float>>() {
+            @Override
+            public long invoke(Map.Entry<Long,Float> obj, Map<Long,Float> set) {
+                assertTrue(set.has(obj.getKey()));
+                assertEquals(obj.getValue(), set.get(obj.getKey()));
+                return 1;
+            }
+        }, map));
+        System.out.println("visit() OK");
+    }
+
     @SuppressWarnings("unchecked")
     public void featureTestSerialize(Random rand, long[] keys, float[] vals, Long2FloatMap map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         File t=null;
         try {
             t=File.createTempFile("serial-", ".ser");
@@ -213,7 +207,7 @@ public class PrimitiveMapTest extends TestCase {
             }
 //            assertTrue("serialize(lst)==lst",imap.equals(smap));
             assertEquals("size(map)==map", map.size(),smap.size());
-            for(int i=0;i<vals.length;i++) {
+            for(int i=0;i<keys.length;i++) {
                 long k=keys[i];float v=vals[i];
                 assertTrue("has("+k+")", smap.has(k));
                 assertTrue("get("+k+")", smap.has(k));
@@ -225,4 +219,32 @@ public class PrimitiveMapTest extends TestCase {
         }
     }
 
+    public void featureTestEquals(Random rand, long[] keys, float[] vals, Long2FloatMap map, Long2FloatMap eql, int verb) throws Exception {
+        map.clear();
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
+        assertFalse("lst.equals(eql)", map.equals(eql));
+        for(int i=0;i<keys.length;i++) eql.add(keys[i],vals[i]);
+        assertTrue("lst.equals(eql)", map.equals(eql));
+        assertEquals("lst.hashCode()", map.hashCode(), eql.hashCode());
+        for(int i=0; i<100; i++) {
+            int p = rand.nextInt(vals.length);
+            if(map.del(keys[p])) assertFalse("lst.equals(eql)", map.equals(eql));
+            else assertTrue("lst.equals(eql)", map.equals(eql));
+            eql.del(keys[p]);
+            assertTrue("lst.equals(eql)", map.equals(eql));
+            assertEquals("lst.hashCode()", map.hashCode(), eql.hashCode());
+        }
+        System.out.println("equals OLong");
+    }
+
+    public <S extends Long2FloatMap & Cloneable> void featureTestClone(Random rand, long[] keys, float[] vals, S map, int verb) throws Exception {
+        map.clear();
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
+        Map<Long,Float> cln = clone(map);
+        assertEquals("size(set)==set", map.size(),cln.size());
+        for(int i=0;i<keys.length;i++) {
+            assertEquals("get("+i+")", map.get(keys[i]), cln.get(keys[i]));
+        }
+        System.out.println("clone OLong");
+    }
 }

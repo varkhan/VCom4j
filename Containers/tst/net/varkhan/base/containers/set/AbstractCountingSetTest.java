@@ -197,13 +197,7 @@ public abstract class AbstractCountingSetTest extends TestCase {
                 cset.add(k);
             }
         }
-        int num = 0;
-        for(Iterator<? extends K> iterator=cset.iterator();iterator.hasNext();) {
-            K k=iterator.next();
-            assertTrue("next()",cmap.containsKey(k));
-            num ++;
-        }
-        assertEquals("",cmap.size(),cset.visit(new Visitable.Visitor<K,Map<K,Long>>() {
+        assertEquals("visit()",cmap.size(),cset.visit(new Visitable.Visitor<K,Map<K,Long>>() {
             @Override
             public long invoke(K obj, Map<K,Long> map) {
                 assertTrue(map.containsKey(obj));

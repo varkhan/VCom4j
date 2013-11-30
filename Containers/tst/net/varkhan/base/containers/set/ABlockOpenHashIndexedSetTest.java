@@ -18,7 +18,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testAdd() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -27,7 +27,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testHas() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -36,7 +36,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testIdx() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -45,7 +45,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testGet() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -54,7 +54,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testDel() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -63,7 +63,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testClear() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -72,7 +72,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -81,7 +81,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testIterate() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -90,7 +90,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testSerialize() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -99,7 +99,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testEquals() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         IndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };
@@ -111,7 +111,7 @@ public class ABlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
 
     public void testClone() throws Exception {
         Random rand=new Random(baseseed);
-        String[] vals=generateKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        String[] vals=genKeyStrings(rand, 100000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         AbstractBlockOpenHashIndexedSet<String> iset = new AbstractBlockOpenHashIndexedSet<String>() {
             public static final long serialVersionUID=1L;
         };

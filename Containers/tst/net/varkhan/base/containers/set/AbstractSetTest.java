@@ -2,6 +2,7 @@ package net.varkhan.base.containers.set;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Iterator;
+import net.varkhan.base.containers.Visitable;
 
 import java.io.*;
 import java.util.HashSet;
@@ -137,6 +138,19 @@ public abstract class AbstractSetTest extends TestCase {
         }
         assertFalse("hasNext()", it.hasNext());
         System.out.println("iterate() OK");
+    }
+
+    public <T> void featureTestVisit(Random rand, T[] vals, Set<T> set, int verb) throws Exception {
+        set.clear();
+        for(int i=0;i<vals.length;i++) set.add(vals[i]);
+        assertEquals("visit()",set.size(),set.visit(new Visitable.Visitor<T,Set<T>>() {
+            @Override
+            public long invoke(T obj, Set<T> set) {
+                assertTrue(set.has(obj));
+                return 1;
+            }
+        }, set));
+        System.out.println("visit() OK");
     }
 
     @SuppressWarnings("unchecked")

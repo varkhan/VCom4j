@@ -50,6 +50,13 @@ public class BlockOpenHashSetTest extends AbstractSetTest {
         featureTestIterate(rand, vals, set, 0);
     }
 
+    public void testVisit() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        Set<String> set = new BlockOpenHashSet<String>();
+        featureTestVisit(rand, vals, set, 0);
+    }
+
     public void testSerialize() throws Exception {
         Random rand=new Random(baseseed);
         String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
