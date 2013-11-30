@@ -698,7 +698,7 @@ public class ArrayOpenHashIndexedFloatSet implements IndexedFloatSet, Serializab
                 pos++;
                 continue;
             }
-            long r=vis.invoke(idx, keys[idx-1], par);
+            long r=vis.invoke(idx-1, keys[idx-1], par);
             if(r<0) return c;
             c+=r;
             pos++;

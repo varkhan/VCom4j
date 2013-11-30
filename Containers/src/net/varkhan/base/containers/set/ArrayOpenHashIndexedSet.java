@@ -646,7 +646,7 @@ public class ArrayOpenHashIndexedSet<Key> implements IndexedSet<Key>, Serializab
                 continue;
             }
             @SuppressWarnings("unchecked")
-            long r=vis.invoke(idx, (Key) keys[idx-1], par);
+            long r=vis.invoke(idx-1, (Key) keys[idx-1], par);
             if(r<0) return c;
             c+=r;
             pos++;
