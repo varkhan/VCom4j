@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+    <info organisation="net.varkhan" module="VCom4j-Core-Concurrent" branch="prod" revision="0.2.0" status="release"/>
+    <publications>
+        <artifact name="VCom4j-Core-Concurrent" ext="jar" type="src"/>
+        <artifact name="VCom4j-Core-Concurrent" ext="jar" type="bin"/>
+        <artifact name="VCom4j-Core-Concurrent" ext="jar" type="doc"/>
+        <artifact name="VCom4j-Core-Concurrent" ext="ivy" type="ivy"/>
+        <artifact name="VCom4j-Core-Concurrent" ext="pom" type="pom"/>
+    </publications>
+    <dependencies>
+        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="0.7.+"/>
+    </dependencies>
+</ivy-module>
