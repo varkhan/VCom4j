@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @date 2/17/11
  * @time 9:59 PM
  */
-public class SyncIndexedMap<Key,Value> implements IndexedMap<Key,Value>, Serializable {
+public class SyncIndexedMap<Key,Value> implements ConcurrentIndexedMap<Key,Value>, Serializable {
 
     private static final long serialVersionUID=1L;
 
@@ -194,6 +194,57 @@ public class SyncIndexedMap<Key,Value> implements IndexedMap<Key,Value>, Seriali
     }
 
     /**
+     * Replaces the value designated by a key, if the record exists and has the specified value.
+     *
+     * @param key a key referring to this record
+     * @param oldval the old value at this index
+     * @param newval the new value at this index
+     *
+     * @return {@literal true} if the record was updated, {@literal false} otherwise
+     */
+    public boolean repForKey(Key key, Value oldval, Value newval) {
+        wlock.lock();
+        try {
+            long idx = map.index(key);
+            if(idx>=0 && map.get(idx)==oldval) {
+                ++opid;
+                map.setValue(idx,newval);
+                return true;
+            }
+            else return false;
+        }
+        finally {
+            ++opid;
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Replaces the value designated by an index, if the record exists and has the specified value.
+     *
+     * @param index a unique identifier
+     * @param oldval the old value at this index
+     * @param newval the new value at this index
+     *
+     * @return {@literal true} if the record was updated, {@literal false} otherwise
+     */
+    public boolean rep(long index, Value oldval, Value newval) {
+        wlock.lock();
+        try {
+            if(map.get(index)==oldval) {
+                ++opid;
+                map.setValue(index,newval);
+                return true;
+            }
+            else return false;
+        }
+        finally {
+            ++opid;
+            wlock.unlock();
+        }
+    }
+
+    /**
      * Allocates an index and associates it with an Entry record
      *
      * @param key a key referring to this record
@@ -212,18 +263,40 @@ public class SyncIndexedMap<Key,Value> implements IndexedMap<Key,Value>, Seriali
     }
 
     /**
-     * Adds an element at the end of the map.
-     * <p/>
-     * Note: this is equivalent to {@link #map}{@code (head(), val)}, and
-     * the returned index is the value of {@link #head()} before the call.
+     * Allocates an index and associates it with an Entry record, if no record for this key exists.
      *
-     * @param val the object to store in the map
+     * @param key a key referring to this record
+     * @param val the value contained in this record
      *
-     * @return the entry's unique identifier, that will subsequently give access to the element
+     * @return the record's unique identifier, that would be subsequently returned
+     *         by a call to {@code getIndex(getKey(data))}, or {@literal -1L} if the record was not added
      */
-    public long add(Entry<Key,Value> val) {
+    public long addIfAbsent(Key key, Value val) {
         wlock.lock();
-        try { return map.add(val); }
+        try {
+            long idx = map.index(key);
+            if(idx<0) {
+                ++opid;
+                return map.add(key,val);
+            }
+            else return -1L;
+        }
+        finally {
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Allocates an index and associates it with an Entry record
+     *
+     * @param item the data contained in this record
+     *
+     * @return the record's unique identifier, that would be subsequently returned
+     *         by a call to {@code getIndex(getKey(data))}
+     */
+    public long add(Entry<Key,Value> item) {
+        wlock.lock();
+        try { return map.add(item); }
         finally {
             ++opid;
             wlock.unlock();
@@ -240,6 +313,55 @@ public class SyncIndexedMap<Key,Value> implements IndexedMap<Key,Value>, Seriali
         try { map.del(index); }
         finally {
             ++opid;
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Deletes an Entry record, and invalidates the associated index mapping,
+     * if the record exists and has the specified value.
+     *
+     * @param key a key referring to this record
+     * @param val the value contained in this record
+     *
+     * @return {@literal true} if the record was deleted, {@literal false} otherwise
+     */
+    public boolean delForKey(Key key, Value val) {
+        wlock.lock();
+        try {
+            long idx = map.index(key);
+            if(idx>=0 && map.getValue(idx)==val) {
+                ++opid;
+                map.del(idx);
+                return true;
+            }
+            else return false;
+        }
+        finally {
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Deletes an Entry record, and invalidates the associated index mapping,
+     * if the record exists and has the specified value.
+     *
+     * @param index a unique identifier for this record
+     * @param val the value contained in this record
+     *
+     * @return {@literal true} if the record was deleted, {@literal false} otherwise
+     */
+    public boolean del(long index, Value val) {
+        wlock.lock();
+        try {
+            if(map.getValue(index)==val) {
+                ++opid;
+                map.del(index);
+                return true;
+            }
+            else return false;
+        }
+        finally {
             wlock.unlock();
         }
     }
@@ -486,6 +608,32 @@ public class SyncIndexedMap<Key,Value> implements IndexedMap<Key,Value>, Seriali
                 public long invoke(Entry<Key,Value> obj, Par par) {
                     if(exid!=opid) throw new ConcurrentModificationException();
                     return vis.invoke(obj, par);
+                }
+            }, par);
+        }
+        finally { rlock.unlock(); }
+    }
+
+    /**
+     * Iterate over each element of the map, and pass it as argument to a
+     * visitor's {@link Visitor#invoke} method, until this method returns
+     * a negative count.
+     *
+     * @param vis the visitor
+     * @param par the control parameter
+     * @param <Par> the type of the control parameter
+     *
+     * @return the sum of all positive return values from the visitor
+     */
+    public <Par> long visit(final IndexedMapVisitor<Key,Value,Par> vis, Par par) {
+        rlock.lock();
+        try {
+            return map.visit(new IndexedMapVisitor<Key,Value,Par>() {
+                private final long exid=opid;
+
+                public long invoke(long index, Key key, Value val, Par par) {
+                    if(exid!=opid) throw new ConcurrentModificationException();
+                    return vis.invoke(index, key, val, par);
                 }
             }, par);
         }

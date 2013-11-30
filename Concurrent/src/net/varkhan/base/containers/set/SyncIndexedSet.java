@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @date 2/17/11
  * @time 10:00 PM
  */
-public class SyncIndexedSet<Key> implements IndexedSet<Key>, Serializable {
+public class SyncIndexedSet<Key> implements ConcurrentIndexedSet<Key>, Serializable {
 
     private static final long serialVersionUID=1L;
 

@@ -30,7 +30,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @date Mar 12, 2009
  * @time 7:18:56 PM
  */
-public class SyncIndexedFloatList implements IndexedFloatList, Serializable {
+public class SyncIndexedFloatList implements ConcurrentIndexedFloatList, Serializable {
 
     private static final long serialVersionUID=1L;
 
@@ -276,6 +276,96 @@ public class SyncIndexedFloatList implements IndexedFloatList, Serializable {
     }
 
     /**
+     * Associates an element to a particular index, if no value was stored at this index
+     *
+     * @param index a unique identifier for this entry
+     * @param val   the object to store in the list
+     * index
+     * @return the entry's unique identifier, equal to {@code index}, or {@literal -1L} if a value existed at that index
+     */
+    public long setIfAbsent(long index, Float val) {
+        wlock.lock();
+        try {
+            if(list.has(index)) return -1L;
+            else {
+                ++opid;
+                return list.set(index, val);
+            }
+        }
+        finally {
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Associates an element to a particular index, if no value was stored at this index
+     *
+     * @param index a unique identifier for this entry
+     * @param val   the object to store in the list
+     * index
+     * @return the entry's unique identifier, equal to {@code index}, or {@literal -1L} if a value existed at that index
+     */
+    public long setIfAbsent(long index, float val) {
+        wlock.lock();
+        try {
+            if(list.has(index)) return -1L;
+            else {
+                ++opid;
+                return list.set(index, val);
+            }
+        }
+        finally {
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Associates an element to a particular index, if a particular value existed at this index.
+     *
+     * @param index  a unique identifier for this entry
+     * @param oldval the object at that index in the list
+     * @param newval the object to store in the list
+     *
+     * @return the entry's unique identifier, equal to {@code index}, or {@literal -1L} if the element was not replaced
+     */
+    public long rep(long index, Float oldval, Float newval) {
+        wlock.lock();
+        try {
+            if(list.get(index)==oldval) {
+                ++opid;
+                return list.set(index, newval);
+            }
+            else return -1L;
+        }
+        finally {
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Associates an element to a particular index, if a particular value existed at this index.
+     *
+     * @param index  a unique identifier for this entry
+     * @param oldval the object at that index in the list
+     * @param newval the object to store in the list
+     *
+     * @return the entry's unique identifier, equal to {@code index}, or {@literal -1L} if the element was not replaced
+     */
+    public long rep(long index, float oldval, float newval) {
+        wlock.lock();
+        try {
+            if(list.get(index)==oldval) {
+                ++opid;
+                return list.set(index, newval);
+            }
+            else return -1L;
+        }
+        finally {
+            wlock.unlock();
+        }
+    }
+
+    /**
      * Deletes an element, and invalidates the related index.
      *
      * @param index a unique identifier for this entry
@@ -285,6 +375,48 @@ public class SyncIndexedFloatList implements IndexedFloatList, Serializable {
         try { list.del(index); }
         finally {
             ++opid;
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Deletes an element, and invalidates the related index.
+     *
+     * @param index a unique identifier for this entry
+     * @param val   the object at this index in the list
+     */
+    public boolean del(long index, Float val) {
+        wlock.lock();
+        try {
+            if(list.get(index)==val) {
+                ++opid;
+                list.del(index);
+                return true;
+            }
+            else return false;
+        }
+        finally {
+            wlock.unlock();
+        }
+    }
+
+    /**
+     * Deletes an element, and invalidates the related index.
+     *
+     * @param index a unique identifier for this entry
+     * @param val   the object at this index in the list
+     */
+    public boolean del(long index, float val) {
+        wlock.lock();
+        try {
+            if(list.get(index)==val) {
+                ++opid;
+                list.del(index);
+                return true;
+            }
+            else return false;
+        }
+        finally {
             wlock.unlock();
         }
     }

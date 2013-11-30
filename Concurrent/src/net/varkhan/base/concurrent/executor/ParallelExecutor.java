@@ -44,7 +44,7 @@ public class ParallelExecutor<T extends Task> implements Executor<T> {
     }
 
     public void execute(T task) {
-        execute(Arrays.container(task));
+        execute(Arrays.asList(task));
     }
 
     public void execute(Container<T> tasks) {
