@@ -62,14 +62,14 @@ public class ArrayOpenHashSetTest extends AbstractSetTest {
         String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         Set<String> set = new ArrayOpenHashSet<String>();
         Set<String> set2 = new ArrayOpenHashSet<String>();
-        featureTestEquals(rand, vals, set, set2);
+        featureTestEquals(rand, vals, set, set2, 0);
     }
 
     public void testClone() throws Exception {
         Random rand=new Random(baseseed);
         String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
         ArrayOpenHashSet<String> set = new ArrayOpenHashSet<String>();
-        featureTestClone(rand, vals, set);
+        featureTestClone(rand, vals, set, 0);
     }
 
 }

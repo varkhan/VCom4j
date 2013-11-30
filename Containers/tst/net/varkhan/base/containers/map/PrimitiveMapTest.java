@@ -64,7 +64,6 @@ public class PrimitiveMapTest extends TestCase {
         System.out.println("Test "+map.getClass().getSimpleName()+" ["+baseseed+"]");
         featureTestAdd(rand, keys, vals, map, verb);
         featureTestHas(rand, keys, vals, map, verb);
-//        featureTestIdx(rand,keys, vals,map,verb);
         featureTestGet(rand,keys, vals,map,verb);
         featureTestDel(rand, keys, vals, map, verb);
         featureTestClear(rand, keys, vals, map, verb);
@@ -213,6 +212,7 @@ public class PrimitiveMapTest extends TestCase {
                 if(is!=null) is.close();
             }
 //            assertTrue("serialize(lst)==lst",imap.equals(smap));
+            assertEquals("size(map)==map", map.size(),smap.size());
             for(int i=0;i<vals.length;i++) {
                 long k=keys[i];float v=vals[i];
                 assertTrue("has("+k+")", smap.has(k));

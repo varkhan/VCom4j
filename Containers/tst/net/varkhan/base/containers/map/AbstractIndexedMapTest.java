@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.varkhan.base.containers.map;
 
 import junit.framework.TestCase;
@@ -14,23 +11,25 @@ import java.util.Set;
 
 
 /**
+ * <b></b>.
+ * <p/>
+ *
  * @author varkhan
- * @date Nov 5, 2009
- * @time 6:09:05 PM
+ * @date 11/29/13
+ * @time 6:16 PM
  */
-public class IndexedObjectMapTest extends TestCase {
-    long baseseed=1234567890987654321L;
-
-    public void testArrayOpenHashIndexedMap() throws Exception {
-        featureTest(10000, new ArrayOpenHashIndexedMap<String,String>(), 0);
+public abstract class AbstractIndexedMapTest extends TestCase {
+    @SuppressWarnings("unchecked")
+    public static <C extends Cloneable> C clone(C obj) {
+        try {
+            return (C) obj.getClass().getMethod("clone").invoke(obj);
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 
-    public void testBlockOpenHashIndexedMap() throws Exception {
-        featureTest(10000, new BlockOpenHashIndexedMap<String,String>(), 0);
-    }
-
-
-    private String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
+    protected String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
         java.util.Set<String> keys=new HashSet<String>(num);
         while(keys.size()<num) {
             StringBuilder buf=new StringBuilder();
@@ -41,7 +40,7 @@ public class IndexedObjectMapTest extends TestCase {
         return keys.toArray(new String[num]);
     }
 
-    private String[] generateValueStrings(Random rand, int num, double sparse, int minl, int maxl, char[] characters) {
+    protected String[] generateValueStrings(Random rand, int num, double sparse, int minl, int maxl, char[] characters) {
         String[] a=new String[num];
         for(int i=0;i<num;i++) {
             if(rand.nextFloat()<sparse) {
@@ -56,25 +55,7 @@ public class IndexedObjectMapTest extends TestCase {
         return a;
     }
 
-    public void featureTest(int num, IndexedMap<String,String> imap, int verb) throws Exception {
-        System.out.println("Test "+imap.getClass().getSimpleName());
-        Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, num, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
-        String[] vals=generateValueStrings(rand, num, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
-        System.out.println("Test "+imap.getClass().getSimpleName()+" ["+baseseed+"]");
-        featureTestAdd(rand, keys, vals, imap, verb);
-        featureTestHas(rand, keys, vals, imap, verb);
-        featureTestIdx(rand, keys, vals, imap, verb);
-        featureTestGet(rand, keys, vals, imap, verb);
-        featureTestDel(rand, keys, vals, imap, verb);
-        featureTestClear(rand, keys, vals, imap, verb);
-        featureTestIndexes(rand, keys, vals, imap, verb);
-        featureTestIterate(rand, keys, vals, imap, verb);
-        try { featureTestSerialize(rand, keys, vals, imap, verb); } catch(NotSerializableException e) { /* ignore */ }
-        System.out.println();
-    }
-
-    private <K,V> void featureTestAdd(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
+    protected <K,V> void featureTestAdd(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
         // Testing key adding
         for(int i=0;i<keys.length;i++) {
             K k=keys[i];
@@ -87,7 +68,7 @@ public class IndexedObjectMapTest extends TestCase {
         if(verb>0) System.out.println("add(T) OK");
     }
 
-    private <K,V> void featureTestHas(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
+    protected <K,V> void featureTestHas(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
         long[] idx=new long[keys.length];
         imap.clear();
         for(int i=0;i<keys.length;i++) idx[i]=imap.add(keys[i],vals[i]);
@@ -101,7 +82,7 @@ public class IndexedObjectMapTest extends TestCase {
         System.out.println("has(long) OK");
     }
 
-    private <K,V> void featureTestIdx(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
+    protected <K,V> void featureTestIdx(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
         long[] idx=new long[keys.length];
         imap.clear();
         for(int i=0;i<keys.length;i++) idx[i]=imap.add(keys[i],vals[i]);
@@ -116,7 +97,7 @@ public class IndexedObjectMapTest extends TestCase {
         if(verb>0) System.out.println("index(T) OK");
     }
 
-    private <K,V> void featureTestGet(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
+    protected <K,V> void featureTestGet(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
         long[] idx=new long[keys.length];
         imap.clear();
         for(int i=0;i<keys.length;i++) idx[i]=imap.add(keys[i],vals[i]);
@@ -133,7 +114,7 @@ public class IndexedObjectMapTest extends TestCase {
         if(verb>0) System.out.println("get{Key,Value}(long) OK");
     }
 
-    private <K,V> void featureTestDel(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
+    protected <K,V> void featureTestDel(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, int verb) throws Exception {
         long[] idx=new long[keys.length];
         // Testing forward delete (no resize)
         for(int i=0;i<keys.length;i++) {
@@ -262,7 +243,7 @@ public class IndexedObjectMapTest extends TestCase {
         for(int i=0;i<imap.size();i++) {
             assertTrue(i+": hasNext()", it.hasNext());
             long x=it.next();
-            /*if(verb>0)*/ System.err.println(i+": next() = "+x);
+            if(verb>0) System.err.println(i+": next() = "+x);
             if(prev) assertTrue(i+": hasPrevious()", it.hasPrevious());
             else assertFalse(i+": !hasPrevious()", it.hasPrevious());
             prev=true;
@@ -285,4 +266,40 @@ public class IndexedObjectMapTest extends TestCase {
         System.out.println("iterate() OK");
     }
 
+    public <K,V> void featureTestEquals(Random rand, K[] keys, V[] vals, IndexedMap<K,V> imap, IndexedMap<K,V> eql, int verb) throws Exception {
+        long[] idx=new long[keys.length];
+        long[] eidx=new long[keys.length];
+        imap.clear();
+        for(int i=0;i<keys.length;i++) idx[i]=imap.add(keys[i],vals[i]);
+        assertFalse("lst.equals(eql)", imap.equals(eql));
+        for(int i=0;i<keys.length;i++) eidx[i]=eql.add(keys[i],vals[i]);
+        assertTrue("lst.equals(eql)", imap.equals(eql));
+        assertEquals("lst.hashCode()", imap.hashCode(), eql.hashCode());
+        for(int i=0; i<100; i++) {
+            int p = rand.nextInt(vals.length);
+            if(!imap.has(p)) continue;
+            imap.del(p);
+            assertFalse("lst.equals(eql)", imap.equals(eql));
+            eql.del(p);
+            assertTrue("lst.equals(eql)", imap.equals(eql));
+            assertEquals("lst.hashCode()", imap.hashCode(), eql.hashCode());
+        }
+        System.out.println("equals OK");
+    }
+
+    public <K,V,S extends IndexedMap<K,V> & Cloneable> void featureTestClone(Random rand, K[] keys, V[] vals, S imap, int verb) throws Exception {
+        long[] idx=new long[vals.length];
+        imap.clear();
+        for(int i=0;i<keys.length;i++) idx[i]=imap.add(keys[i],vals[i]);
+        IndexedMap<K,V> cln = clone(imap);
+        assertEquals("size(set)==set", imap.size(),cln.size());
+        for(int i=0;i<vals.length;i++) {
+            K k=keys[i];
+            V v=vals[i];
+            long x=idx[i];
+            assertEquals("index("+k+") = "+x, x, imap.index(k));
+            assertEquals("get("+x+")", v, imap.get(x));
+        }
+        System.out.println("clone OK");
+    }
 }

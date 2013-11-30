@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.varkhan.base.containers.map;
 
 import junit.framework.TestCase;
@@ -12,22 +9,15 @@ import java.util.Random;
 
 
 /**
+ * <b></b>.
+ * <p/>
+ *
  * @author varkhan
- * @date Feb 10, 2010
- * @time 6:24:10 AM
+ * @date 11/29/13
+ * @time 6:02 PM
  */
-public class ObjectMapTest extends TestCase {
-    long baseseed=1234567890987654321L;
-
-    public void testArrayOpenHashMap() throws Exception {
-        featureTest(100000, new ArrayOpenHashMap<String,String>(), 0);
-    }
-
-    public void testBlockOpenHashMap() throws Exception {
-        featureTest(100000, new BlockOpenHashMap<String,String>(), 0);
-    }
-
-    private String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
+public abstract class AbstractMapTest extends TestCase {
+    protected String[] generateKeyStrings(Random rand, int num, int minl, int maxl, char[] characters) {
         java.util.Set<String> keys=new HashSet<String>(num);
         while(keys.size()<num) {
             StringBuilder buf=new StringBuilder();
@@ -38,7 +28,7 @@ public class ObjectMapTest extends TestCase {
         return keys.toArray(new String[num]);
     }
 
-    private String[] generateValueStrings(Random rand, int num, double sparse, int minl, int maxl, char[] characters) {
+    protected String[] generateValueStrings(Random rand, int num, double sparse, int minl, int maxl, char[] characters) {
         String[] a=new String[num];
         for(int i=0;i<num;i++) {
             if(rand.nextFloat()<sparse) {
@@ -53,25 +43,9 @@ public class ObjectMapTest extends TestCase {
         return a;
     }
 
-    public void featureTest(int num, Map<String,String> map, int verb) throws Exception {
-        Random rand=new Random(baseseed);
-        String[] keys=generateKeyStrings(rand, num, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
-        String[] vals=generateValueStrings(rand, num, .1, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
-        System.out.println("Test "+map.getClass().getSimpleName()+" ["+baseseed+"]");
-        featureTestAdd(rand, keys, vals, map, verb);
-        featureTestHas(rand, keys, vals, map, verb);
-//        featureTestIdx(rand,keys, vals,map,verb);
-        featureTestGet(rand,keys, vals,map,verb);
-        featureTestDel(rand, keys, vals, map, verb);
-        featureTestClear(rand, keys, vals, map, verb);
-        featureTestIterate(rand, keys, vals, map, verb);
-        try { featureTestSerialize(rand, keys, vals, map, verb); } catch(NotSerializableException e) { /* ignore */ }
-        System.out.println();
-    }
-
     public <K,V> void featureTestAdd(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
         // Testing key adding
-        for(int i=0;i<vals.length;i++) {
+        for(int i=0;i<keys.length;i++) {
             K k=keys[i];
             V v=vals[i];
             map.add(k,v);
@@ -84,10 +58,10 @@ public class ObjectMapTest extends TestCase {
 
     public <K,V> void featureTestHas(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         if(verb>0) System.err.println("Ready");
         // Testing if keys are seen
-        for(int i=0;i<vals.length;i++) {
+        for(int i=0;i<keys.length;i++) {
             K k=keys[i];
             assertTrue("has("+k+")", map.has(k));
             if(verb>0) System.err.println("Checked "+i+" "+k);
@@ -96,7 +70,7 @@ public class ObjectMapTest extends TestCase {
         System.out.println("has(T) OK");
     }
 
-    private <K,V> void featureTestGet(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
+    protected <K,V> void featureTestGet(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
         map.clear();
         for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         // Testing if keys/values can be retrieved
@@ -112,10 +86,10 @@ public class ObjectMapTest extends TestCase {
 
     public <K,V> void featureTestDel(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         if(verb>0) System.err.println("Ready");
         // Testing forward delete (no resize)
-        for(int i=0;i<vals.length;i++) {
+        for(int i=0;i<keys.length;i++) {
             K k=keys[i];
             V v=vals[i];
             // This may have been deleted before
@@ -127,10 +101,10 @@ public class ObjectMapTest extends TestCase {
         }
         System.out.println("del(T) forward OK");
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         if(verb>0) System.err.println("Ready");
         // Testing backward delete (implies auto resize)
-        for(int i=vals.length-1;i>=0;i--) {
+        for(int i=keys.length-1;i>=0;i--) {
             K k=keys[i];
             V v=vals[i];
             // This may have been deleted before
@@ -146,7 +120,7 @@ public class ObjectMapTest extends TestCase {
         if(verb>0) System.err.println("Ready");
         // Testing random delete (implies auto resize)
         java.util.Set<Integer> del=new HashSet<Integer>();
-        while(del.size()<vals.length) {
+        while(del.size()<keys.length) {
             int i=rand.nextInt(vals.length);
             if(del.contains(i)) continue;
             K k=keys[i];V v=vals[i];
@@ -159,7 +133,7 @@ public class ObjectMapTest extends TestCase {
 
     public <K,V> void featureTestClear(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         map.clear();
         if(verb>0) System.err.println("Ready");
         assertTrue("isEmpty", map.isEmpty());
@@ -173,7 +147,7 @@ public class ObjectMapTest extends TestCase {
 
     public <K,V> void featureTestIterate(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         @SuppressWarnings("unchecked")
         Iterator<Map.Entry<K,V>> it=(Iterator<Map.Entry<K,V>>) map.iterator();
         for(int i=0;i<map.size();i++) {
@@ -187,7 +161,7 @@ public class ObjectMapTest extends TestCase {
     @SuppressWarnings("unchecked")
     public <K,V> void featureTestSerialize(Random rand, K[] keys, V[] vals, Map<K,V> map, int verb) throws Exception {
         map.clear();
-        for(int i=0;i<vals.length;i++) map.add(keys[i],vals[i]);
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
         File t=null;
         try {
             t=File.createTempFile("serial-", ".ser");
@@ -209,6 +183,7 @@ public class ObjectMapTest extends TestCase {
                 if(is!=null) is.close();
             }
 //            assertTrue("serialize(lst)==lst",imap.equals(smap));
+            assertEquals("size(map)==map", map.size(),smap.size());
             for(int i=0;i<vals.length;i++) {
                 K k=keys[i];V v=vals[i];
                 assertTrue("has("+k+")", smap.has(k));
@@ -218,6 +193,45 @@ public class ObjectMapTest extends TestCase {
         }
         finally {
             if(t!=null) t.delete();
+        }
+    }
+
+    public <K,V> void featureTestEquals(Random rand, K[] keys, V[] vals, Map<K,V> map, Map<K,V> eql, int verb) throws Exception {
+        map.clear();
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
+        assertFalse("lst.equals(eql)", map.equals(eql));
+        for(int i=0;i<keys.length;i++) eql.add(keys[i],vals[i]);
+        assertTrue("lst.equals(eql)", map.equals(eql));
+        assertEquals("lst.hashCode()", map.hashCode(), eql.hashCode());
+        for(int i=0; i<100; i++) {
+            int p = rand.nextInt(vals.length);
+            if(map.del(keys[p])) assertFalse("lst.equals(eql)", map.equals(eql));
+            else assertTrue("lst.equals(eql)", map.equals(eql));
+            eql.del(keys[p]);
+            assertTrue("lst.equals(eql)", map.equals(eql));
+            assertEquals("lst.hashCode()", map.hashCode(), eql.hashCode());
+        }
+        System.out.println("equals OK");
+    }
+
+    public <K,V,S extends Map<K,V> & Cloneable> void featureTestClone(Random rand, K[] keys, V[] vals, S map, int verb) throws Exception {
+        map.clear();
+        for(int i=0;i<keys.length;i++) map.add(keys[i],vals[i]);
+        Map<K,V> cln = clone(map);
+        assertEquals("size(set)==set", map.size(),cln.size());
+        for(int i=0;i<keys.length;i++) {
+            assertEquals("get("+i+")", map.get(keys[i]), cln.get(keys[i]));
+        }
+        System.out.println("clone OK");
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <C extends Cloneable> C clone(C obj) {
+        try {
+            return (C) obj.getClass().getMethod("clone").invoke(obj);
+        }
+        catch(Exception e) {
+            return null;
         }
     }
 

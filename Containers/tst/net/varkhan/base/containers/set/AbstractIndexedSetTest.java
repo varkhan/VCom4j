@@ -279,4 +279,5 @@ public abstract class AbstractIndexedSetTest extends TestCase {
         }
         System.out.println("clone OK");
     }
+
 }

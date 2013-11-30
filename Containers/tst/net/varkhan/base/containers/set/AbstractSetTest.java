@@ -176,7 +176,7 @@ public abstract class AbstractSetTest extends TestCase {
         }
     }
 
-    public <T> void featureTestEquals(Random rand, T[] vals, Set<T> set, Set<T> eql) throws Exception {
+    public <T> void featureTestEquals(Random rand, T[] vals, Set<T> set, Set<T> eql, int verb) throws Exception {
         for(int i=0;i<vals.length;i++) if(vals[i]!=null) set.add(vals[i]);
         assertFalse("lst.equals(eql)", set.equals(eql));
         for(int i=0;i<vals.length;i++) if(vals[i]!=null) eql.add(vals[i]);
@@ -193,7 +193,7 @@ public abstract class AbstractSetTest extends TestCase {
         System.out.println("equals OK");
     }
 
-    public <T,S extends Set<T> & Cloneable> void featureTestClone(Random rand, T[] vals, S set) throws Exception {
+    public <T,S extends Set<T> & Cloneable> void featureTestClone(Random rand, T[] vals, S set, int verb) throws Exception {
         for(int i=0;i<vals.length;i++) if(vals[i]!=null) set.add(vals[i]);
         Set<T> cln = clone(set);
         assertEquals("size(set)==set", set.size(),cln.size());
