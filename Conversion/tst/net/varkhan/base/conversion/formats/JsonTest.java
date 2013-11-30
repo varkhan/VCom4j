@@ -61,16 +61,34 @@ public class JsonTest extends TestCase {
                     );
     }
 
+    public void testReadBoolean() throws Exception {
+        assertEquals(true,Json.readBoolean(new StringReader("true")));
+        assertEquals(false,Json.readBoolean(new StringReader("false")));
+    }
+
+    public void testReadNumber() throws Exception {
+        assertEquals(1L,Json.readNumber(new StringReader("1")));
+        assertEquals(1.0,Json.readNumber(new StringReader("1.0")));
+    }
+
     public void testReadString() throws Exception {
         assertEquals("abc _\t\f\r\u4a9dgh\3",Json.readString(new StringReader("\"abc _\\t\\f\\r\\u4a9dgh\\u0003\"")));
     }
 
     public void testReadList() throws Exception {
-
+        String json="[\"x\",\"y\",1.2,\"abc _\\t\\f\\r\\u4a9dgh\\u0003\"]";
+        assertEquals(json,
+                     Json.toJson(Arrays.asList((Object) "x", "y", 1.2, "abc _\t\f\r\u4a9dgh\3")),
+                     Json.toJson(Json.readList(new StringReader(json)))
+                    );
     }
 
     public void testReadMap() throws Exception {
-
+        String json="{\"a\":2,\"b\":true,\"c\":null,\"d\":null}";
+        assertEquals(json,
+                     Json.toJson(asMap(CharSequence.class, Object.class, "a", 2, "b", true, "c", null, "d", null)),
+                     Json.toJson(Json.readObject(new StringReader(json)))
+                    );
     }
 
 

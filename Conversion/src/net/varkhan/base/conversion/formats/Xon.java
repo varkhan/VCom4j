@@ -514,16 +514,16 @@ public class Xon {
         throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
     }
 
-    public static Boolean readBoolean(Reader in) throws IOException, FormatException {
+    public static boolean readBoolean(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         p.skipWhitespace();
         return readBoolean(p);
     }
 
-    protected static Boolean readBoolean(Parser p) throws IOException, FormatException {
+    protected static boolean readBoolean(Parser p) throws IOException, FormatException {
         StringBuilder buf = new StringBuilder();
         int c = p.last();
-        while(c>=0 && c>'a' && c<'z') {
+        while(c>=0 && c>='a' && c<='z') {
             buf.append((char)c);
             c = p.next();
         }
