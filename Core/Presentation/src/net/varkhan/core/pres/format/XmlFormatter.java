@@ -229,7 +229,7 @@ public class XmlFormatter extends CheckedFormatter {
     public void close() throws IOException, IllegalStateException {
         if(forceCloseTags) _all();
         else if(!opentags.isEmpty()) throw new IllegalStateException("Elements remains unclosed");
-//        super.close();
+        super.close();
     }
 
 
