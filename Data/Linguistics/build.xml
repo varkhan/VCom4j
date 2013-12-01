@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="VCom4j-Core-Concurrent" default="all">
-    <dirname property="module.base.dir" file="${ant.file.VCom4j-Core-Concurrent}"/>
+<project name="VCom4j-Data-Linguistics" default="all">
+    <dirname property="module.base.dir" file="${ant.file.VCom4j-Data-Linguistics}"/>
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
-    <property name="module.vers" value="0.3.5"/>
+    <property name="module.vers" value="0.2.0"/>
     <property name="module.desc" value="Logging, management and supervision"/>
-    <property name="test.emma.include" value="+net.varkhan.core.concurrent.*,+net.varkhan.core.container.*,-*Test*"/>
     <include file="${project.base.dir}/project.xml"/>
     <include file="${project.tool.dir}/compiler.xml"/>
     <import file="${project.tool.dir}/module.xml"/>

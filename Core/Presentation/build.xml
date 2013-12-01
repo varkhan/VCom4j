@@ -3,7 +3,7 @@
     <dirname property="module.base.dir" file="${ant.file.VCom4j-Core-Presentation}"/>
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
-    <property name="module.vers" value="0.6.1"/>
+    <property name="module.vers" value="0.5.1"/>
     <property name="module.desc" value="Presentation and rendering layer"/>
     <property name="test.emma.include" value="+net.varkhan.core.pres.*,-*Test*"/>
     <include file="${project.base.dir}/project.xml"/>
