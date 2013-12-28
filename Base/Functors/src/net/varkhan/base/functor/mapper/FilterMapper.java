@@ -1,7 +1,9 @@
 package net.varkhan.base.functor.mapper;
 
+import net.varkhan.base.functor.Expander;
 import net.varkhan.base.functor.Mapper;
 import net.varkhan.base.functor.Predicate;
+import net.varkhan.base.functor.Reducer;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -15,7 +17,7 @@ import java.util.NoSuchElementException;
  * @date 11/10/13
  * @time 4:07 PM
  */
-public class FilterMapper<R,A,C> implements Mapper<Iterable<R>,Iterable<A>,C> {
+public class FilterMapper<R,A,C> implements Mapper<Iterable<R>,Iterable<A>,C>, Expander<R,Iterable<A>,C>, Reducer<Iterable<R>,A,C> {
 
     protected final Predicate<A,C> select;
     protected final Mapper<R,A,C>  convert;
