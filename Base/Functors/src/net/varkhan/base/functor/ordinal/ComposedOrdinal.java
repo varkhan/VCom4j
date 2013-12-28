@@ -1,4 +1,4 @@
-package net.varkhan.base.functor.partition;
+package net.varkhan.base.functor.ordinal;
 
 import net.varkhan.base.functor.Mapper;
 import net.varkhan.base.functor.Ordinal;
