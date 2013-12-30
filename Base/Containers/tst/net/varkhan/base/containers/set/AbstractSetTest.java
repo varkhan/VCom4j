@@ -227,4 +227,16 @@ public abstract class AbstractSetTest extends TestCase {
         }
     }
 
+    public <T> void featureTestString(Random rand, T[] vals, Set<T> set, int verb) throws Exception {
+        set.clear();
+        for(int i=0;i<vals.length;i++) set.add(vals[i]);
+        String s = set.toString();
+        assertTrue("toString() : { ",s.startsWith("{ "));
+        assertTrue("toString() : { ",s.endsWith(" }"));
+        for(int i=0;i<vals.length;i++) {
+            assertTrue("toString() : "+vals[i],s.contains(vals[i]+", ")||s.contains(vals[i]+" }"));
+        }
+        System.out.println("toString OK");
+    }
+
 }

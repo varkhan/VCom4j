@@ -101,4 +101,11 @@ public class BlockOpenHashIndexedSetTest extends AbstractIndexedSetTest {
         featureTestClone(rand, vals, iset, 0);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        BlockOpenHashIndexedSet<String> iset = new BlockOpenHashIndexedSet<String>();
+        featureTestString(rand, vals, iset, 0);
+    }
+
 }

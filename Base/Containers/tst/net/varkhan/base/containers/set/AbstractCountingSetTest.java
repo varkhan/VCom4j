@@ -206,4 +206,25 @@ public abstract class AbstractCountingSetTest extends TestCase {
         }, cmap));
     }
 
+    public <K> void featureTestString(Random rand, K[] keys, long[] vals, CountingSet<K> cset) throws Exception {
+        Map<K, Long> cmap = new HashMap<K, Long>(keys.length);
+        for(int i=0;i<keys.length;i++) {
+            K k=keys[i];
+            for(int c=0;c<vals[i];c++) {
+                if(cmap.containsKey(k)) cmap.put(k, cmap.get(k)+1L);
+                else cmap.put(k, 1L);
+                cset.add(k);
+            }
+        }
+        String s = cset.toString();
+        assertTrue("toString() : { ",s.startsWith("{ "));
+        assertTrue("toString() : { ",s.endsWith(" }"));
+        for(int i=0;i<keys.length;i++) {
+            String k = keys[i]+":"+cset.count(keys[i]);
+            if(cset.count(keys[i])==0) assertFalse("toString() : "+k,s.contains(k+", ")||s.contains(k+" }"));
+            else assertTrue("toString() : "+k,s.contains(k+", ")||s.contains(k+" }"));
+        }
+        System.out.println("toString OK");
+    }
+
 }

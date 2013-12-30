@@ -607,7 +607,7 @@ public class ArrayOpenHashWeightingSet<Key> implements WeightingSet<Key>, Serial
 
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -619,10 +619,10 @@ public class ArrayOpenHashWeightingSet<Key> implements WeightingSet<Key>, Serial
             double v=vals[pos];
             if(first) first=false;
             else buf.append(',');
-            buf.append(k).append(':').append(v).append(' ');
+            buf.append(' ').append(k).append(':').append(v);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 

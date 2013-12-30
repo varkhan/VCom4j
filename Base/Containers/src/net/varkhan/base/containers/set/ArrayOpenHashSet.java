@@ -530,7 +530,7 @@ public class ArrayOpenHashSet<Key> implements Set<Key>, Serializable, Cloneable 
 
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -541,10 +541,10 @@ public class ArrayOpenHashSet<Key> implements Set<Key>, Serializable, Cloneable 
             }
             if(first) first=false;
             else buf.append(',');
-            buf.append(k).append(' ');
+            buf.append(' ').append(k);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 

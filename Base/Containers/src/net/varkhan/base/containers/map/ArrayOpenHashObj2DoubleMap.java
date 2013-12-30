@@ -828,7 +828,7 @@ public class ArrayOpenHashObj2DoubleMap<Key> implements Obj2DoubleMap<Key>, Seri
 
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -840,10 +840,10 @@ public class ArrayOpenHashObj2DoubleMap<Key> implements Obj2DoubleMap<Key>, Seri
             double v=vals[pos];
             if(first) first=false;
             else buf.append(',');
-            buf.append(k).append(':').append(v).append(' ');
+            buf.append(' ').append(k).append(':').append(v);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 

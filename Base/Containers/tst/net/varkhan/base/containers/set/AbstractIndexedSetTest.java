@@ -304,4 +304,18 @@ public abstract class AbstractIndexedSetTest extends TestCase {
         System.out.println("clone OK");
     }
 
+    public <T> void featureTestString(Random rand, T[] vals, IndexedSet<T> iset, int verb) throws Exception {
+        long[] idx=new long[vals.length];
+        iset.clear();
+        for(int i=0;i<vals.length;i++) idx[i]=iset.add(vals[i]);
+        String s = iset.toString();
+        assertTrue("toString() : { ",s.startsWith("{ "));
+        assertTrue("toString() : { ",s.endsWith(" }"));
+        for(int i=0;i<vals.length;i++) {
+            String k=iset.index(vals[i])+"@"+vals[i];
+            assertTrue("toString() : "+k,s.contains(k+", ")||s.contains(k+" }"));
+        }
+        System.out.println("toString OK");
+    }
+
 }

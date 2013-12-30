@@ -171,4 +171,26 @@ public abstract class AbstractWeightingSetTest extends TestCase {
         }, cmap));
     }
 
+    public <K> void featureTestString(Random rand, K[] keys, double[] vals, WeightingSet<K> cset) throws Exception {
+        Map<K, Double> cmap = new HashMap<K, Double>(keys.length);
+        for(int i=0;i<keys.length;i++) {
+            K k=keys[i];
+            if(vals[i]!=0) {
+                double v;
+                if(cmap.containsKey(k)) cmap.put(k, v=(cmap.get(k)+vals[i]));
+                else cmap.put(k, v=vals[i]);
+                cset.add(k,vals[i]);
+            }
+        }
+        String s = cset.toString();
+        assertTrue("toString() : { ",s.startsWith("{ "));
+        assertTrue("toString() : { ",s.endsWith(" }"));
+        for(int i=0;i<keys.length;i++) {
+            String k = keys[i]+":"+cset.weight(keys[i]);
+            if(cset.weight(keys[i])==0) assertFalse("toString() : "+k,s.contains(k+", ")||s.contains(k+" }"));
+            else assertTrue("toString() : "+k,s.contains(k+", ")||s.contains(k+" }"));
+        }
+        System.out.println("toString OK");
+    }
+
 }

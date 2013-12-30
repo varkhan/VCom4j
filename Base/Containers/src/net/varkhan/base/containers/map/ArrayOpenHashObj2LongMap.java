@@ -828,7 +828,7 @@ public class ArrayOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializ
 
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -840,10 +840,10 @@ public class ArrayOpenHashObj2LongMap<Key> implements Obj2LongMap<Key>, Serializ
             long v=vals[pos];
             if(first) first=false;
             else buf.append(',');
-            buf.append(k).append(':').append(v).append(' ');
+            buf.append(' ').append(k).append(':').append(v);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 

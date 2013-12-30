@@ -100,4 +100,11 @@ public class ArrayOpenHashIndexedSetTest extends AbstractIndexedSetTest {
         featureTestClone(rand, vals, iset, 0);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] vals=genKeyStrings(rand, 10000, 2, 5, "abcdefghijklmnopqrstuvwxyz".toCharArray());
+        ArrayOpenHashIndexedSet<String> iset = new ArrayOpenHashIndexedSet<String>();
+        featureTestString(rand, vals, iset, 0);
+    }
+
 }

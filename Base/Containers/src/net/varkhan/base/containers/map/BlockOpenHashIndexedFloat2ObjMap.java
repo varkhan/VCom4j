@@ -1430,7 +1430,7 @@ public class BlockOpenHashIndexedFloat2ObjMap<Value> implements IndexedFloat2Obj
 
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -1444,10 +1444,10 @@ public class BlockOpenHashIndexedFloat2ObjMap<Value> implements IndexedFloat2Obj
             Object v=_getVal(idx);
             if(first) first=false;
             else buf.append(',');
-            buf.append(idx).append('@').append(k).append(':').append(v).append(' ');
+            buf.append(' ').append(idx).append('@').append(k).append(':').append(v);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 

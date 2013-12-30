@@ -72,4 +72,12 @@ public class ArrayOpenHashCountingSetTest extends AbstractCountingSetTest {
         featureTestIterator(rand, keys, vals, ilst);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        String[] keys=genKeyStrings(rand, 10000, 10, 50, keychars);
+        long[] vals=genValCounts(rand, 10000, 0, 10);
+        CountingSet<String> ilst = new ArrayOpenHashCountingSet<String>();
+        featureTestString(rand, keys, vals, ilst);
+    }
+
 }

@@ -682,7 +682,7 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
 
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -694,10 +694,10 @@ public class BlockOpenHashCountingSet<Key> implements CountingSet<Key>, Serializ
             long v=_getVal(pos);
             if(first) first=false;
             else buf.append(',');
-            buf.append(k).append(':').append(v).append(' ');
+            buf.append(' ').append(k).append(':').append(v);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 

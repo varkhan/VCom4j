@@ -1450,7 +1450,7 @@ public class BlockOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2Double
 
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -1464,10 +1464,10 @@ public class BlockOpenHashIndexedObj2DoubleMap<Key> implements IndexedObj2Double
             double v=_getVal(idx);
             if(first) first=false;
             else buf.append(',');
-            buf.append(idx).append('@').append(k).append(':').append(v).append(' ');
+            buf.append(' ').append(idx).append('@').append(k).append(':').append(v);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 

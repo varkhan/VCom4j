@@ -1451,7 +1451,7 @@ public class BlockOpenHashIndexedObj2IntMap<Key> implements IndexedObj2IntMap<Ke
 
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('{').append(' ');
+        buf.append('{');
         boolean first = true;
         int pos=0;
         while(pos<capa) {
@@ -1465,10 +1465,10 @@ public class BlockOpenHashIndexedObj2IntMap<Key> implements IndexedObj2IntMap<Ke
             int v=_getVal(idx);
             if(first) first=false;
             else buf.append(',');
-            buf.append(idx).append('@').append(k).append(':').append(v).append(' ');
+            buf.append(' ').append(idx).append('@').append(k).append(':').append(v);
             pos++;
         }
-        buf.append('}');
+        buf.append(' ').append('}');
         return buf.toString();
     }
 
