@@ -108,7 +108,9 @@ public class DotGraphTest extends TestCase {
             Y[i] = y;
         }
 
-        fmt.bars(200, xmin, xmax, X, 50, ymax, ymin, Y);
+        fmt.bars(200, xmin, xmax, X, 50, ymax, ymin, Y, -1);
+        fmt.bars(200, xmin, xmax, X, 50, ymax, ymin, Y, 0);
+        fmt.bars(200, xmin, xmax, X, 50, ymax, ymin, Y, +1);
 
         fmt.flush();
         System.out.println(buf);

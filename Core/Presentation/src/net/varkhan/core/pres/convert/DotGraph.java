@@ -135,23 +135,26 @@ public class DotGraph extends RowFormatter {
         return dots(xnum, discretize(xnum, xmin, xmax, X),ynum, discretize(ynum, ymax, ymin, Y));
     }
 
-    public RowFormatter bars(int xn, int[] X, int yn, int[] Y) throws IOException {
+    public RowFormatter bars(int xn, int[] X, int yn, int[] Y, int z) throws IOException {
         if(X.length!=Y.length) throw new IllegalArgumentException();
+        if(z<0 || z>yn) throw new IllegalArgumentException();
         yn += dpr - yn%dpr;
         boolean[][] dots = new boolean[yn][xn];
         for(int i=0; i<X.length; i++) {
             int x = X[i];
             int y = Y[i];
             if(0<=x && x<xn && 0<=y && y<yn) {
-                for(int yj=y; yj<yn; yj++) dots[yj][x] = true;
+                dots[y][x] = true;
+                if(y<z) for(int yj=y; yj<z; yj++) dots[yj][x] = true;
+                else for(int yj=z;yj<y; yj++) dots[yj][x] = true;
             }
         }
         rows(dots);
         return this;
     }
 
-    public RowFormatter bars(int xnum, double xmin, double xmax, double[] X, int ynum, double ymin, double ymax, double[] Y) throws IOException {
-        return bars(xnum, discretize(xnum, xmin, xmax, X), ynum, discretize(ynum, ymax, ymin, Y));
+    public RowFormatter bars(int xnum, double xmin, double xmax, double[] X, int ynum, double ymin, double ymax, double[] Y, double zero) throws IOException {
+        return bars(xnum, discretize(xnum, xmin, xmax, X), ynum, discretize(ynum, ymax, ymin, Y), (int)(ynum*(ymax-zero)/(ymax-ymin)));
     }
 
     public static int[] discretize(int num, double min, double max, double[] vals) {
