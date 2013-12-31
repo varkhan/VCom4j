@@ -56,6 +56,7 @@ public class HtmlFormatter extends XmlFormatter {
 
     public HtmlFormatter append(CharSequence csq) throws IOException { super.append(csq); return this; }
     public HtmlFormatter append(CharSequence... csq) throws IOException { super.append(csq); return this; }
+    public HtmlFormatter append(CharSequence[]... csq) throws IOException { super.append(csq); return this; }
     public HtmlFormatter append(CharSequence csq, int beg, int end) throws IOException { super.append(csq, beg, end); return this; }
     public HtmlFormatter append(char c) throws IOException { super.append(c); return this; }
     public HtmlFormatter ln() throws IOException { super.ln(); return this; }

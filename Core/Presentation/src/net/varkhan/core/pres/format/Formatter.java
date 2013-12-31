@@ -48,16 +48,6 @@ public interface Formatter extends Appendable, Flushable, Closeable {
     public Formatter append(CharSequence csq) throws IOException;
 
     /**
-     * Appends the specified character sequences to the Formatter.
-     *
-     * @param  csq the character sequences to append
-     *
-     * @return a reference to this Formatter
-     * @throws  IOException if an I/O error occurs
-     */
-    public Formatter append(CharSequence... csq) throws IOException;
-
-    /**
      * Appends a subsequence of the specified character sequence to the Formatter.
      * <p/>
      * An invocation of this method of the form {@code fmt.append(csq, beg end)} when

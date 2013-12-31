@@ -35,4 +35,15 @@ public class RowFormatter extends CheckedFormatter {
 
     public RowFormatter row(char[] row) throws IOException { openRow(); append(row); closeRow(); return this; }
 
+    public RowFormatter row(CharSequence row) throws IOException { openRow(); append(row); closeRow(); return this; }
+
+    public CheckedFormatter rows(CharSequence... rows) throws IOException {
+        if(rows!=null) for(CharSequence s: rows) if(s!=null) { openRow(); append(s); closeRow(); }
+        return this;
+    }
+
+    public CheckedFormatter rows(CharSequence[]... rows) throws IOException {
+        if(rows!=null) for(CharSequence[] ss: rows) if(ss!=null) for(CharSequence s: ss) if(s!=null) { openRow(); append(s); closeRow(); }
+        return this;
+    }
 }

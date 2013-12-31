@@ -15,7 +15,7 @@ import java.io.IOException;
 @SuppressWarnings( { "UnusedDeclaration" })
 public class CheckedFormatter implements Formatter {
 
-    private final Appendable out;
+    protected final Appendable out;
     protected boolean opened = false;
     protected boolean closed = false;
 
@@ -43,18 +43,6 @@ public class CheckedFormatter implements Formatter {
     public CheckedFormatter append(CharSequence csq) throws IOException {
         if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
         if(csq!=null) out.append(csq);
-        return this;
-    }
-
-    public CheckedFormatter append(CharSequence... csq) throws IOException {
-        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
-        if(csq!=null) for(CharSequence s: csq) if(s!=null) out.append(s).append('\n');
-        return this;
-    }
-
-    public CheckedFormatter append(CharSequence[]... csq) throws IOException {
-        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
-        if(csq!=null) for(CharSequence[] ss: csq) if(ss!=null) for(CharSequence s: ss) if(s!=null) out.append(s).append('\n');
         return this;
     }
 

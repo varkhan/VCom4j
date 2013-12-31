@@ -51,7 +51,17 @@ public class XmlFormatter extends CheckedFormatter {
 
     public XmlFormatter append(CharSequence csq) throws IOException { super.append(csq); return this; }
 
-    public XmlFormatter append(CharSequence... csq) throws IOException { super.append(csq); return this; }
+    public XmlFormatter append(CharSequence... csq) throws IOException {
+        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
+        if(csq!=null) for(CharSequence s: csq) if(s!=null) out.append(s).append('\n');
+        return this;
+    }
+
+    public XmlFormatter append(CharSequence[]... csq) throws IOException {
+        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
+        if(csq!=null) for(CharSequence[] ss: csq) if(ss!=null) for(CharSequence s: ss) if(s!=null) out.append(s).append('\n');
+        return this;
+    }
 
     public XmlFormatter append(CharSequence csq, int beg, int end) throws IOException { super.append(csq, beg, end); return this; }
 
