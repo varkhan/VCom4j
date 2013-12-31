@@ -3,6 +3,8 @@ package net.varkhan.base.containers;
 import net.varkhan.base.containers.map.Map;
 
 import java.io.IOException;
+import java.lang.*;
+import java.lang.Iterable;
 
 
 /**
@@ -18,13 +20,9 @@ import java.io.IOException;
  */
 public class Containers {
 
+
     /*********************************************************************************
      **  Equality
-     **/
-
-
-    /*********************************************************************************
-     **  Deep inspection
      **/
 
     /**
@@ -106,18 +104,19 @@ public class Containers {
      * element with delimiters and separating them with a given string.
      *
      * @param buf   the buffer to append the composed string to
-     * @param sep   the separator between elements
-     * @param ldl   the left delimiter of elements
-     * @param rdl   the right delimiter of element
+     * @param ldl   the left delimiter for non-null elements
+     * @param rdl   the right delimiter for non-null elements
+     * @param nil   the representation to use for {@literal null} elements
+     * @param sep   the separator to use
      * @param array the array to join
+     *
      * @param <T>   the element type
-     * @param <A>   the buffer type
      *
      * @return the original buffer, for chaining purposes
      *
      * @throws IOException if the output buffer raises this exception on {@code append()}
      */
-    public static <T,A extends Appendable> A join(A buf, String sep, String ldl, String rdl, java.lang.Iterable<T> array) throws IOException {
+    public static <T,A extends Appendable> A join(A buf, String ldl, String rdl, String nil, String sep, java.lang.Iterable<T> array) throws IOException {
         if(sep==null) {
             for(T elt: array) {
                 if(elt!=null) {
@@ -125,6 +124,7 @@ public class Containers {
                     buf.append(elt.toString());
                     if(rdl!=null) buf.append(rdl);
                 }
+                else if(nil!=null) buf.append(nil);
             }
         }
         else {
@@ -137,6 +137,7 @@ public class Containers {
                     buf.append(elt.toString());
                     if(rdl!=null) buf.append(rdl);
                 }
+                else if(nil!=null) buf.append(nil);
             }
         }
         return buf;
@@ -146,16 +147,17 @@ public class Containers {
      * Appends as strings the elements of an array, wrapping each non-null
      * element with delimiters and separating them with a given string.
      *
-     * @param buf   the buffer to append the composed string to
-     * @param sep   the separator between elements
-     * @param ldl   the left delimiter of elements
-     * @param rdl   the right delimiter of element
+     * @param ldl   the left delimiter for non-null elements
+     * @param rdl   the right delimiter for non-null elements
+     * @param nil   the representation to use for {@literal null} elements
+     * @param sep   the separator to use
      * @param array the array to join
+     *
      * @param <T>   the element type
      *
      * @return the original buffer, for chaining purposes
      */
-    public static <T> StringBuilder join(StringBuilder buf, String sep, String ldl, String rdl, java.lang.Iterable<T> array) {
+    public static <T> StringBuilder join(StringBuilder buf, String ldl, String rdl, String nil, String sep, java.lang.Iterable<T> array) {
         if(sep==null) {
             for(T elt: array) {
                 if(elt!=null) {
@@ -163,6 +165,7 @@ public class Containers {
                     buf.append(elt.toString());
                     if(rdl!=null) buf.append(rdl);
                 }
+                else if(nil!=null) buf.append(nil);
             }
         }
         else {
@@ -175,6 +178,7 @@ public class Containers {
                     buf.append(elt.toString());
                     if(rdl!=null) buf.append(rdl);
                 }
+                else if(nil!=null) buf.append(nil);
             }
         }
         return buf;
@@ -184,16 +188,18 @@ public class Containers {
      * Appends as strings the elements of an array, wrapping each non-null
      * element with delimiters and separating them with a given string.
      *
+     * @param ldl   the left delimiter for non-null elements
+     * @param rdl   the right delimiter for non-null elements
+     * @param nil   the representation to use for {@literal null} elements
      * @param sep   the separator between elements
-     * @param ldl   the left delimiter of elements
-     * @param rdl   the right delimiter of element
      * @param array the array to join
+     *
      * @param <T>   the element type
      *
      * @return a concatenation of the elements of the array, as strings wrapped in the delimiters, and the separator
      */
-    public static <T> String join(String sep, String ldl, String rdl, java.lang.Iterable<T> array) {
-        return join(new StringBuilder(), sep, ldl, rdl, array).toString();
+    public static <T> String join(String ldl, String rdl, String nil, String sep, java.lang.Iterable<T> array) {
+        return join(new StringBuilder(), ldl, rdl, nil, sep, array).toString();
     }
 
     /**
@@ -206,7 +212,130 @@ public class Containers {
      * @return a concatenation of the elements of the array, as strings, and the separator
      */
     public static <T> String join(String sep, java.lang.Iterable<T> array) {
-        return join(new StringBuilder(), sep, null, null, array).toString();
+        return join(new StringBuilder(), null, null, "null", sep, array).toString();
+    }
+
+    /**
+     * Appends as strings the elements of a map, wrapping each non-null
+     * element with delimiters and separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param ldl   the left delimiter of key-value pairs
+     * @param edl   the delimiter between keys and values
+     * @param rdl   the right delimiter of key-value pairs
+     * @param nil   the representation to use for {@literal null} keys or values
+     * @param sep   the separator between key-value pairs
+     * @param map   the sequence of map entries to join
+     *
+     * @param <K>   the key type
+     * @param <V>   the value type
+     * @param <A>   the buffer type
+     *
+     * @return the original buffer, for chaining purposes
+     *
+     * @throws IOException if the output buffer raises this exception on {@code append()}
+     */
+    public static <K,V,A extends Appendable> A join(A buf, String ldl, String edl, String rdl, String nil, String sep, java.lang.Iterable<java.util.Map.Entry<K,V>> map) throws IOException {
+        if(sep==null) {
+            for(java.util.Map.Entry<K,V> elt: map) {
+                if(elt!=null) {
+                    if(ldl!=null) buf.append(ldl);
+                    K key = elt.getKey();
+                    buf.append(key==null ? nil : key.toString());
+                    if(edl!=null) buf.append(edl);
+                    V val = elt.getValue();
+                    buf.append(val==null ? nil : val.toString());
+                    if(rdl!=null) buf.append(rdl);
+                }
+            }
+        }
+        else {
+            boolean fst = true;
+            for(java.util.Map.Entry<K,V> elt: map) {
+                if(fst) fst=false;
+                else buf.append(sep);
+                if(elt!=null) {
+                    if(ldl!=null) buf.append(ldl);
+                    K key = elt.getKey();
+                    buf.append(key==null ? nil : key.toString());
+                    if(edl!=null) buf.append(edl);
+                    V val = elt.getValue();
+                    buf.append(val==null ? nil : val.toString());
+                    if(rdl!=null) buf.append(rdl);
+                }
+            }
+        }
+        return buf;
+    }
+
+    /**
+     * Appends as strings the key-value pairs of a map, wrapping each non-null
+     * element with delimiters and separating them with a given string.
+     *
+     * @param buf   the buffer to append the composed string to
+     * @param ldl   the left delimiter of key-value pairs
+     * @param edl   the delimiter between keys and values
+     * @param rdl   the right delimiter of key-value pairs
+     * @param nil   the representation to use for {@literal null} keys or values
+     * @param sep   the separator between key-value pairs
+     * @param map   the sequence of map entries to join
+     *
+     * @param <K>   the key type
+     * @param <V>   the value type
+     *
+     * @return the original buffer, for chaining purposes
+     */
+    public static <K,V> StringBuilder join(StringBuilder buf, String ldl, String edl, String rdl, String nil, String sep, java.lang.Iterable<java.util.Map.Entry<K,V>> map) {
+        if(sep==null) {
+            for(java.util.Map.Entry<K,V> elt: map) {
+                if(elt!=null) {
+                    if(ldl!=null) buf.append(ldl);
+                    K key = elt.getKey();
+                    buf.append(key==null ? nil : key.toString());
+                    if(edl!=null) buf.append(edl);
+                    V val = elt.getValue();
+                    buf.append(val==null ? nil : val.toString());
+                    if(rdl!=null) buf.append(rdl);
+                }
+            }
+        }
+        else {
+            boolean fst = true;
+            for(java.util.Map.Entry<K,V> elt: map) {
+                if(fst) fst=false;
+                else buf.append(sep);
+                if(elt!=null) {
+                    if(ldl!=null) buf.append(ldl);
+                    K key = elt.getKey();
+                    buf.append(key==null ? nil : key.toString());
+                    if(edl!=null) buf.append(edl);
+                    V val = elt.getValue();
+                    buf.append(val==null ? nil : val.toString());
+                    if(rdl!=null) buf.append(rdl);
+                }
+            }
+        }
+        return buf;
+   }
+
+    /**
+     * Appends as strings the key-value pairs of a map, wrapping each non-null
+     * element with delimiters and separating them with a given string.
+     *
+     * @param ldl   the left delimiter of key-value pairs
+     * @param edl   the delimiter between keys and values
+     * @param rdl   the right delimiter of key-value pairs
+     * @param nil   the representation to use for {@literal null} keys or values
+     * @param sep   the separator between key-value pairs
+     * @param map   the sequence of map entries to join
+     *
+     * @param <K>   the key type
+     * @param <V>   the value type
+     *
+     * @return a concatenation of the elements of the array, as strings wrapped in the delimiters, and the separator
+     */
+    public static <K,V> String join(String ldl, String edl, String rdl, String nil, String sep, java.lang.Iterable<java.util.Map.Entry<K,V>> map) {
+        return join(new StringBuilder(), ldl, edl, rdl, nil, sep, map).toString();
     }
 
 }

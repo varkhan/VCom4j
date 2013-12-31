@@ -69,18 +69,27 @@ public class ContainersTest extends TestCase {
         assertFalse("!equals({a=>1,b=>3},{a=>1,c=>3})",Containers.equals(m22,m23));
     }
 
-    public void testJoin() throws Exception {
+    public void testJoinA() throws Exception {
         assertEquals("",Containers.join(":",Arrays.asList()));
         assertEquals("0",Containers.join(":",Arrays.asList(0)));
         assertEquals("1",Containers.join(":",Arrays.asList(1)));
-        assertEquals("",Containers.join(":",Arrays.asList((Object)null)));
+        assertEquals("null",Containers.join(":",Arrays.asList((Object)null)));
         assertEquals("247",Containers.join(":",Arrays.asList(0xF7)));
         assertEquals("foo",Containers.join(":",Arrays.asList("foo")));
-        assertEquals("0:true:2.2::foo",Containers.join(":",Arrays.asList(0,true,2.2,null,"foo")));
-        assertEquals("<0>:<true>:<2.2>::<foo>",Containers.join(new StringBuilder(),":","<",">",Arrays.asList(0,true,2.2,null,"foo")).toString());
-        assertEquals("<0>:<true>:<2.2>::<foo>",Containers.join(new StringBuffer(),":","<",">",Arrays.asList(0,true,2.2,null,"foo")).toString());
+        assertEquals("0:true:2.2:null:foo",Containers.join(":",Arrays.asList(0,true,2.2,null,"foo")));
+        assertEquals("<0>:<true>:<2.2>:null:<foo>",Containers.join(new StringBuilder(), "<", ">", "null", ":", Arrays.asList(0,true,2.2,null,"foo")).toString());
+        assertEquals("<0>:<true>:<2.2>:null:<foo>",Containers.join(new StringBuffer(), "<", ">", "null", ":", Arrays.asList(0,true,2.2,null,"foo")).toString());
     }
 
+    public void testJoinM() throws Exception {
+        assertEquals("",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class)));
+        assertEquals("a=0",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class,"a",0)));
+        assertEquals("b=1",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class,"b",1)));
+        assertEquals("c=null",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class,"c",null)));
+        assertEquals("s=foo:b=true:d=2.2:i=0:n=null",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Object.class,"i",0,"b",true,"d",2.2,"n",null,"s","foo")));
+        assertEquals("<s=foo>:<b=true>:<d=2.2>:<i=0>:<n=null>",Containers.join(new StringBuilder(), "<", "=", ">", "null", ":", Arrays.asMap(String.class,Object.class,"i",0,"b",true,"d",2.2,"n",null,"s","foo")).toString());
+        assertEquals("<s=foo>:<b=true>:<d=2.2>:<i=0>:<n=null>",Containers.join(new StringBuffer(), "<", "=", ">", "null", ":", Arrays.asMap(String.class,Object.class,"i",0,"b",true,"d",2.2,"n",null,"s","foo")).toString());
+    }
 
     protected static class ArrayContainer<T> implements Container<T> {
         final T[] a;

@@ -1614,30 +1614,35 @@ public class CharArrays {
      * Appends as strings the elements of an array, separating them with a given string.
      *
      * @param buf   the buffer to append the composed string to
-     * @param pre   a sequence of characters to prepend to each field
-     * @param app   a sequence of characters to append to each field
-     * @param sep   the separator to use
+     * @param ldl   the left delimiter for non-null elements
+     * @param rdl   the right delimiter for non-null elements
+     * @param nil   the representation to use for {@literal null} elements
+     * @param sep   the separator between elements
      * @param array the array to concatenate
+     *
+     * @param <T>   the element type
      *
      * @return a concatenation of the elements of the array, as string, and the separator
      */
-    public static <T> StringBuilder join(StringBuilder buf, String pre, String app, String sep, T... array) {
+    public static <T> StringBuilder join(StringBuilder buf, String ldl, String rdl, String nil, String sep, T... array) {
         if(sep==null) for(int i=0;i<array.length;i++) {
             T t=array[i];
             if(t!=null) {
-                if(pre!=null) buf.append(pre);
+                if(ldl!=null) buf.append(ldl);
                 buf.append(t.toString());
-                if(app!=null) buf.append(app);
+                if(rdl!=null) buf.append(rdl);
             }
+            else if(nil!=null) buf.append(nil);
         }
         else for(int i=0;i<array.length;i++) {
             if(i>0) buf.append(sep);
             T t=array[i];
             if(t!=null) {
-                if(pre!=null) buf.append(pre);
+                if(ldl!=null) buf.append(ldl);
                 buf.append(t.toString());
-                if(app!=null) buf.append(app);
+                if(rdl!=null) buf.append(rdl);
             }
+            else if(nil!=null) buf.append(nil);
         }
         return buf;
     }
@@ -1646,32 +1651,38 @@ public class CharArrays {
      * Appends as strings the elements of an array, separating them with a given string.
      *
      * @param buf   the buffer to append the composed string to
-     * @param pre   a sequence of characters to prepend to each field
-     * @param app   a sequence of characters to append to each field
-     * @param sep   the separator to use
+     * @param ldl   the left delimiter for non-null elements
+     * @param rdl   the right delimiter for non-null elements
+     * @param nil   the representation to use for {@literal null} elements
+     * @param sep   the separator between elements
      * @param array the array to concatenate
+     *
+     * @param <T>   the element type
+     * @param <A>   the buffer type
      *
      * @return the original buffer, for chaining purposes
      *
      * @throws IOException if the output buffer raises this exception on {@code append()}
      */
-    public static <T,A extends Appendable> A join(A buf, String pre, String app, String sep, T... array) throws IOException {
+    public static <T,A extends Appendable> A join(A buf, String ldl, String rdl, String nil, String sep, T... array) throws IOException {
         if(sep==null) for(int i=0;i<array.length;i++) {
             T t=array[i];
             if(t!=null) {
-                if(pre!=null) buf.append(pre);
+                if(ldl!=null) buf.append(ldl);
                 buf.append(t.toString());
-                if(app!=null) buf.append(app);
+                if(rdl!=null) buf.append(rdl);
             }
+            else if(nil!=null) buf.append(nil);
         }
         else for(int i=0;i<array.length;i++) {
             if(i>0) buf.append(sep);
             T t=array[i];
             if(t!=null) {
-                if(pre!=null) buf.append(pre);
+                if(ldl!=null) buf.append(ldl);
                 buf.append(t.toString());
-                if(app!=null) buf.append(app);
+                if(rdl!=null) buf.append(rdl);
             }
+            else if(nil!=null) buf.append(nil);
         }
         return buf;
     }
@@ -1680,8 +1691,10 @@ public class CharArrays {
      * Appends as strings the elements of an array, separating them with a given string.
      *
      * @param buf   the buffer to append the composed string to
-     * @param sep   the separator to use
+     * @param sep   the separator between elements
      * @param array the array to concatenate
+     *
+     * @param <T>   the element type
      *
      * @return a concatenation of the elements of the array, as string, and the separator
      */
@@ -1702,8 +1715,11 @@ public class CharArrays {
      * Appends as strings the elements of an array, separating them with a given string.
      *
      * @param buf   the buffer to append the composed string to
-     * @param sep   the separator to use
+     * @param sep   the separator between elements
      * @param array the array to concatenate
+     *
+     * @param <T>   the element type
+     * @param <A>   the buffer type
      *
      * @return the original buffer, for chaining purposes
      *
@@ -1725,129 +1741,32 @@ public class CharArrays {
     /**
      * Appends as strings the elements of an array, separating them with a given string.
      *
-     * @param pre   a sequence of characters to prepend to each field
-     * @param app   a sequence of characters to append to each field
-     * @param sep   the separator to use
+     * @param ldl   the left delimiter for non-null elements
+     * @param rdl   the right delimiter for non-null elements
+     * @param nil   the representation to use for {@literal null} elements
+     * @param sep   the separator between elements
      * @param array the array to concatenate
+     *
+     * @param <T>   the element type
      *
      * @return a human-readable string exposing the contents of the array
      */
-    public static <T> String join(String pre, String app, String sep, T... array) {
-        return join(new StringBuilder(), pre, app, sep, array).toString();
+    public static <T> String join(String ldl, String rdl, String nil, String sep, T... array) {
+        return join(new StringBuilder(), ldl, rdl, nil, sep, array).toString();
     }
 
     /**
      * Appends as strings the elements of an array, separating them with a given string.
      *
-     * @param sep   the separator to use
+     * @param sep   the separator between elements
      * @param array the array to concatenate
+     *
+     * @param <T>   the element type
      *
      * @return a human-readable string exposing the contents of the array
      */
     public static <T> String join(String sep, T... array) {
         return join(new StringBuilder(), sep, array).toString();
-    }
-
-
-    /************************
-     **  Complex field extraction
-     **/
-
-    /**
-     * Splits a string into "command-line" fields.
-     * <p/>
-     * The string is cut in separate substrings at every white-space, except when those
-     * spaces are escaped, or are contained within literal sequences.
-     * <p/>
-     * "Escaped" characters, i.e. characters prefixed by an (unescaped) '\' backslash
-     * character, are "unescaped" (the backslash is removed).
-     * <p/>
-     * "Literal" sequences are sequences starting and ending with the same (unescaped)
-     * delimiter (one of '\'' or '\"'), in which all occurrences of that same delimiter
-     * are escaped.
-     *
-     * @param s the String containing the concatenated fields
-     *
-     * @return an array containing the command-line fields
-     */
-    public static String[] splitCmd(String s) {
-        int l=s.length();
-        while(l>0) {
-            if(Character.isSpaceChar(s.charAt(l-1))) l--;
-            else break;
-        }
-        int n=1;
-        boolean isEscape=false;
-        char sepChar=' ';
-        for(int i=0;i<l;i++) {
-            char c=s.charAt(i);
-            if(c=='\\') isEscape=!isEscape;
-            else {
-                if(isEscape) isEscape=false;
-                else {
-                    if(sepChar=='\''||sepChar=='\"') {
-                        if(c==sepChar) sepChar=' ';
-                    }
-                    else if(Character.isSpaceChar(c)) {
-                        n++;
-                    }
-                    else if(c=='\''||c=='\"') {
-                        sepChar=c;
-                    }
-                }
-            }
-        }
-        String[] b=new String[n];
-        int p=0;
-        int j=0;
-        isEscape=false;
-        sepChar=' ';
-        for(int i=0;i<l;i++) {
-            char c=s.charAt(i);
-            if(c=='\\') isEscape=!isEscape;
-            else {
-                if(isEscape) {
-                    if(b[p]==null) b[p]=s.substring(j, i-1);
-                    else b[p]+=s.substring(j, i-1);
-                    j=i;
-                    isEscape=false;
-                }
-                else {
-                    if(sepChar=='\''||sepChar=='\"') {
-                        if(c==sepChar) {
-                            sepChar=' ';
-                            if(b[p]==null) b[p]=s.substring(j, i);
-                            else b[p]+=s.substring(j, i);
-                            j=i+1;
-                        }
-                    }
-                    else if(Character.isSpaceChar(c)) {
-                        if(i>j) {
-                            if(b[p]==null) b[p++]=s.substring(j, i);
-                            else b[p++]+=s.substring(j, i);
-                        }
-                        else if(b[p]!=null) p++;
-                        j=i+1;
-                    }
-                    else if(c=='\''||c=='\"') {
-                        if(i>j) {
-                            if(b[p]==null) b[p]=s.substring(j, i);
-                            else b[p]+=s.substring(j, i);
-                        }
-                        sepChar=c;
-                        j=i+1;
-                    }
-                }
-            }
-        }
-        if(p<b.length) {
-            if(j<l) {
-                if(b[p]==null) b[p]=s.substring(j, l);
-                else b[p]+=s.substring(j, l);
-            }
-            else if(b[p]==null) b[p]="";
-        }
-        return b;
     }
 
 
