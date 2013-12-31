@@ -89,6 +89,26 @@ public interface Formatter extends Appendable, Flushable, Closeable {
     public Formatter append(char c) throws IOException;
 
     /**
+     * Appends a sequence of characters to the Formatter.
+     *
+     * @param car the character array containing the sequence
+     * @return a reference to this Formatter
+     * @throws IOException if an I/O error occurs
+     */
+    public Formatter append(char[] car) throws IOException;
+
+    /**
+     * Appends a sequence characters to the Formatter.
+     *
+     * @param car the character array to append
+     * @param beg the beginning of the sequence in the array
+     * @param len the length of the sequence (number of characters to append)
+     * @return a reference to this Formatter
+     * @throws IOException if an I/O error occurs
+     */
+    public Formatter append(char[] car, int beg, int len) throws IOException;
+
+    /**
      * Appends a newline to the formatter.
      *
      * @return a reference to this Formatter

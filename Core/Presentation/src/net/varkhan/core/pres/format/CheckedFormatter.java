@@ -70,6 +70,21 @@ public class CheckedFormatter implements Formatter {
         return this;
     }
 
+    public CheckedFormatter append(char[] car) throws IOException {
+        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
+        for(char c: car) out.append(c);
+        return this;
+    }
+
+    public CheckedFormatter append(char[] car, int beg, int len) throws IOException {
+        if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
+        final int end = beg+len;
+        if(beg<0 || beg>=car.length) throw new ArrayIndexOutOfBoundsException(beg);
+        if(end<beg || end>car.length) throw new ArrayIndexOutOfBoundsException(end);
+        for(int i=beg;i<end;i++) out.append(car[beg]);
+        return this;
+    }
+
     public CheckedFormatter ln() throws IOException {
         if(!opened || closed) throw new IllegalStateException("Formatter is not accepting input");
         out.append('\n');
