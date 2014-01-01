@@ -1,5 +1,6 @@
 package net.varkhan.base.containers.list;
 
+import net.varkhan.base.containers.Container;
 import net.varkhan.base.containers.Iterator;
 
 import java.io.Externalizable;
@@ -45,11 +46,11 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
     /**
      * Creates a new ArrayList, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
+     * @param gf the node reference storage growth factor
      */
-    public ArrayList(double growthfact) {
-        if(growthfact<=1) growthfact=1.5;
-        this.growthfact=growthfact;
+    public ArrayList(double gf) {
+        if(gf<=1) gf=1.5;
+        this.growthfact=gf;
         clear();
     }
 
@@ -63,11 +64,11 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
     /**
      * Copies an ArrayList, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
+     * @param gf the node reference storage growth factor
      * @param list       the IndexedList to copy
      */
-    public ArrayList(double growthfact, List<Type> list) {
-        this(growthfact);
+    public ArrayList(double gf, Container<Type> list) {
+        this(gf);
         Iterator<? extends Type> it=list.iterator();
         while(it.hasNext()) {
             Type obj=it.next();
@@ -80,7 +81,7 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
      *
      * @param list the IndexedList to copy
      */
-    public ArrayList(List<Type> list) {
+    public ArrayList(Container<Type> list) {
         this();
         Iterator<? extends Type> it=list.iterator();
         while(it.hasNext()) {
