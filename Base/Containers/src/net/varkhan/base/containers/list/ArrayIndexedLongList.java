@@ -6,6 +6,7 @@ package net.varkhan.base.containers.list;
 import net.varkhan.base.containers.Index;
 import net.varkhan.base.containers.Indexable;
 import net.varkhan.base.containers.Indexed;
+import net.varkhan.base.containers.type.IndexedLongContainer;
 import net.varkhan.base.containers.type.LongIterable;
 
 import java.io.Externalizable;
@@ -63,11 +64,11 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
     /**
      * Creates a new ArrayIndexedLongList, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
+     * @param gf the internal element array growth factor
      */
-    public ArrayIndexedLongList(double growthfact) {
-        if(growthfact<=1) growthfact=1.5;
-        this.growthfact=growthfact;
+    public ArrayIndexedLongList(double gf) {
+        if(gf<=1) gf=1.5;
+        this.growthfact=gf;
         clear();
     }
 
@@ -79,13 +80,13 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
     }
 
     /**
-     * Copies an IndexedList, specifying the reallocation strategy.
+     * Copies an IndexedContainer, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
-     * @param list       the IndexedList to copy
+     * @param gf   the internal element array growth factor
+     * @param list the IndexedContainer to copy
      */
-    public ArrayIndexedLongList(double growthfact, IndexedLongList list) {
-        this(growthfact);
+    public ArrayIndexedLongList(double gf, IndexedLongContainer list) {
+        this(gf);
         Index it=list.indexes();
         while(it.hasNext()) {
             long id=it.next();
@@ -95,11 +96,11 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
     }
 
     /**
-     * Copies an IndexedList.
+     * Copies an IndexedContainer.
      *
-     * @param list the IndexedList to copy
+     * @param list the IndexedContainer to copy
      */
-    public ArrayIndexedLongList(IndexedLongList list) {
+    public ArrayIndexedLongList(IndexedLongContainer list) {
         this();
         Index it=list.indexes();
         while(it.hasNext()) {

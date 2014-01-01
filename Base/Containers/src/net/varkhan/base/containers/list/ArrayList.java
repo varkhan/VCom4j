@@ -46,7 +46,7 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
     /**
      * Creates a new ArrayList, specifying the reallocation strategy.
      *
-     * @param gf the node reference storage growth factor
+     * @param gf the internal element array growth factor
      */
     public ArrayList(double gf) {
         if(gf<=1) gf=1.5;
@@ -62,32 +62,40 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
     }
 
     /**
-     * Copies an ArrayList, specifying the reallocation strategy.
+     * Copies a Container, specifying the reallocation strategy.
      *
-     * @param gf the node reference storage growth factor
-     * @param list       the IndexedList to copy
+     * @param gf the internal element array growth factor
+     * @param list the Container to copy
      */
     public ArrayList(double gf, Container<Type> list) {
         this(gf);
+        this.list = new Object[(int)list.size()+1];
         Iterator<? extends Type> it=list.iterator();
         while(it.hasNext()) {
             Type obj=it.next();
-            add(obj);
+            this.list[(int)this.size++]=obj;
         }
     }
 
     /**
-     * Copies an ArrayList.
+     * Copies a Container.
      *
      * @param list the IndexedList to copy
      */
     public ArrayList(Container<Type> list) {
-        this();
-        Iterator<? extends Type> it=list.iterator();
-        while(it.hasNext()) {
-            Type obj=it.next();
-            add(obj);
-        }
+        this(1.5,list);
+    }
+
+    /**
+     * Builds an ArrayList from an array.
+     *
+     * @param gf    the internal element array growth factor
+     * @param array the array to copy
+     */
+    public ArrayList(double gf, Type... array) {
+        this(gf);
+        this.list = new Object[array.length+1];
+        System.arraycopy(array,0,this.list,0,array.length);
     }
 
     /**
@@ -96,11 +104,7 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
      * @param array the array to copy
      */
     public ArrayList(Type... array) {
-        this();
-        for(int id=0;id<array.length;id++) {
-            Type obj=array[id];
-            add(obj);
-        }
+        this(1.5,array);
     }
 
 

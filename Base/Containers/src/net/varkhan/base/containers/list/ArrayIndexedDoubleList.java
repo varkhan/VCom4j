@@ -7,6 +7,7 @@ import net.varkhan.base.containers.Index;
 import net.varkhan.base.containers.Indexable;
 import net.varkhan.base.containers.Indexed;
 import net.varkhan.base.containers.type.DoubleIterable;
+import net.varkhan.base.containers.type.IndexedDoubleContainer;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -63,11 +64,11 @@ public class ArrayIndexedDoubleList implements IndexedDoubleList, Externalizable
     /**
      * Creates a new ArrayIndexedDoubleList, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
+     * @param gf the internal element array growth factor
      */
-    public ArrayIndexedDoubleList(double growthfact) {
-        if(growthfact<=1) growthfact=1.5;
-        this.growthfact=growthfact;
+    public ArrayIndexedDoubleList(double gf) {
+        if(gf<=1) gf=1.5;
+        this.growthfact=gf;
         clear();
     }
 
@@ -79,13 +80,13 @@ public class ArrayIndexedDoubleList implements IndexedDoubleList, Externalizable
     }
 
     /**
-     * Copies an IndexedList, specifying the reallocation strategy.
+     * Copies an IndexedContainer, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
-     * @param list       the IndexedList to copy
+     * @param gf   the internal element array growth factor
+     * @param list the IndexedContainer to copy
      */
-    public ArrayIndexedDoubleList(double growthfact, IndexedDoubleList list) {
-        this(growthfact);
+    public ArrayIndexedDoubleList(double gf, IndexedDoubleContainer list) {
+        this(gf);
         Index it=list.indexes();
         while(it.hasNext()) {
             long id=it.next();
@@ -95,11 +96,11 @@ public class ArrayIndexedDoubleList implements IndexedDoubleList, Externalizable
     }
 
     /**
-     * Copies an IndexedList.
+     * Copies an IndexedContainer.
      *
-     * @param list the IndexedList to copy
+     * @param list the IndexedContainer to copy
      */
-    public ArrayIndexedDoubleList(IndexedDoubleList list) {
+    public ArrayIndexedDoubleList(IndexedDoubleContainer list) {
         this();
         Index it=list.indexes();
         while(it.hasNext()) {

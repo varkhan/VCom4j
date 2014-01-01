@@ -77,12 +77,12 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
     }
 
     /**
-     * Copies an IndexedList, specifying the reallocation strategy.
+     * Copies an IndexedContainer, specifying the reallocation strategy.
      *
      * @param growthfact the node reference storage growth factor
-     * @param list       the IndexedList to copy
+     * @param list       the IndexedContainer to copy
      */
-    public ArrayIndexedList(double growthfact, IndexedList<Type> list) {
+    public ArrayIndexedList(double growthfact, IndexedContainer<Type> list) {
         this(growthfact);
         Index it=list.indexes();
         while(it.hasNext()) {
@@ -93,11 +93,11 @@ public class ArrayIndexedList<Type> implements IndexedList<Type>, Externalizable
     }
 
     /**
-     * Copies an IndexedList.
+     * Copies an IndexedContainer.
      *
-     * @param list the IndexedList to copy
+     * @param list the IndexedContainer to copy
      */
-    public ArrayIndexedList(IndexedList<Type> list) {
+    public ArrayIndexedList(IndexedContainer<Type> list) {
         this();
         Index it=list.indexes();
         while(it.hasNext()) {

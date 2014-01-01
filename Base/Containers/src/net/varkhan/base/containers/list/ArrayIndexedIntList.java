@@ -6,6 +6,7 @@ package net.varkhan.base.containers.list;
 import net.varkhan.base.containers.Index;
 import net.varkhan.base.containers.Indexable;
 import net.varkhan.base.containers.Indexed;
+import net.varkhan.base.containers.type.IndexedIntContainer;
 import net.varkhan.base.containers.type.IntIterable;
 
 import java.io.Externalizable;
@@ -63,11 +64,11 @@ public class ArrayIndexedIntList implements IndexedIntList, Externalizable, Clon
     /**
      * Creates a new ArrayIndexedIntList, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
+     * @param gf the node reference storage growth factor
      */
-    public ArrayIndexedIntList(double growthfact) {
-        if(growthfact<=1) growthfact=1.5;
-        this.growthfact=growthfact;
+    public ArrayIndexedIntList(double gf) {
+        if(gf<=1) gf=1.5;
+        this.growthfact=gf;
         clear();
     }
 
@@ -79,13 +80,13 @@ public class ArrayIndexedIntList implements IndexedIntList, Externalizable, Clon
     }
 
     /**
-     * Copies an IndexedList, specifying the reallocation strategy.
+     * Copies an IndexedContainer, specifying the reallocation strategy.
      *
-     * @param growthfact the node reference storage growth factor
-     * @param list       the IndexedList to copy
+     * @param gf the node reference storage growth factor
+     * @param list       the IndexedContainer to copy
      */
-    public ArrayIndexedIntList(double growthfact, IndexedIntList list) {
-        this(growthfact);
+    public ArrayIndexedIntList(double gf, IndexedIntContainer list) {
+        this(gf);
         Index it=list.indexes();
         while(it.hasNext()) {
             long id=it.next();
@@ -95,11 +96,11 @@ public class ArrayIndexedIntList implements IndexedIntList, Externalizable, Clon
     }
 
     /**
-     * Copies an IndexedList.
+     * Copies an IndexedContainer.
      *
-     * @param list the IndexedList to copy
+     * @param list the IndexedContainer to copy
      */
-    public ArrayIndexedIntList(IndexedIntList list) {
+    public ArrayIndexedIntList(IndexedIntContainer list) {
         this();
         Index it=list.indexes();
         while(it.hasNext()) {
