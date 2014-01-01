@@ -64,10 +64,10 @@ public class IntArraysTest extends TestCase {
 
     public void testSortDec() throws Exception {
         int[] ary = {0};
-        IntArrays.heapSortDec(ary);
+        IntArrays.sortDec(ary);
         assertArrayEquals("heapSort(0)", new int[] { 0 }, ary);
         ary = new int[]{3,2,1,1,4,4,6,5,7,2};
-        IntArrays.heapSortDec(ary);
+        IntArrays.sortDec(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", reverse(new int[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }), ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         int[][] a = new int[N][];
@@ -88,7 +88,7 @@ public class IntArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=IntArrays.heapSortDec(a1[i]);
+            c+=IntArrays.sortDec(a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
@@ -104,10 +104,10 @@ public class IntArraysTest extends TestCase {
 
     public void testSortInc() throws Exception {
         int[] ary = {0};
-        IntArrays.heapSortInc(ary);
+        IntArrays.sortInc(ary);
         assertArrayEquals("heapSort(0)", new int[] { 0 }, ary);
         ary = new int[]{3,2,1,1,4,4,6,5,7,2};
-        IntArrays.heapSortInc(ary);
+        IntArrays.sortInc(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new int[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }, ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         int[][] a = new int[N][];
@@ -128,7 +128,7 @@ public class IntArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=IntArrays.heapSortInc(a1[i]);
+            c+=IntArrays.sortInc(a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {

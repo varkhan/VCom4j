@@ -105,8 +105,8 @@ public class ShortArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(short... ary) {
-        return heapSortInc(ary,0,ary.length-1);
+    public static int sortInc(short... ary) {
+        return sortInc(ary, 0, ary.length-1);
     }
 
     /**
@@ -115,8 +115,8 @@ public class ShortArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(short... ary) {
-        return heapSortDec(ary,0,ary.length-1);
+    public static int sortDec(short... ary) {
+        return sortDec(ary, 0, ary.length-1);
     }
 
     /**
@@ -127,7 +127,7 @@ public class ShortArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(short[] ary, int inf, int sup) {
+    public static int sortInc(short[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
@@ -153,7 +153,7 @@ public class ShortArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(short[] ary, int inf, int sup) {
+    public static int sortDec(short[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {

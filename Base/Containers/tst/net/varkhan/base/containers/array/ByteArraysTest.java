@@ -90,10 +90,10 @@ public class ByteArraysTest extends TestCase {
 
     public void testSortDec() throws Exception {
         byte[] ary = {0};
-        ByteArrays.heapSortDec(ary);
+        ByteArrays.sortDec(ary);
         assertArrayEquals("heapSort(0)", new byte[] { 0 }, ary);
         ary = new byte[]{3,2,1,1,4,4,6,5,7,2};
-        ByteArrays.heapSortDec(ary);
+        ByteArrays.sortDec(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", reverse(new byte[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }), ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         byte[][] a = new byte[N][];
@@ -114,7 +114,7 @@ public class ByteArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=ByteArrays.heapSortDec(a1[i]);
+            c+=ByteArrays.sortDec(a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
@@ -130,10 +130,10 @@ public class ByteArraysTest extends TestCase {
 
     public void testSortInc() throws Exception {
         byte[] ary = {0};
-        ByteArrays.heapSortInc(ary);
+        ByteArrays.sortInc(ary);
         assertArrayEquals("heapSort(0)", new byte[] { 0 }, ary);
         ary = new byte[]{3,2,1,1,4,4,6,5,7,2};
-        ByteArrays.heapSortInc(ary);
+        ByteArrays.sortInc(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new byte[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }, ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         byte[][] a = new byte[N][];
@@ -154,7 +154,7 @@ public class ByteArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=ByteArrays.heapSortInc(a1[i]);
+            c+=ByteArrays.sortInc(a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {

@@ -104,8 +104,8 @@ public class ByteArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(byte... ary) {
-        return heapSortInc(ary,0,ary.length-1);
+    public static int sortInc(byte... ary) {
+        return sortInc(ary, 0, ary.length-1);
     }
 
     /**
@@ -114,8 +114,8 @@ public class ByteArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(byte... ary) {
-        return heapSortDec(ary,0,ary.length-1);
+    public static int sortDec(byte... ary) {
+        return sortDec(ary, 0, ary.length-1);
     }
 
     /**
@@ -126,7 +126,7 @@ public class ByteArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(byte[] ary, int inf, int sup) {
+    public static int sortInc(byte[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
@@ -152,7 +152,7 @@ public class ByteArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(byte[] ary, int inf, int sup) {
+    public static int sortDec(byte[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {

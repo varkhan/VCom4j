@@ -71,7 +71,7 @@ public interface List<Type> extends Collection<Type> {
     public Type get(long idx);
 
     /**
-     * Gets an element in this list.
+     * Sets an element in this list.
      *
      * @param idx the index of the element
      * @param elt the element to set

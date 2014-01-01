@@ -134,8 +134,8 @@ public class Arrays {
      * @param <T> the element type
      * @return the number of swap operations required for the sorting
      */
-    public static <T extends Comparable<? super T>> int heapSort(T... ary) {
-        return heapSort(ary,0,ary.length-1);
+    public static <T extends Comparable<? super T>> int sort(T... ary) {
+        return sort(ary, 0, ary.length-1);
     }
 
     /**
@@ -147,7 +147,7 @@ public class Arrays {
      * @param <T> the element type
      * @return the number of swap operations required for the sorting
      */
-    public static <T extends Comparable<? super T>> int heapSort(T[] ary, int inf, int sup) {
+    public static <T extends Comparable<? super T>> int sort(T[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
@@ -197,8 +197,8 @@ public class Arrays {
      * @param ary  the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static <T> int heapSort(Comparator<? super T> comp, T... ary) {
-        return heapSort(comp, ary,0,ary.length-1);
+    public static <T> int sort(Comparator<? super T> comp, T... ary) {
+        return sort(comp, ary, 0, ary.length-1);
     }
 
     /**
@@ -209,9 +209,10 @@ public class Arrays {
      * @param ary  the array to sort
      * @param inf  the minimum index
      * @param sup  the maximum index
+     * @param <T> the element type
      * @return the number of swap operations required for the sorting
      */
-    public static <T> int heapSort(Comparator<? super T> comp, T[] ary, int inf, int sup) {
+    public static <T> int sort(Comparator<? super T> comp, T[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
@@ -683,7 +684,13 @@ public class Arrays {
             public void clear() { }
             public boolean add(T elt) { return false; }
             public T get(long idx) { return array[(int) idx]; }
-            public boolean set(long idx, T elt) { return false; }
+            public boolean set(long idx, T elt) {
+                if(0<=idx && idx<array.length && array[(int) idx] != elt) {
+                    array[(int) idx] = elt;
+                    return true;
+                }
+                else return false;
+            }
             public boolean del(long idx) { return false; }
             public boolean del(T elt) { return false; }
             public Iterator<? extends T> iterator() {

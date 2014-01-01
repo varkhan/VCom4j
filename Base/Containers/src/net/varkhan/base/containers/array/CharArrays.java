@@ -153,8 +153,8 @@ public class CharArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(char... ary) {
-        return heapSortInc(ary,0,ary.length-1);
+    public static int sortInc(char... ary) {
+        return sortInc(ary, 0, ary.length-1);
     }
 
     /**
@@ -163,8 +163,8 @@ public class CharArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(char... ary) {
-        return heapSortDec(ary,0,ary.length-1);
+    public static int sortDec(char... ary) {
+        return sortDec(ary, 0, ary.length-1);
     }
 
     /**
@@ -175,7 +175,7 @@ public class CharArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(char[] ary, int inf, int sup) {
+    public static int sortInc(char[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
@@ -201,7 +201,7 @@ public class CharArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(char[] ary, int inf, int sup) {
+    public static int sortDec(char[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {

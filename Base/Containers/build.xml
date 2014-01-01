@@ -3,7 +3,7 @@
     <dirname property="module.base.dir" file="${ant.file.VCom4j-Base-Containers}"/>
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
-    <property name="module.vers" value="0.7.0"/>
+    <property name="module.vers" value="0.7.1"/>
     <property name="module.desc" value="Containers and data-structures"/>
     <include file="${project.base.dir}/project.xml"/>
     <include file="${project.tool.dir}/compiler.xml"/>

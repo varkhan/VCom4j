@@ -1,10 +1,11 @@
 package net.varkhan.base.containers;
 
+import net.varkhan.base.containers.array.Arrays;
+import net.varkhan.base.containers.list.List;
 import net.varkhan.base.containers.map.Map;
 
 import java.io.IOException;
-import java.lang.*;
-import java.lang.Iterable;
+import java.util.Comparator;
 
 
 /**
@@ -336,6 +337,49 @@ public class Containers {
      */
     public static <K,V> String join(String ldl, String edl, String rdl, String nil, String sep, java.lang.Iterable<java.util.Map.Entry<K,V>> map) {
         return join(new StringBuilder(), ldl, edl, rdl, nil, sep, map).toString();
+    }
+
+
+    /*********************************************************************************
+     **  Sorting
+     **/
+
+    /**
+     * Sorts a list in place using the natural order.
+     *
+     * @param lst the list to sort
+     * @param <T> the element type
+     * @return the number of swap operations required for the sorting
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Comparable<? super T>> int sort(List<T> lst) {
+        Comparable[] a = new Comparable[(int)lst.size()];
+        int i=0;
+        for(Comparable o: (java.lang.Iterable<? extends Comparable>) lst) a[i++] = o;
+        int s = Arrays.sort(a);
+        i=0;
+        for(Comparable o: a) lst.set(i++,(T)o);
+        return s;
+    }
+
+    /**
+     * Sorts a list in place using a comparator.
+     *
+     *
+     * @param comp the comparator
+     * @param lst  the list to sort
+     * @param <T>  the element type
+     * @return the number of swap operations required for the sorting
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> int sort(Comparator<? super T> comp, List<T> lst) {
+        Object[] a = new Object[(int)lst.size()];
+        int i=0;
+        for(Object o: lst) a[i++] = o;
+        int s = Arrays.sort((Comparator)comp,a);
+        i=0;
+        for(Object o: a) lst.set(i++,(T)o);
+        return s;
     }
 
 }

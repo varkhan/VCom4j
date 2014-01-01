@@ -43,10 +43,10 @@ public class ArraysTest extends TestCase {
 
     public void testSort() throws Exception {
         Integer[] ary = {0};
-        Arrays.heapSort(ary);
+        Arrays.sort(ary);
         assertArrayEquals("heapSort(0)", new Integer[] { 0 }, ary);
         ary = new Integer[]{3,2,1,1,4,4,6,5,7,2};
-        Arrays.heapSort(ary);
+        Arrays.sort(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new Object[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }, ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         Integer[][] a = new Integer[N][];
@@ -67,7 +67,7 @@ public class ArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=Arrays.heapSort(a1[i]);
+            c+=Arrays.sort(a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
@@ -93,10 +93,10 @@ public class ArraysTest extends TestCase {
             }
         };
         String[] ary = {"0"};
-        Arrays.heapSort(cmp,ary);
+        Arrays.sort(cmp, ary);
         assertArrayEquals("heapSort(0)", new String[] { "0" }, ary);
         ary = new String[]{"3","2","1","1","4","4","6","5","7","2"};
-        Arrays.heapSort(cmp,ary);
+        Arrays.sort(cmp, ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new Object[] { "1", "1", "2", "2", "3", "4", "4", "5", "6", "7" }, ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         String[][] a = new String[N][];
@@ -117,7 +117,7 @@ public class ArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=Arrays.heapSort(cmp,a1[i]);
+            c+=Arrays.sort(cmp, a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {

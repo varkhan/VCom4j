@@ -2,7 +2,11 @@ package net.varkhan.base.containers;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.array.Arrays;
+import net.varkhan.base.containers.list.List;
 import net.varkhan.base.containers.map.Map;
+
+import java.util.NoSuchElementException;
+import java.util.Random;
 
 
 /**
@@ -14,6 +18,10 @@ import net.varkhan.base.containers.map.Map;
  * @time 6:27 PM
  */
 public class ContainersTest extends TestCase {
+
+    public static <T> void assertListEquals(String message, List<T> expected, List<T> actual) {
+        if(!Containers.equals(expected,actual)) fail(message+";\n expected: ["+Containers.join(",",expected)+"];\n   actual: ["+Containers.join(",",actual)+"]");
+    }
 
     public void testEqualsContainer() throws Exception {
         Container<String> c00 = new Container<String>() {
@@ -46,6 +54,7 @@ public class ContainersTest extends TestCase {
         assertTrue("equals([a,c],[a,c])", Containers.equals(c22, c21));
         assertFalse("!equals([a,d],[a,c])", Containers.equals(c23, c21));
     }
+
     public void testEqualsMap() throws Exception {
         Map<String,Integer> m00 =new ArrayMap<String,Integer>(new String[]{},new Integer[]{});
         Map<String,Integer> m01 =new ArrayMap<String,Integer>(new String[]{},new Integer[]{});
@@ -82,18 +91,57 @@ public class ContainersTest extends TestCase {
     }
 
     public void testJoinM() throws Exception {
-        assertEquals("",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class)));
-        assertEquals("a=0",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class,"a",0)));
+        assertEquals("",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class, Integer.class)));
+        assertEquals("a=0",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class, Integer.class, "a", 0)));
         assertEquals("b=1",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class,"b",1)));
         assertEquals("c=null",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Integer.class,"c",null)));
         assertEquals("s=foo:b=true:d=2.2:i=0:n=null",Containers.join((String)null,"=",null,"null",":",Arrays.asMap(String.class,Object.class,"i",0,"b",true,"d",2.2,"n",null,"s","foo")));
         assertEquals("<s=foo>:<b=true>:<d=2.2>:<i=0>:<n=null>",Containers.join(new StringBuilder(), "<", "=", ">", "null", ":", Arrays.asMap(String.class,Object.class,"i",0,"b",true,"d",2.2,"n",null,"s","foo")).toString());
-        assertEquals("<s=foo>:<b=true>:<d=2.2>:<i=0>:<n=null>",Containers.join(new StringBuffer(), "<", "=", ">", "null", ":", Arrays.asMap(String.class,Object.class,"i",0,"b",true,"d",2.2,"n",null,"s","foo")).toString());
+        assertEquals("<s=foo>:<b=true>:<d=2.2>:<i=0>:<n=null>",Containers.join(new StringBuffer(), "<", "=", ">", "null", ":", Arrays.asMap(String.class, Object.class, "i", 0, "b", true, "d", 2.2, "n", null, "s", "foo")).toString());
+    }
+
+    public void testSort() throws Exception {
+        List<Integer> ary = new ArrayList<Integer>(0);
+        Containers.sort(ary);
+        assertListEquals("heapSort(0)", new ArrayList<Integer>( 0 ), ary);
+        ary = new ArrayList<Integer>(3,2,1,1,4,4,6,5,7,2);
+        Containers.sort(ary);
+        assertListEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new ArrayList<Integer>( 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 ), ary);
+        int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
+        Integer[][] a = new Integer[N][];
+        List<Integer>[] a1 = new List[N];
+        List<Integer>[] a2 = new List[N];
+        Random rand = new Random();
+        int n = 0;
+        int c = 0;
+        for(int i=0; i<N; i++) {
+            int l = rand.nextInt(N);
+            Integer[] s = new Integer[l];
+            for(int j=0; j<l; j++) s[j]=rand.nextInt();
+            a[i] = s;
+            a1[i] = new ArrayList<Integer>(s.clone());
+            a2[i] = new ArrayList<Integer>(s.clone());
+            n += l;
+        }
+        System.out.println("Sorting "+N+" arrays of "+n+" elements");
+        long t0 = System.currentTimeMillis();
+        for(int i=0; i<N; i++) {
+            c+=Containers.sort(a1[i]);
+        }
+        long t1 = System.currentTimeMillis();
+        for(int i=0; i<N; i++) {
+            java.util.Arrays.sort(a[i]);
+        }
+        long t2 = System.currentTimeMillis();
+        for(int i=0; i<N; i++) {
+            assertListEquals("sort("+Arrays.join(",",a[i])+")",new ArrayList<Integer>(a[i]),a1[i]);
+        }
+        System.out.println("Sorted "+N+" arrays of "+n+" elements in "+(t1-t0)+"ms, "+c+" operations ("+(t2-t1)+"ms for java.util.Arrays.sort)");
     }
 
     protected static class ArrayContainer<T> implements Container<T> {
-        final T[] a;
-        ArrayContainer(T[] a) { this.a=a; }
+        private final T[] a;
+        ArrayContainer(T... a) { this.a=a; }
         public long size() { return a.length; }
         public boolean isEmpty() { return a.length==0; }
         public Iterator<? extends T> iterator() {
@@ -114,9 +162,43 @@ public class ContainersTest extends TestCase {
             return c;
         }
     }
+
+    protected static class ArrayList<T> implements List<T> {
+        private final T[] array;
+        public ArrayList(T... array) { this.array=array; }
+        public long size() { return array==null?0:array.length; }
+        public boolean isEmpty() { return array==null||array.length==0; }
+        public void clear() { }
+        public boolean add(T elt) { return false; }
+        public T get(long idx) { return array[(int) idx]; }
+        public boolean set(long idx, T elt) { array[(int) idx] = elt; return true; }
+        public boolean del(long idx) { return false; }
+        public boolean del(T elt) { return false; }
+        public Iterator<? extends T> iterator() {
+            return new Iterator<T>() {
+                private volatile int pos = 0;
+                public boolean hasNext() { return array!=null&&pos<array.length; }
+                public T next() {
+                    if(array==null||pos>=array.length) throw new NoSuchElementException();
+                    return array[pos++];
+                }
+                public void remove() { throw new UnsupportedOperationException(); }
+            };
+        }
+        public <Par> long visit(Visitor<T,Par> vis, Par par) {
+            long ret = 0;
+            if(array!=null) for(T obj: array) {
+                long r = vis.invoke(obj, par);
+                if(r<0) return ret;
+                ret += r;
+            }
+            return ret;
+        }
+    }
+
     protected static class ArrayMap<K,V> implements Map<K,V> {
-        final K[] keys;
-        final V[] vals;
+        private final K[] keys;
+        private final V[] vals;
         ArrayMap(K[] keys, V[] vals) {
             this.keys=keys;
             this.vals=vals;

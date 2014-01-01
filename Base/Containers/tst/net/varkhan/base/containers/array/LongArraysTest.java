@@ -64,10 +64,10 @@ public class LongArraysTest extends TestCase {
 
     public void testSortDec() throws Exception {
         long[] ary = {0};
-        LongArrays.heapSortDec(ary);
+        LongArrays.sortDec(ary);
         assertArrayEquals("heapSort(0)", new long[] { 0 }, ary);
         ary = new long[]{3,2,1,1,4,4,6,5,7,2};
-        LongArrays.heapSortDec(ary);
+        LongArrays.sortDec(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", reverse(new long[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }), ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         long[][] a = new long[N][];
@@ -88,7 +88,7 @@ public class LongArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=LongArrays.heapSortDec(a1[i]);
+            c+=LongArrays.sortDec(a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
@@ -104,10 +104,10 @@ public class LongArraysTest extends TestCase {
 
     public void testSortInc() throws Exception {
         long[] ary = {0};
-        LongArrays.heapSortInc(ary);
+        LongArrays.sortInc(ary);
         assertArrayEquals("heapSort(0)", new long[] { 0 }, ary);
         ary = new long[]{3,2,1,1,4,4,6,5,7,2};
-        LongArrays.heapSortInc(ary);
+        LongArrays.sortInc(ary);
         assertArrayEquals("heapSort(3,2,1,1,4,4,6,5,7,2)", new long[] { 1, 1, 2, 2, 3, 4, 4, 5, 6, 7 }, ary);
         int N = 500; // Max number of objects that will fit in normal heap size: 16*500^2 = 4m
         long[][] a = new long[N][];
@@ -128,7 +128,7 @@ public class LongArraysTest extends TestCase {
         System.out.println("Sorting "+N+" arrays of "+n+" elements");
         long t0 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {
-            c+=LongArrays.heapSortInc(a1[i]);
+            c+=LongArrays.sortInc(a1[i]);
         }
         long t1 = System.currentTimeMillis();
         for(int i=0; i<N; i++) {

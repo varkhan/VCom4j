@@ -108,8 +108,8 @@ public class LongArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(long... ary) {
-        return heapSortInc(ary,0,ary.length-1);
+    public static int sortInc(long... ary) {
+        return sortInc(ary, 0, ary.length-1);
     }
 
     /**
@@ -118,8 +118,8 @@ public class LongArrays {
      * @param ary the array to sort
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(long... ary) {
-        return heapSortDec(ary,0,ary.length-1);
+    public static int sortDec(long... ary) {
+        return sortDec(ary, 0, ary.length-1);
     }
 
     /**
@@ -130,7 +130,7 @@ public class LongArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortInc(long[] ary, int inf, int sup) {
+    public static int sortInc(long[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
@@ -156,7 +156,7 @@ public class LongArrays {
      * @param sup the maximum index
      * @return the number of swap operations required for the sorting
      */
-    public static int heapSortDec(long[] ary, int inf, int sup) {
+    public static int sortDec(long[] ary, int inf, int sup) {
         int cnt = 0;
         int beg = ((inf+sup)>>1)+1; // inf + (sup-inf+1)/2 - 1 = (sup+inf)/2+1
         while(beg>inf) {
