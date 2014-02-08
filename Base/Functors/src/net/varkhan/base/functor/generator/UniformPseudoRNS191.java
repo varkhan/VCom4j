@@ -8,11 +8,11 @@ package net.varkhan.base.functor.generator;
  * @date 2/2/14
  * @time 3:04 PM
  */
-public class UniformRandomGenerator191 extends AbstractUniformRandomGenerator {
+public class UniformPseudoRNS191 extends AbstractRandomNumberSource {
     protected long u, v, w;
 
 
-    public UniformRandomGenerator191(long s) {
+    public UniformPseudoRNS191(long s) {
         v = 4101842887655102017L;
         w = 1;
         u = s ^ v;

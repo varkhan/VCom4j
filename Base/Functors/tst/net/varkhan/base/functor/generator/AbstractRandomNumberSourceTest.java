@@ -13,9 +13,9 @@ import java.io.PrintStream;
  * @date 2/2/14
  * @time 3:35 PM
  */
-public abstract class AbstractUniformRandomGeneratorTest extends TestCase {
+public abstract class AbstractRandomNumberSourceTest extends TestCase {
 
-    public void testLong(UniformRandomGenerator rand, long count, double pre) throws Exception {
+    public void testLong(RandomNumberSource rand, long count, double pre) throws Exception {
         long[] bins01 = new long[16];
         long[] bins02 = new long[8];
         long[] bins04 = new long[4];

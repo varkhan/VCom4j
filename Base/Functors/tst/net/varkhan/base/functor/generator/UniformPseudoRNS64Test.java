@@ -8,10 +8,10 @@ package net.varkhan.base.functor.generator;
  * @date 2/2/14
  * @time 3:49 PM
  */
-public class UniformRandomGenerator191Test extends AbstractUniformRandomGeneratorTest {
+public class UniformPseudoRNS64Test extends AbstractRandomNumberSourceTest {
 
     public void testLong() throws Exception {
-        testLong(new UniformRandomGenerator191(System.currentTimeMillis()),1000000000L,1.5);
+        testLong(new UniformPseudoRNS64(System.currentTimeMillis()),1000000000L,1.5);
     }
 
 }
