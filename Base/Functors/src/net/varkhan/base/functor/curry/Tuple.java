@@ -71,6 +71,20 @@ public interface Tuple<L, _T extends _> extends _<L,_T> {
             for (Object v: values) h = 31*h + (v==null?0:v.hashCode());
             return h;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder buf = new StringBuilder();
+            buf.append('(');
+            boolean f = false;
+            for(Object v: values) {
+                if(f) f = false;
+                else buf.append(',');
+                buf.append(v);
+            }
+            buf.append(')');
+            return buf.toString();
+        }
     }
 
 }
