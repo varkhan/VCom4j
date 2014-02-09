@@ -33,4 +33,11 @@ public class ConstOrdinal<A,C> implements Ordinal<A,C> {
     @SuppressWarnings({ "unchecked" })
     public static <A,C> Ordinal<A,C> UNITY() { return (Ordinal<A,C>) UNITY; }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append(val).append('@').append(car);
+        return buf.toString();
+    }
+
 }

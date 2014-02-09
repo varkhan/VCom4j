@@ -31,6 +31,22 @@ public abstract class TransformPredicate<A,C> implements Predicate<A,C> {
             public boolean invoke(A arg, C ctx) {
                 return !pred.invoke(arg, ctx);
             }
+            @Override
+            public String toString() { return toString("!"); }
         };
     }
+
+    protected String toString(String op) {
+        StringBuilder buf = new StringBuilder(op);
+        buf.append('(');
+        buf.append(component().toString());
+        buf.append(')');
+        return buf.toString();
+    }
+
+    @Override
+    public String toString() {
+        return toString(this.getClass().getSimpleName());
+    }
+
 }

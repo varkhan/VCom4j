@@ -54,4 +54,10 @@ public class ArrayExpander<T,C> implements Expander<T,T[],C> {
         @Override
         public void remove() { }
     }
+
+    @Override
+    public String toString() {
+        return "$";
+    }
+
 }

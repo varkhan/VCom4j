@@ -23,4 +23,8 @@ public class PredicateMapper<A,C> implements Mapper<Boolean,A,C> {
     public Boolean invoke(A arg, C ctx) {
         return pred.invoke(arg, ctx);
     }
+
+    @Override
+    public String toString() { return pred.toString(); }
+
 }

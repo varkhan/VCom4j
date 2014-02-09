@@ -26,4 +26,16 @@ public class ArrayMapper<R,A,C> implements Mapper<R[],A,C> {
         return res;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        boolean f = true;
+        for(Mapper<R,A,C> m: maps) {
+            if(f) f = false;
+            else buf.append(',');
+            buf.append(m.toString());
+        }
+        return buf.toString();
+    }
+
 }

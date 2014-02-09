@@ -25,4 +25,8 @@ public class OrdinalMapper<A,C> implements Mapper<Long,A,C> {
     public Long invoke(A arg, C ctx) {
         return ordn.invoke(arg, ctx);
     }
+
+    @Override
+    public String toString() { return ordn.toString(); }
+
 }

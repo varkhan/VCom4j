@@ -34,6 +34,17 @@ public abstract class AggregatePredicate<A,C> implements Predicate<A,C> {
                     if(!p.invoke(arg, ctx)) return false;
                 return true;
             }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder();
+                boolean f = true;
+                for(Predicate<A,C> p: preds) {
+                    if(f) f = false;
+                    else buf.append('&');
+                    buf.append(p.toString());
+                }
+                return buf.toString();
+            }
         };
     }
 
@@ -44,6 +55,19 @@ public abstract class AggregatePredicate<A,C> implements Predicate<A,C> {
                 for(Predicate<A, C> p: preds)
                     if(!p.invoke(arg, ctx)) return true;
                 return false;
+            }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder("!");
+                buf.append('(');
+                boolean f = true;
+                for(Predicate<A,C> p: preds) {
+                    if(f) f = false;
+                    else buf.append('&');
+                    buf.append(p.toString());
+                }
+                buf.append(')');
+                return buf.toString();
             }
         };
     }
@@ -56,6 +80,17 @@ public abstract class AggregatePredicate<A,C> implements Predicate<A,C> {
                     if(p.invoke(arg, ctx)) return true;
                 return false;
             }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder();
+                boolean f = true;
+                for(Predicate<A,C> p: preds) {
+                    if(f) f = false;
+                    else buf.append('|');
+                    buf.append(p.toString());
+                }
+                return buf.toString();
+            }
         };
     }
 
@@ -67,7 +102,38 @@ public abstract class AggregatePredicate<A,C> implements Predicate<A,C> {
                     if(p.invoke(arg, ctx)) return false;
                 return true;
             }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder("!");
+                buf.append('(');
+                boolean f = true;
+                for(Predicate<A,C> p: preds) {
+                    if(f) f = false;
+                    else buf.append('|');
+                    buf.append(p.toString());
+                }
+                buf.append(')');
+                return buf.toString();
+            }
         };
     }
 
- }
+    protected String toString(String op) {
+        StringBuilder buf = new StringBuilder(op);
+        buf.append('(');
+        boolean f = true;
+        for(Predicate<A,C> p: preds) {
+            if(f) f = false;
+            else buf.append(',');
+            buf.append(p.toString());
+        }
+        buf.append(')');
+        return buf.toString();
+    }
+
+    @Override
+    public String toString() {
+        return toString(this.getClass().getSimpleName());
+    }
+
+}

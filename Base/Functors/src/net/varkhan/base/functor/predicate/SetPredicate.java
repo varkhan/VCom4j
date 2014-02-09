@@ -42,4 +42,15 @@ public class SetPredicate<A,C> implements Predicate<A,C> {
         return set.contains(arg);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder("~(");
+        boolean f = true;
+        for(A v: set) {
+            if(f) f = false;
+            else buf.append(',');
+            buf.append(v);
+        }
+        return buf.toString();
+    }
 }

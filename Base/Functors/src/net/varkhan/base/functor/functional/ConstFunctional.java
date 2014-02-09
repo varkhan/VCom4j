@@ -26,4 +26,9 @@ public class ConstFunctional<A,C> implements Functional<A,C> {
 
     public static <A,C> ConstFunctional<A,C> as(double val) { return new ConstFunctional<A,C>(val); }
 
+    @Override
+    public String toString() {
+        return Double.toString(val);
+    }
+
 }

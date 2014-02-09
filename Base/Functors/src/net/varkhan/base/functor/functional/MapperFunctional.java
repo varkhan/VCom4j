@@ -24,4 +24,8 @@ public class MapperFunctional<A,C> implements Functional<A,C> {
         Double v=mapr.invoke(arg, ctx);
         return v==null ? Double.NaN : v;
     }
+
+    @Override
+    public String toString() { return mapr.toString(); }
+
 }

@@ -26,4 +26,12 @@ public class ConstMapper<R,A,C> implements Mapper<R,A,C> {
 
     public static <R,A,C> Mapper<R,A,C> as(R val) { return new ConstMapper<R,A,C>(val);}
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        if(val==null) buf.append('\u2205');
+        else buf.append('(').append(val.toString()).append(')');
+        return buf.toString();
+    }
+
 }

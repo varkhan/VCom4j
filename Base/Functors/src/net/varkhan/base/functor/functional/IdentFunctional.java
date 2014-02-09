@@ -16,9 +16,7 @@ public class IdentFunctional<C> implements Functional<Double,C> {
     protected IdentFunctional() { }
 
     @Override
-    public double invoke(Double arg, C ctx) {
-        return arg;
-    }
+    public double invoke(Double arg, C ctx) { return arg; }
 
     protected static final IdentFunctional<?> ID=new IdentFunctional();
 
@@ -27,5 +25,9 @@ public class IdentFunctional<C> implements Functional<Double,C> {
         return (IdentFunctional<C>) ID;
     }
 
+    @Override
+    public String toString() {
+        return "$";
+    }
 
 }

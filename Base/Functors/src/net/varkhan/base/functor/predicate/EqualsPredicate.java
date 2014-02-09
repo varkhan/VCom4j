@@ -19,4 +19,9 @@ public class EqualsPredicate<A,C> implements Predicate<A,C> {
 
     public static <A,C> EqualsPredicate<A,C> as(A obj) { return new EqualsPredicate<A,C>(obj);}
 
+    @Override
+    public String toString() {
+        return "$="+obj;
+    }
+
 }

@@ -95,4 +95,20 @@ public class FilterMapper<R,A,C> implements Mapper<Iterable<R>,Iterable<A>,C>, E
             iter.remove();
         }
     }
+
+    @Override
+    public String toString() {
+        String rs = convert.toString();
+        String ls = "<$>?("+select.toString().replace('$','_')+")";
+        if("$".equals(rs)) return ls;
+        StringBuilder buf = new StringBuilder();
+        int p1 = 0, p2;
+        while(p1<rs.length() && (p2=rs.indexOf('$',p1))>=0) {
+            buf.append(rs.substring(p1,p2)).append(ls);
+            p1 = p2+1;
+        }
+        buf.append(rs.substring(p1,rs.length()));
+        return buf.toString();
+    }
+
 }

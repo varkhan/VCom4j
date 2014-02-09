@@ -20,4 +20,9 @@ public class MarkPredicate<A,C> implements Predicate<A,C> {
     @SuppressWarnings("unchecked")
     public static <A,C> MarkPredicate<A,C> as() { return (MarkPredicate<A,C>) MARK;}
 
+    @Override
+    public String toString() {
+        return "($==%)";
+    }
+
 }

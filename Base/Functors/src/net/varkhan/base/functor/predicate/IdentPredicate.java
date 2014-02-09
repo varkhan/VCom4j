@@ -25,4 +25,9 @@ public class IdentPredicate<C> implements Predicate<Boolean,C> {
     @SuppressWarnings("unchecked")
     public static <C> IdentPredicate<C> as() { return (IdentPredicate<C>) ID; }
 
+    @Override
+    public String toString() {
+        return "$";
+    }
+
 }

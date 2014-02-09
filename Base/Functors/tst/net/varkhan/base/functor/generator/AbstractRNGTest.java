@@ -98,7 +98,7 @@ public abstract class AbstractRNGTest extends TestCase {
 
         // Print 5-sequences
         for(Map.Entry<String,Long> e: seqc.entrySet()) {
-            printDeltas(System.err, "seq "+seqc.size(),e.getKey(),1.0/seqc.size(),e.getValue()/seqn,pre*0.2/Math.sqrt(count));
+            printDeltas(System.err, "seq "+seqc.size(),e.getKey(),1.0/seqc.size(),e.getValue()/seqn,pre*0.5/Math.sqrt(count));
         }
 
         for(int i=0; i<bins01.length; i++) {
@@ -134,7 +134,7 @@ public abstract class AbstractRNGTest extends TestCase {
             assertEquals("seq "+seqc.size()+" '"+e.getKey()+"': "+(e.getValue()/seqn)+" / "+(1.0/seqc.size()),
                          1.0/seqc.size(),
                          e.getValue().doubleValue()/seqn,
-                         pre*1.0/Math.sqrt(count));
+                         pre*0.5/Math.sqrt(count));
         }
 
         for(int i=0; i<bins01.length; i++) {

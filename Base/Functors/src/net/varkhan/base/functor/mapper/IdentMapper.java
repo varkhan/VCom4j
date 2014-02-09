@@ -22,4 +22,9 @@ public class IdentMapper<A,C> implements Mapper<A,A,C> {
     @SuppressWarnings({ "unchecked" })
     public static <A,C> Mapper<A,A,C> as() { return (Mapper) ID;}
 
+    @Override
+    public String toString() {
+        return "$";
+    }
+
 }

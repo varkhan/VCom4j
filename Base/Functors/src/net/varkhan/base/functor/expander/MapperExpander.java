@@ -20,4 +20,8 @@ public class MapperExpander<R,A,C> implements Expander<R,A,C> {
     public Mapper<Iterable<R>,A,C> source() { return mapr; }
 
     public Iterable<R> invoke(A arg, C ctx) { return mapr.invoke(arg, ctx); }
+
+    @Override
+    public String toString() { return mapr.toString(); }
+
 }

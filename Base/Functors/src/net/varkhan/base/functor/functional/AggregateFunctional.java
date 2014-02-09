@@ -35,6 +35,41 @@ public abstract class AggregateFunctional<A,C> implements Functional<A,C> {
                 }
                 return val;
             }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder();
+                boolean f = true;
+                for(Functional<A,C> m: funcs) {
+                    if(f) f = false;
+                    else buf.append('+');
+                    buf.append(m.toString());
+                }
+                return buf.toString();
+            }
+        };
+    }
+
+    public static <A,C> AggregateFunctional<A,C> prod(Functional<A, C>... funcs) {
+        return new AggregateFunctional<A,C>(funcs) {
+            @Override
+            public double invoke(A arg, C ctx) {
+                double val = 1;
+                for(Functional<A, C> f: funcs) {
+                    val *= f.invoke(arg, ctx);
+                }
+                return val;
+            }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder();
+                boolean f = true;
+                for(Functional<A,C> m: funcs) {
+                    if(f) f = false;
+                    else buf.append('*');
+                    buf.append(m.toString());
+                }
+                return buf.toString();
+            }
         };
     }
 
@@ -48,6 +83,19 @@ public abstract class AggregateFunctional<A,C> implements Functional<A,C> {
                     if(val>v) val = v;
                 }
                 return val;
+            }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder("min");
+                buf.append('(');
+                boolean f = true;
+                for(Functional<A,C> m: funcs) {
+                    if(f) f = false;
+                    else buf.append(',');
+                    buf.append(m.toString());
+                }
+                buf.append(')');
+                return buf.toString();
             }
         };
     }
@@ -63,7 +111,38 @@ public abstract class AggregateFunctional<A,C> implements Functional<A,C> {
                 }
                 return val;
             }
+            @Override
+            public String toString() {
+                StringBuilder buf = new StringBuilder("max");
+                buf.append('(');
+                boolean f = true;
+                for(Functional<A,C> m: funcs) {
+                    if(f) f = false;
+                    else buf.append(',');
+                    buf.append(m.toString());
+                }
+                buf.append(')');
+                return buf.toString();
+            }
         };
+    }
+
+    protected String toString(String op) {
+        StringBuilder buf = new StringBuilder(op);
+        buf.append('(');
+        boolean f = true;
+        for(Functional<A,C> m: funcs) {
+            if(f) f = false;
+            else buf.append(',');
+            buf.append(m.toString());
+        }
+        buf.append(')');
+        return buf.toString();
+    }
+
+    @Override
+    public String toString() {
+        return toString(this.getClass().getSimpleName());
     }
 
 }

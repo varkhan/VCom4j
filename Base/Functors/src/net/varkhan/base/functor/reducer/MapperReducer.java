@@ -21,4 +21,7 @@ public class MapperReducer<R,A,C> implements Reducer<R,A,C> {
 
     public R invoke(Iterable<A> arg, C ctx) { return mapr.invoke(arg, ctx); }
 
+    @Override
+    public String toString() { return mapr.toString(); }
+
 }

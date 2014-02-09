@@ -25,4 +25,7 @@ public class MapperPredicate<A,C> implements Predicate<A,C> {
         return v==null ? false : v;
     }
 
+    @Override
+    public String toString() { return mapr.toString(); }
+
 }

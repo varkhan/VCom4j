@@ -26,4 +26,9 @@ public class AffineFunctional<A,C> extends TransformFunctional<A,C> {
         if(func==null) return offset;
         return offset+scale*func.invoke(arg, ctx);
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append(offset).append('+').append(scale).append('*').append(func.toString()).toString();
+    }
 }

@@ -23,6 +23,9 @@ public class ChainExpander<T,S,C> implements Expander<T,S,C> {
         this.r=(Expander<Object,S,C>) r;
     }
 
+    public Expander<T,?,C> left() { return l; }
+    public Expander<?,S,C> right() { return r; }
+
     @Override
     public Iterable<T> invoke(S src, C ctx) {
         return new ChainIterable<T>(l, r.invoke(src, ctx), ctx);
@@ -80,6 +83,22 @@ public class ChainExpander<T,S,C> implements Expander<T,S,C> {
 
         @Override
         public void remove() { }
+    }
+
+    @Override
+    public String toString() {
+        String rs = right().toString();
+        String ls = left().toString();
+        if("$".equals(rs)) return ls;
+        if("$".equals(ls)) return rs;
+        StringBuilder buf = new StringBuilder();
+        int p1 = 0, p2;
+        while(p1<rs.length() && (p2=rs.indexOf('$',p1))>=0) {
+            buf.append(rs.substring(p1,p2)).append(ls);
+            p1 = p2+1;
+        }
+        buf.append(rs.substring(p1,rs.length()));
+        return buf.toString();
     }
 
 }

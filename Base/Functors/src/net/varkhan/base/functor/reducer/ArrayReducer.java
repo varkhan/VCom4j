@@ -29,5 +29,9 @@ public class ArrayReducer<T,C> implements Reducer<T[],T,C> {
         return lst.toArray((T[])Array.newInstance(cls, lst.size()));
     }
 
+    @Override
+    public String toString() {
+        return "$";
+    }
 
 }

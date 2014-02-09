@@ -19,4 +19,9 @@ public class SamePredicate<A,C> implements Predicate<A,C> {
 
     public static <A,C> SamePredicate<A,C> as(A obj) { return new SamePredicate<A,C>(obj);}
 
+    @Override
+    public String toString() {
+        return "($=="+obj+')';
+    }
+
 }

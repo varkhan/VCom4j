@@ -2,7 +2,8 @@ package net.varkhan.base.functor.mapper;
 
 import net.varkhan.base.functor.Mapper;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**

@@ -1,6 +1,5 @@
 package net.varkhan.base.functor.reducer;
 
-import net.varkhan.base.functor.Mapper;
 import net.varkhan.base.functor.Reducer;
 
 
@@ -22,5 +21,10 @@ public class IdentReducer<A,C> implements Reducer<Iterable<A>,A,C> {
 
     @SuppressWarnings({ "unchecked" })
     public static <A,C> Reducer<Iterable<A>,A,C> as() { return (Reducer) ID;}
+
+    @Override
+    public String toString() {
+        return "$";
+    }
 
 }

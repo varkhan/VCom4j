@@ -26,4 +26,12 @@ public class ConstGenerator<R,C> implements Generator<R,C> {
 
     public static <R,C> Generator<R,C> as(R val) { return new ConstGenerator<R,C>(val);}
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        if(val==null) buf.append('\u2205');
+        else buf.append('(').append(val.toString()).append(')');
+        return buf.toString();
+    }
+
 }

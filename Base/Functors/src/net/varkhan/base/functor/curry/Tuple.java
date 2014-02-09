@@ -46,6 +46,31 @@ public interface Tuple<L, _T extends _> extends _<L,_T> {
             System.arraycopy(values,1,v,0,values.length-1);
             return v;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if(this==o) return true;
+            if(!(o instanceof Tuple)) return false;
+            Tuple that=(Tuple) o;
+            final int l = values.length;
+            Object[] thisV = this.values();
+            Object[] thatV = that.values();
+            if (thatV.length!=l) return false;
+            for (int i=0; i<l; i++) {
+                Object thisO = thisV[i];
+                Object thatO = thatV[i];
+                if (!(thisO==null ? thatO==null : thisO.equals(thatO))) return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            if (values==null) return 0;
+            int h = 1;
+            for (Object v: values) h = 31*h + (v==null?0:v.hashCode());
+            return h;
+        }
     }
 
 }

@@ -23,4 +23,8 @@ public class FunctionalMapper<A,C> implements Mapper<Double,A,C> {
     public Double invoke(A arg, C ctx) {
         return func.invoke(arg, ctx);
     }
+
+    @Override
+    public String toString() { return func.toString(); }
+
 }

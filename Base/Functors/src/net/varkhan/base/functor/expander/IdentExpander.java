@@ -1,7 +1,6 @@
 package net.varkhan.base.functor.expander;
 
 import net.varkhan.base.functor.Expander;
-import net.varkhan.base.functor.Mapper;
 
 
 /**
@@ -22,5 +21,10 @@ public class IdentExpander<A,C> implements Expander<A,Iterable<A>,C> {
 
     @SuppressWarnings({ "unchecked" })
     public static <A,C> Expander<A,Iterable<A>,C> as() { return (Expander) ID;}
+
+    @Override
+    public String toString() {
+        return "$";
+    }
 
 }
