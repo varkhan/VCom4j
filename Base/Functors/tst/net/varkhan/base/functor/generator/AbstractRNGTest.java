@@ -3,6 +3,9 @@ package net.varkhan.base.functor.generator;
 import junit.framework.TestCase;
 
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -23,6 +26,9 @@ public abstract class AbstractRNGTest extends TestCase {
         long[] bins10 = new long[2];
         long[] bins20 = new long[2];
         long[] bins40 = new long[2];
+        long[] seqs = new long[5];
+        Map<String,Long> seqc = new HashMap<String,Long>();
+        double seqn = 0;
         for(long i=0; i<count; i++) {
             long r = rand.nextLong();
             if((r&0x0000000000000001L)==0) bins01[0]++;
@@ -69,6 +75,15 @@ public abstract class AbstractRNGTest extends TestCase {
 
             if((r&0x00000000FFFFFFFFL)==0) bins40[0]++;
             if((r&0xFFFFFFFF00000000L)==0) bins40[1]++;
+
+            if(i%seqs.length==0) {
+                String s = sequence(seqs);
+                Long c = seqc.get(s);
+                if(c==null) { seqc.put(s,1L); }
+                else seqc.put(s,c+1L);
+                seqn++;
+            }
+            seqs[(int)(i%seqs.length)] = r;
         }
 
         long t0 = System.currentTimeMillis();
@@ -80,6 +95,11 @@ public abstract class AbstractRNGTest extends TestCase {
         long t1 = System.currentTimeMillis();
         assertEquals("ratio01 ~ 0.5",0.5,((double)t)/count,1.0/Math.sqrt(count));
         System.err.println("Computed "+count+" rands in "+((t1-t0)/1000)+"s, "+(1.0e6*(t1-t0)/count)+"ns/call, with "+((double)t)/count+" mix, +/-"+(1.0/Math.sqrt(count)));
+
+        // Print 5-sequences
+        for(Map.Entry<String,Long> e: seqc.entrySet()) {
+            printDeltas(System.err, "seq "+seqc.size(),e.getKey(),1.0/seqc.size(),e.getValue()/seqn,pre*0.2/Math.sqrt(count));
+        }
 
         for(int i=0; i<bins01.length; i++) {
             printDeltas(System.err, "ratio01", i, 0.50000, ((double) bins01[i])/count, pre*1.0/Math.sqrt(count));
@@ -107,6 +127,14 @@ public abstract class AbstractRNGTest extends TestCase {
 
         for(int i=0; i<bins40.length; i++) {
             printDeltas(System.err, "ratio40", i, 0.00000078125, ((double)bins40[i])/count,(pre*64.0/Math.sqrt(count)));
+        }
+
+        // Verify 5-sequences
+        for(Map.Entry<String,Long> e: seqc.entrySet()) {
+            assertEquals("seq "+seqc.size()+" '"+e.getKey()+"': "+(e.getValue()/seqn)+" / "+(1.0/seqc.size()),
+                         1.0/seqc.size(),
+                         e.getValue().doubleValue()/seqn,
+                         pre*1.0/Math.sqrt(count));
         }
 
         for(int i=0; i<bins01.length; i++) {
@@ -153,6 +181,44 @@ public abstract class AbstractRNGTest extends TestCase {
         double d = t-v;
         if(d<0) d=-d;
         p.printf(r+" %02d ~ %f = %f +/- %f (%f)\n", i, t, v, d, e);
+    }
+
+    /**
+     *
+     * @param p the output
+     * @param r the name of the test
+     * @param i the name of the test bin
+     * @param t the target value
+     * @param v the actual value
+     * @param e the expected error
+     */
+    protected static void printDeltas(PrintStream p, final String r, String i, double t, double v, double e) {
+        double d = t-v;
+        if(d<0) d=-d;
+        p.printf(r+" '%s' ~ %f = %f +/- %f (%f)\n", i, t, v, d, e);
+    }
+
+    /**
+     * Gets the order sequence of a series of values.
+     *
+     * @param vals the values
+     * @return an array containing the indices of each respective value in the sorted sequence of values
+     */
+    protected static String sequence(long[] vals) {
+        if(vals==null) return null;
+        if(vals.length==0) return "";
+        long[] sort = Arrays.copyOf(vals,vals.length);
+        Arrays.sort(sort);
+        long min = sort[0]-1;
+        StringBuilder b = new StringBuilder();
+        for(long v: vals) {
+            int s=-1;
+            for(int p=0;p<sort.length;p++) if(sort[p]==v) { s=p; sort[p]=min; break; }
+            if(s<0) b.append(' ');
+            else if(s<10) b.append((char)('0'+s));
+            else b.append((char)('a'+s));
+        }
+        return b.toString();
     }
 
 }

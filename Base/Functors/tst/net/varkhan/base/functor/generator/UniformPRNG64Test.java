@@ -11,7 +11,7 @@ package net.varkhan.base.functor.generator;
 public class UniformPRNG64Test extends AbstractRNGTest {
 
     public void testLong() throws Exception {
-        testLong(new UniformPRNG64(System.nanoTime()),1000000000L,2.0);
+        testLong(new UniformPRNG64(System.nanoTime()),100000000L,2.0);
     }
 
 }
