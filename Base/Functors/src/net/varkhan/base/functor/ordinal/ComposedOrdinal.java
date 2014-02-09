@@ -14,8 +14,8 @@ import net.varkhan.base.functor.Ordinal;
  */
 public class ComposedOrdinal<A,C> implements Ordinal<A,C> {
 
-    private final Mapper<Object,A,C> mapr;
-    private final Ordinal<Object,C>  ordn;
+    protected final Mapper<Object,A,C> mapr;
+    protected final Ordinal<Object,C>  ordn;
 
     @SuppressWarnings({ "unchecked" })
     public <R> ComposedOrdinal(Ordinal<R,C> ordn, Mapper<R,A,C> mapr) {

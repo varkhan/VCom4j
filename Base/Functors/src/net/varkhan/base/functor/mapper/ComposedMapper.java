@@ -13,8 +13,8 @@ import net.varkhan.base.functor.Mapper;
  */
 public class ComposedMapper<R,A,C> implements Mapper<R,A,C> {
 
-    private final Mapper<R,Object,C> l;
-    private final Mapper<Object,A,C> r;
+    protected final Mapper<R,Object,C> l;
+    protected final Mapper<Object,A,C> r;
 
     @SuppressWarnings({ "unchecked" })
     public <T> ComposedMapper(Mapper<R, ? super T, C> l, Mapper<? extends T, A, C> r) {

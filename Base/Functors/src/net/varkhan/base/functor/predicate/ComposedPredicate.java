@@ -14,8 +14,8 @@ import net.varkhan.base.functor.Predicate;
  */
 public class ComposedPredicate<A,C> implements Predicate<A,C> {
 
-    private final Mapper<Object,A,C> mapr;
-    private final Predicate<Object,C> pred;
+    protected final Mapper<Object,A,C> mapr;
+    protected final Predicate<Object,C> pred;
 
     @SuppressWarnings({ "unchecked" })
     public <R> ComposedPredicate(Predicate<R,C> pred, Mapper<R,A,C> mapr) {
