@@ -13,14 +13,14 @@ import net.varkhan.base.functor.Generator;
  */
 public class UniformNumberGenerator<C> implements Generator<Double,C> {
 
-    protected final RandomNumberSource rand;
+    protected final RNG    rand;
     protected final double min;
     protected final double dev;
 
-    public UniformNumberGenerator(RandomNumberSource rand, double min, double max) {
-        this.rand = rand;
-        this.min = min;
-        this.dev = max-min;
+    public UniformNumberGenerator(RNG rand, double min, double max) {
+        this.rand=rand;
+        this.min=min;
+        this.dev=max-min;
     }
 
     @Override

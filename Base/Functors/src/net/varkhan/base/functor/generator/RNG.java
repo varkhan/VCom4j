@@ -8,7 +8,7 @@ package net.varkhan.base.functor.generator;
  * @date 2/2/14
  * @time 2:28 PM
  */
-public interface RandomNumberSource {
+public interface RNG {
 
     public boolean nextBoolean();
 

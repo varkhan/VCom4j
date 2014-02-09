@@ -13,15 +13,15 @@ import net.varkhan.base.functor.Generator;
  */
 public class GaussianNumberGenerator<C> implements Generator<Double,C> {
 
-    protected final RandomNumberSource rand;
-    protected final double             mean;
-    protected final double             sdev;
-    protected volatile Double          next = null;
+    protected final RNG    rand;
+    protected final double mean;
+    protected final double sdev;
+    protected volatile Double next=null;
 
-    public GaussianNumberGenerator(RandomNumberSource rand, double mean, double sdev) {
-        this.rand = rand;
-        this.mean = mean;
-        this.sdev = sdev;
+    public GaussianNumberGenerator(RNG rand, double mean, double sdev) {
+        this.rand=rand;
+        this.mean=mean;
+        this.sdev=sdev;
     }
 
     @Override

@@ -11,11 +11,15 @@ import java.util.Random;
  * @date 2/2/14
  * @time 3:15 PM
  */
-public class UniformPseudoRNSDef extends AbstractRandomNumberSource {
+public class UniformPRNGDef extends AbstractRNG {
     protected Random r;
 
-    public UniformPseudoRNSDef(long s) {
+    public UniformPRNGDef(long s) {
         r = new Random(s);
+    }
+
+    public UniformPRNGDef(Random r) {
+        this.r=r;
     }
 
     @Override

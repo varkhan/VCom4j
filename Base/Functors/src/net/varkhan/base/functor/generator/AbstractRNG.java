@@ -8,7 +8,7 @@ package net.varkhan.base.functor.generator;
  * @date 2/2/14
  * @time 2:46 PM
  */
-public abstract class AbstractRandomNumberSource implements RandomNumberSource {
+public abstract class AbstractRNG implements RNG {
 
     protected static final double DNORM = 5.42101086242752217e-20;
 
