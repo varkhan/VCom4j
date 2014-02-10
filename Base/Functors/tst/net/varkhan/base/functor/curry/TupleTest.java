@@ -1,7 +1,6 @@
 package net.varkhan.base.functor.curry;
 
 import junit.framework.TestCase;
-import net.varkhan.base.functor._;
 
 
 /**
@@ -39,4 +38,10 @@ public class TupleTest extends TestCase {
         assertEquals("vals",3,t2.values()[0]);
         assertEquals("vals","s",t2.values()[1]);
     }
+
+    public void testString() throws Exception {
+        Tuple<Integer,Tuple<String,Tuple<Boolean,Tuple>>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple<Boolean,Tuple>>>(3,"s",true);
+        assertEquals("toString","(3,s,true)",t2.toString());
+    }
+
 }

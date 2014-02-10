@@ -76,7 +76,7 @@ public interface Tuple<L, _T extends _> extends _<L,_T> {
         public String toString() {
             StringBuilder buf = new StringBuilder();
             buf.append('(');
-            boolean f = false;
+            boolean f = true;
             for(Object v: values) {
                 if(f) f = false;
                 else buf.append(',');
