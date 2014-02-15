@@ -23,11 +23,11 @@ public interface Decision<K,T,C> extends Classifier<K,T,C> {
     public Ordinal<T,C> partition();
     public List<? extends Classifier<K,T,C>> classes();
 
-    public static interface Tree<K,T,C> extends Classifier<K,T,C> {
+    public static interface Tree<K,T,C> extends Decision<K,T,C> {
         public K invoke(T obs, C ctx);
+        public Decision<K,T,C> decision(T obs, C ctx);
         public double confidence(K key, T obs, C ctx);
         public Collection<? extends Mapper<?,T,C>> attributes();
-        public Decision<K,T,C> tree();
     }
 
 }

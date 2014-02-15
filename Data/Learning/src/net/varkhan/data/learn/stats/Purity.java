@@ -1,5 +1,6 @@
 package net.varkhan.data.learn.stats;
 
+import net.varkhan.base.containers.set.CountingSet;
 import net.varkhan.base.functor.Functional;
 
 import java.util.Collection;
@@ -16,5 +17,7 @@ import java.util.Collection;
 public interface Purity<A,C> extends Functional<Collection<? extends Collection<A>>,C> {
 
     public double invoke(Collection<? extends Collection<A>> arg, C ctx);
+
+    public double invoke(Collection<CountingSet<A>> parts, CountingSet<A> all, C ctx);
 
 }

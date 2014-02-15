@@ -21,6 +21,8 @@ public class SingletonClassifier<K,T,C> implements Classifier<K, T, C> {
         this.cnf=cnf;
     }
 
+    public K key() { return key; }
+
     @Override
     public K invoke(T obs, C ctx) {
         return key;
@@ -31,4 +33,8 @@ public class SingletonClassifier<K,T,C> implements Classifier<K, T, C> {
         return this.key.equals(key) ? cnf : (1.0-cnf);
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder().append('(').append(key).append(':').append(cnf).append(')').toString();
+    }
 }
