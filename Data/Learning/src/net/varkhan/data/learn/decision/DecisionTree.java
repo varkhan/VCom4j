@@ -87,12 +87,12 @@ public class DecisionTree<K,T,C> implements Decision.Tree<K,T,C> {
 
         @Override
         public StringBuilder toString(StringBuilder buf, String ind, String tab, String sep) {
-            return buf.append(ind).append("*: ").append(key).append(sep);
+            return buf.append(super.toString()).append(sep);
         }
 
         @Override
         public String toString() {
-            return toString(new StringBuilder(), "","\t","\n").toString();
+            return super.toString();
         }
     }
 
@@ -149,9 +149,12 @@ public class DecisionTree<K,T,C> implements Decision.Tree<K,T,C> {
 
         @Override
         public StringBuilder toString(StringBuilder buf, String ind, String tab, String sep) {
-            buf.append(ind).append(part.toString()).append(sep);
-            for(Node<K,?,T,C> u: child) {
-                u.toString(buf,ind+tab,tab,sep);
+            buf.append(part.toString()).append(sep);
+            ind=ind+tab;
+            for(int i=0;i<child.length;i++) {
+                Node<K,?,T,C> u=child[i];
+                buf.append(ind).append(i).append(tab).append(": ");
+                u.toString(buf, ind, tab, sep);
             }
             return buf;
         }

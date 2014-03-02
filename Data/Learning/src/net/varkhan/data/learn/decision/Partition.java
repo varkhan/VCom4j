@@ -43,13 +43,13 @@ public class Partition<A,T,C> extends ComposedOrdinal<T,C> {
 
     @Override
     public String toString() {
-        return super.toString()+":"+conf;
+        return super.toString()+"@"+conf;
     }
 
     @SuppressWarnings("unchecked")
     public static <A,T,C> Partition<A,T,C> NULL() { return (Partition<A,T,C>) NULL; }
 
-    public static interface Factory<K,A,T,C> extends Mapper<Partition<A,T,C>,Collection<? extends Pair<T,K>>,C>{
+    public static interface Factory<K,A,T,C> extends Mapper<Partition<A,T,C>,Iterable<? extends Pair<T,K>>,C>{
 
     }
 

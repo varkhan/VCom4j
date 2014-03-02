@@ -7,8 +7,6 @@ import net.varkhan.base.containers.set.CountingSet;
 import net.varkhan.base.functor.Mapper;
 import net.varkhan.base.functor.Ordinal;
 import net.varkhan.base.functor.curry.Pair;
-import net.varkhan.base.functor.mapper.ConstMapper;
-import net.varkhan.base.functor.ordinal.ConstOrdinal;
 import net.varkhan.data.learn.stats.Purity;
 
 import java.util.*;
@@ -41,14 +39,14 @@ public class DiscretePartitionFactory<K,A,T,C> implements Partition.Factory<K,A,
         this.pure=pure;
     }
 
-    public Partition<A,T,C> invoke(Collection<? extends Pair<T,K>> obs, C ctx) {
+    public Partition<A,T,C> invoke(Iterable<? extends Pair<T,K>> obs, C ctx) {
         Map<A,Collection<Pair<A,K>>> classes=new HashMap<A,Collection<Pair<A,K>>>();
         for(Pair<T,K> o : obs) {
             K k=o.rvalue();
             T t=o.lvalue();
             A a=attr.invoke(t, ctx);
             Collection<Pair<A,K>> g=classes.get(a);
-            if(g==null) classes.put(a, g=new HashSet<Pair<A,K>>());
+            if(g==null) classes.put(a, g=new ArrayList<Pair<A,K>>());
             g.add(new Pair.Value<A,K>(a,k));
         }
 //        if(classes.size()<=1) return new Partition<A,T,C>((Mapper<A,T,C>) ConstMapper.NULL(), (Ordinal<A,C>) ConstOrdinal.UNITY(), 1.0);
@@ -105,14 +103,14 @@ public class DiscretePartitionFactory<K,A,T,C> implements Partition.Factory<K,A,
                     @Override
                     public String toString() {
                         StringBuilder buf = new StringBuilder();
-                        buf.append('{');
+                        buf.append("($?=");
                         boolean f = true;
                         for(Map.Entry<A,Long> e: (Iterable<? extends Map.Entry<A,Long>>) index) {
                             if(f) { f = false; buf.append(' '); }
                             else buf.append(", ");
                             buf.append(e.getKey()).append(": ").append(e.getValue());
                         }
-                        buf.append('}');
+                        buf.append(')');
                         return buf.toString();
                     }
                 },

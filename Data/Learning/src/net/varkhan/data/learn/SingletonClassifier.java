@@ -35,6 +35,6 @@ public class SingletonClassifier<K,T,C> implements Classifier<K, T, C> {
 
     @Override
     public String toString() {
-        return new StringBuilder().append('(').append(key).append(':').append(cnf).append(')').toString();
+        return new StringBuilder().append('(').append(key).append(')').append('@').append(cnf).toString();
     }
 }
