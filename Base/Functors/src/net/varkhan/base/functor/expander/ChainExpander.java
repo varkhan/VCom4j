@@ -93,11 +93,11 @@ public class ChainExpander<T,S,C> implements Expander<T,S,C> {
         if("$".equals(ls)) return rs;
         StringBuilder buf = new StringBuilder();
         int p1 = 0, p2;
-        while(p1<rs.length() && (p2=rs.indexOf('$',p1))>=0) {
-            buf.append(rs.substring(p1,p2)).append(ls);
+        while(p1<ls.length() && (p2=ls.indexOf('$',p1))>=0) {
+            buf.append(ls.substring(p1,p2)).append(rs);
             p1 = p2+1;
         }
-        buf.append(rs.substring(p1,rs.length()));
+        buf.append(ls.substring(p1,ls.length()));
         return buf.toString();
     }
 

@@ -37,4 +37,32 @@ public class ComposedMapperTest extends TestCase {
         assertEquals("1010",((Mapper<String,Long,Object>)m.right()).invoke(10L,null));
         assertEquals(3,(int)((Mapper<Integer,CharSequence,Object>)m.left()).invoke("123",null));
     }
+
+    public void testString() throws Exception {
+        ComposedMapper<Integer,Long,Object> m = new ComposedMapper<Integer,Long,Object>(
+                        new Mapper<Integer,CharSequence,Object>() {
+                            @Override
+                            public Integer invoke(CharSequence arg, Object ctx) {
+                                return arg.length();
+                            }
+
+                            @Override
+                            public String toString() {
+                                return "length($)";
+                            }
+                        },
+                        new Mapper<String,Long,Object>() {
+                            @Override
+                            public String invoke(Long arg, Object ctx) {
+                                return Long.toBinaryString(arg);
+                            }
+                            @Override
+                            public String toString() {
+                                return "string($)";
+                            }
+                        }
+                );
+        assertEquals("length(string($))",m.toString());
+    }
+
 }

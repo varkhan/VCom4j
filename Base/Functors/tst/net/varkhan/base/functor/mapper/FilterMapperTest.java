@@ -71,7 +71,29 @@ public class FilterMapperTest extends TestCase {
         assertTrue("filter([]).hasNext() 1", it5.hasNext());
         assertEquals("filter([]).next() 1", "BAZ", it5.next());
         assertFalse("filter([]).hasNext() 2", it5.hasNext());
-        System.out.println(m.toString());
     }
 
+    public void testString() throws Exception {
+        Predicate<String,Object> p = AggregatePredicate.and(
+                new Predicate<String,Object>() {
+                    @Override
+                    public boolean invoke(String arg, Object ctx) {
+                        return ctx==null||!arg.contains(ctx.toString());
+                    }
+
+                    @Override
+                    public String toString() { return "($~%)"; }
+                },
+                new ConstPredicate<String,Object>(true),
+                TransformPredicate.not(new EqualsPredicate<String,Object>("azwarf"))
+                                                           );
+        Mapper<String,String,Object> u = new Mapper<String,String,Object>() {
+            @Override
+            public String invoke(String arg, Object ctx) { return arg.toUpperCase(); }
+            @Override
+            public String toString() { return "uppercase($)"; }
+        };
+        FilterMapper<String,String,Object> f = new FilterMapper<String,String,Object>(p, u);
+        assertEquals("uppercase(<$>?((_~%)&true&!(_=azwarf)))",f.toString());
+    }
 }
