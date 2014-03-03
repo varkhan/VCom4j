@@ -2,6 +2,7 @@ package net.varkhan.data.learn.decision;
 
 import net.varkhan.base.containers.set.ArrayOpenHashCountingSet;
 import net.varkhan.base.containers.set.CountingSet;
+import net.varkhan.base.functor._;
 import net.varkhan.base.functor.curry.Pair;
 import net.varkhan.data.learn.SupervisedLearner;
 
@@ -27,6 +28,18 @@ public class DecisionLearner<K,T,C> implements SupervisedLearner<K,T,C> {
         this.minc=minc;
         this.maxd=maxd;
         for(Partition.Factory<K,?,T,C> a : attr) this.attributes.add(a);
+    }
+
+    public boolean train(Iterable<? extends _<T,? extends _<K,_>>> dat, C ctx) {
+        boolean m = false;
+        for(_<T,? extends _<K,_>> d: dat) m |= observed.add(new Pair.Value<T,K>(d));
+        if(!m) return false;
+        DecisionTree.Node<K,?,T,C> l = learnTree(tree.tree, observed, ctx, 0);
+        if(l!=null) {
+            tree.tree = l;
+            return true;
+        }
+        return false;
     }
 
     @Override

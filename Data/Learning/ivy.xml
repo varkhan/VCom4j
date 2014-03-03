@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
-    <info organisation="net.varkhan" module="VCom4j-Data-Learning" branch="prod" revision="0.2.0" status="release"/>
+    <info organisation="net.varkhan" module="VCom4j-Data-Learning" branch="prod" revision="0.3.0" status="release"/>
     <publications>
         <artifact name="VCom4j-Data-Learning" ext="jar" type="src"/>
         <artifact name="VCom4j-Data-Learning" ext="jar" type="bin"/>
@@ -9,7 +9,7 @@
         <artifact name="VCom4j-Data-Learning" ext="pom" type="pom"/>
     </publications>
     <dependencies>
-        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="0.7.+"/>
-        <dependency org="net.varkhan" name="VCom4j-Base-Functors" rev="0.7.+"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="0.8.+"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Functors" rev="0.8.+"/>
     </dependencies>
 </ivy-module>

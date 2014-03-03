@@ -7,6 +7,7 @@ import net.varkhan.base.functor.generator.GaussianNumberGenerator;
 import net.varkhan.base.functor.generator.UniformPRNGDef;
 import net.varkhan.data.learn.stats.InformationGain;
 
+import java.util.Formatter;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -82,60 +83,114 @@ public class DecisionLearnerTest extends TestCase {
         );
     }
 
-    public void testTrain100() throws Exception {
+    public void testTrainInc100() throws Exception {
         Random rand=new Random();
 
-        testTrain(rand, 100, 100, 0.03, 0.05);
-        testTrain(rand, 100, 100, 0.05, 0.10);
-        testTrain(rand, 100, 100, 0.10, 0.15);
-        testTrain(rand, 100, 100, 0.20, 0.20);
-        testTrain(rand, 100, 100, 0.30, 0.25);
-        testTrain(rand, 100, 100, 0.40, 0.30);
+        testTrainInc(rand, 100, 100, 0.03, 0.05);
+        testTrainInc(rand, 100, 100, 0.05, 0.10);
+        testTrainInc(rand, 100, 100, 0.10, 0.15);
+        testTrainInc(rand, 100, 100, 0.20, 0.20);
+        testTrainInc(rand, 100, 100, 0.30, 0.25);
+        testTrainInc(rand, 100, 100, 0.40, 0.30);
 
     }
 
-    public void testTrain300() throws Exception {
+    public void testTrainInc300() throws Exception {
         Random rand=new Random();
 
-        testTrain(rand, 30,  300, 0.03, 0.02);
-        testTrain(rand, 30,  300, 0.05, 0.03);
-        testTrain(rand, 30,  300, 0.10, 0.10);
-        testTrain(rand, 30,  300, 0.20, 0.20);
-        testTrain(rand, 30,  300, 0.30, 0.25);
-        testTrain(rand, 30,  300, 0.40, 0.30);
+        testTrainInc(rand, 30, 300, 0.03, 0.02);
+        testTrainInc(rand, 30, 300, 0.05, 0.03);
+        testTrainInc(rand, 30, 300, 0.10, 0.10);
+        testTrainInc(rand, 30, 300, 0.20, 0.20);
+        testTrainInc(rand, 30, 300, 0.30, 0.27);
+        testTrainInc(rand, 30, 300, 0.40, 0.30);
 
     }
 
-    public void testTrain1000() throws Exception {
+    public void testTrainInc1000() throws Exception {
         Random rand=new Random();
 
-        testTrain(rand, 10, 1000, 0.10, 0.05);
-        testTrain(rand, 10, 1000, 0.20, 0.15);
-        testTrain(rand, 10, 1000, 0.30, 0.25);
-        testTrain(rand, 10, 1000, 0.40, 0.30);
+        testTrainInc(rand, 10, 1000, 0.10, 0.05);
+        testTrainInc(rand, 10, 1000, 0.20, 0.15);
+        testTrainInc(rand, 10, 1000, 0.30, 0.25);
+        testTrainInc(rand, 10, 1000, 0.40, 0.30);
 
     }
 
-    public void testTrain3000() throws Exception {
+    public void testTrainInc3000() throws Exception {
         Random rand=new Random();
 
         // Not much improvement is to be expected at these noise levels by just increasing the # of samples
-        testTrain(rand, 10, 3000, 0.20, 0.15);
-        testTrain(rand, 10, 3000, 0.30, 0.25);
-        testTrain(rand, 10, 3000, 0.40, 0.30);
+        testTrainInc(rand, 10, 3000, 0.20, 0.15);
+        testTrainInc(rand, 10, 3000, 0.30, 0.25);
+        testTrainInc(rand, 10, 3000, 0.40, 0.30);
     }
 
-    public void testTrain(Random rand, int run, int num, double err, double max) throws Exception {
+
+    public void testTrainAll100() throws Exception {
+        Random rand=new Random();
+
+        testTrainAll(rand, 100, 100, 0.03, 0.05);
+        testTrainAll(rand, 100, 100, 0.05, 0.10);
+        testTrainAll(rand, 100, 100, 0.10, 0.15);
+        testTrainAll(rand, 100, 100, 0.20, 0.25);
+        testTrainAll(rand, 100, 100, 0.30, 0.25);
+        testTrainAll(rand, 100, 100, 0.40, 0.30);
+
+    }
+
+    public void testTrainAll300() throws Exception {
+        Random rand=new Random();
+
+        testTrainAll(rand, 30, 300, 0.03, 0.02);
+        testTrainAll(rand, 30, 300, 0.05, 0.03);
+        testTrainAll(rand, 30, 300, 0.10, 0.10);
+        testTrainAll(rand, 30, 300, 0.20, 0.20);
+        testTrainAll(rand, 30, 300, 0.30, 0.30);
+        testTrainAll(rand, 30, 300, 0.40, 0.35);
+
+    }
+
+    public void testTrainAll1000() throws Exception {
+        Random rand=new Random();
+
+        testTrainAll(rand, 10, 1000, 0.10, 0.10);
+        testTrainAll(rand, 10, 1000, 0.20, 0.20);
+        testTrainAll(rand, 10, 1000, 0.30, 0.25);
+        testTrainAll(rand, 10, 1000, 0.40, 0.35);
+
+    }
+
+    public void testTrainAll3000() throws Exception {
+        Random rand=new Random();
+
+        // Not much improvement is to be expected at these noise levels by just increasing the # of samples
+        testTrainAll(rand, 10, 3000, 0.20, 0.20);
+        testTrainAll(rand, 10, 3000, 0.30, 0.25);
+        testTrainAll(rand, 10, 3000, 0.40, 0.35);
+    }
+
+    public void testTrainInc(Random rand, int run, int num, double err, double max) throws Exception {
         double inv = 0;
         for(int i=0; i<run; i++) {
-            inv += runTrain(rand, num, err);
+            inv += runTrainInc(rand, num, err);
         }
         inv /= run;
-        System.out.printf("Inv for %3d runs of %5d +/-%4f = %5f / %5f\n",run,num,err,inv,max);
-        assertTrue("error rate "+inv+" / "+max,inv<max);
+        System.out.printf("Inc for %3d runs of %5d +/-%4f = %5f / %5f\n",run,num,err,inv,max);
+        assertTrue(String.format("Inc for %3d runs of %5d +/-%4f = %5f / %5f\n",run,num,err,inv,max),inv<max);
     }
 
-    public double runTrain(Random rand, int num, double err) throws Exception {
+    public void testTrainAll(Random rand, int run, int num, double err, double max) throws Exception {
+        double inv = 0;
+        for(int i=0; i<run; i++) {
+            inv += runTrainAll(rand, num, err);
+        }
+        inv /= run;
+        System.out.printf("All for %3d runs of %5d +/-%4f = %5f / %5f\n",run,num,err,inv,max);
+        assertTrue(String.format("All for %3d runs of %5d +/-%4f = %5f / %5f\n",run,num,err,inv,max),inv<max);
+    }
+
+    public double runTrainInc(Random rand, int num, double err) throws Exception {
         DecisionLearner<String,Double,Object> learner = new DecisionLearner<String,Double,Object>(
                 0.7,    // Min confidence
                 10,     // Max depth
@@ -161,8 +216,27 @@ public class DecisionLearnerTest extends TestCase {
         return (double)inv/(double)tst;
     }
 
-//    public void testTrainPartial() throws Exception {
-//
-//    }
+    public double runTrainAll(Random rand, int num, double err) throws Exception {
+        DecisionLearner<String,Double,Object> learner = new DecisionLearner<String,Double,Object>(
+                0.7,    // Min confidence
+                10,     // Max depth
+                createSplitPartition(0),
+                createSplitPartition(1),
+                createSplitPartition(2),
+                createSplitPartition(3),
+                createSplitPartition(4)
+        );
+        learner.train(sample(rand, num, err), null);
+        DecisionTree<String,Double,Object> model=learner.model();
+//        System.out.println("Tree for "+num+" +/-"+err+":\n"+model.toString());
+        int tst = 0;
+        int inv = 0;
+        for(double v=-3;v<7;v+=0.1) {
+            if(!bucket.invoke(v,null).equals(model.invoke(v,null))) inv++;
+//            System.out.printf("%4f:\t%s\t%s\n",v,bucket.invoke(v,null),model.invoke(v,null));
+            tst ++;
+        }
+        return (double)inv/(double)tst;
+    }
 
 }
