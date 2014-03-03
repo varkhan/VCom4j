@@ -92,7 +92,7 @@ public class DecisionLearnerTest extends TestCase {
         testTrain(rand, 100, 100, 0.30, 0.25);
         testTrain(rand, 100, 100, 0.40, 0.30);
 
-        testTrain(rand, 30,  300, 0.03, 0.01);
+        testTrain(rand, 30,  300, 0.03, 0.02);
         testTrain(rand, 30,  300, 0.05, 0.03);
         testTrain(rand, 30,  300, 0.10, 0.10);
         testTrain(rand, 30,  300, 0.20, 0.20);
