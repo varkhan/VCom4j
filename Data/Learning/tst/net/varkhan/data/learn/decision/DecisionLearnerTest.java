@@ -82,7 +82,7 @@ public class DecisionLearnerTest extends TestCase {
         );
     }
 
-    public void testTrain() throws Exception {
+    public void testTrain100() throws Exception {
         Random rand=new Random();
 
         testTrain(rand, 100, 100, 0.03, 0.05);
@@ -92,6 +92,11 @@ public class DecisionLearnerTest extends TestCase {
         testTrain(rand, 100, 100, 0.30, 0.25);
         testTrain(rand, 100, 100, 0.40, 0.30);
 
+    }
+
+    public void testTrain300() throws Exception {
+        Random rand=new Random();
+
         testTrain(rand, 30,  300, 0.03, 0.02);
         testTrain(rand, 30,  300, 0.05, 0.03);
         testTrain(rand, 30,  300, 0.10, 0.10);
@@ -99,10 +104,20 @@ public class DecisionLearnerTest extends TestCase {
         testTrain(rand, 30,  300, 0.30, 0.25);
         testTrain(rand, 30,  300, 0.40, 0.30);
 
+    }
+
+    public void testTrain1000() throws Exception {
+        Random rand=new Random();
+
         testTrain(rand, 10, 1000, 0.10, 0.05);
         testTrain(rand, 10, 1000, 0.20, 0.15);
         testTrain(rand, 10, 1000, 0.30, 0.25);
         testTrain(rand, 10, 1000, 0.40, 0.30);
+
+    }
+
+    public void testTrain3000() throws Exception {
+        Random rand=new Random();
 
         // Not much improvement is to be expected at these noise levels by just increasing the # of samples
         testTrain(rand, 10, 3000, 0.20, 0.15);
