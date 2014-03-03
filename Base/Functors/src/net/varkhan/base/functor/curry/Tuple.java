@@ -20,6 +20,7 @@ public interface Tuple<L, _T extends _> extends _<L,_T> {
 
     public static class Value<L,_T extends _> implements Tuple<L,_T> {
         protected final Object[] values;
+        public Value(_<L,? extends _T> t) { this.values = t.values(); }
         public Value(L l, Object... values) { this.values = uncurry(l, values); }
         protected Value(Object[] values) { this.values = values; }
         @SuppressWarnings("unchecked")

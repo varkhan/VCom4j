@@ -23,6 +23,10 @@ public interface CTuple<L, _T extends _> extends Tuple<L,_T> {
 
     public static class Value<L,_T extends _> extends Tuple.Value<L,_T> implements CTuple<L,_T> {
         protected final Class<?>[] types;
+        public Value(CTuple<L,? extends _T> t) {
+            super(t.values());
+            this.types=t.types();
+        }
         public Value(Class<L> lc, Class<?>[] types, L l, Object[] values) {
             super(uncurry(l,values));
             this.types=uncurry(lc,types);
@@ -31,6 +35,7 @@ public interface CTuple<L, _T extends _> extends Tuple<L,_T> {
             super(values);
             this.types=types;
         }
+
         protected static <T> Class<?>[] uncurry(Class<T> l, Class<?>[] values) {
             if(values==null||values.length==0) return new Class[]{l};
             Class[] v = new Class[1+values.length];

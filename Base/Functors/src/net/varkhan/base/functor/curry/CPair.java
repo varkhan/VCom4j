@@ -11,7 +11,7 @@ import net.varkhan.base.functor._;
  * @date 12/1/13
  * @time 12:48 PM
  */
-public interface CPair<L,R> extends Pair<L,R>, _<L,_<R,_>> {
+public interface CPair<L,R> extends Pair<L,R>, CTuple<L,_<R,_>>, _<L,_<R,_>> {
 
     public Class<L> ltype();
     public L lvalue();
@@ -23,6 +23,7 @@ public interface CPair<L,R> extends Pair<L,R>, _<L,_<R,_>> {
     public Object[] values();
 
     public static class Value<L,R> extends CTuple.Value<L,_<R,_>> implements CPair<L,R> {
+        public Value(CPair<L,R> t) { super(t); }
         public Value(Class<L> lc, Class<R> rc, L l, R r) { super(new Class[]{lc,rc}, new Object[]{l,r}); }
         @SuppressWarnings("unchecked")
         public Class<R> rtype() { return (Class<R>) types[1]; }
