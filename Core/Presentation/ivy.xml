@@ -9,7 +9,7 @@
         <artifact name="VCom4j-Core-Presentation" ext="pom" type="pom"/>
     </publications>
     <dependencies>
-        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="0.7.+"/>
-        <dependency org="net.varkhan" name="VCom4j-Base-Conversion" rev="0.7.+"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="[0.7.*,)"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Conversion" rev="[0.7.*,)"/>
     </dependencies>
 </ivy-module>
