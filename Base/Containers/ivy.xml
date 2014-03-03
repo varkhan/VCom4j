@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0">
-    <info organisation="net.varkhan" module="VCom4j-Base-Containers" branch="prod" revision="0.7.1" status="release"/>
+    <info organisation="net.varkhan" module="VCom4j-Base-Containers" branch="prod" revision="0.8.0" status="release"/>
     <publications>
         <artifact name="VCom4j-Base-Containers" ext="jar" type="src"/>
         <artifact name="VCom4j-Base-Containers" ext="jar" type="bin"/>
