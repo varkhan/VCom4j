@@ -11,7 +11,7 @@ import net.varkhan.core.geocode.features.Typology;
  * @date 11/11/12
  * @time 4:12 PM
  */
-public enum Loctype {
+public enum LocType {
     A(Typology.Politic, "country","state","region"),
     H(Typology.Geology, "stream","lake"),
     L(Typology.Ecology, "parks","area"),
@@ -26,7 +26,7 @@ public enum Loctype {
     private final Typology type;
     private final String[] desc;
 
-    Loctype(Typology type, String... desc) {
+    LocType(Typology type, String... desc) {
         this.type=type;
         this.desc=desc;
     }
