@@ -3,6 +3,7 @@ package net.varkhan.core.geo.geomaps;
 import junit.framework.TestCase;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
 import net.varkhan.core.geo.geometry.plane.PointD2D;
+import net.varkhan.core.geo.geometry.plane.PointF2D;
 import net.varkhan.core.geo.geometry.plane.Rect2D;
 import net.varkhan.core.geo.geometry.plane.Shape2D;
 
@@ -19,6 +20,8 @@ import java.util.*;
  */
 public abstract class AbstractMetricMapTest extends TestCase {
 
+    protected Shape2D getPoint(double x, double y) { return new PointD2D(x, y);}
+
     protected void testClosest(Random rand, Rect2D bounds, MetricMap<Shape2D, String> geomap, long size) {
         double xmin = bounds.xmin();
         double xmax = bounds.xmax();
@@ -30,7 +33,7 @@ public abstract class AbstractMetricMapTest extends TestCase {
             double x = xmin+(xmax-xmin)*rand.nextDouble();
             double y = ymin+(ymax-ymin)*rand.nextDouble();
             String n = "Point-"+i+"-("+x+","+y+")";
-            final Shape2D c = new PointD2D(x, y);
+            final Shape2D c = getPoint(x, y);
             locs.put(n, c);
             geomap.add(c,n);
             assertEquals("size() @" + n, locs.size(), geomap.size());
@@ -54,7 +57,7 @@ public abstract class AbstractMetricMapTest extends TestCase {
         }
     }
 
-    protected void testSearch(Random rand, Rect2D bounds, MetricMap<Shape2D, String> geomap, long size) {
+    protected void testSearch(Random rand, Rect2D bounds, MetricMap<Shape2D,String> geomap, long size, double prec) {
         double xmin = bounds.xmin();
         double xmax = bounds.xmax();
         double ymin = bounds.ymin();
@@ -65,7 +68,7 @@ public abstract class AbstractMetricMapTest extends TestCase {
             double x = xmin+(xmax-xmin)*rand.nextDouble();
             double y = ymin+(ymax-ymin)*rand.nextDouble();
             String n = "Point-"+i+"-("+x+","+y+")";
-            final Shape2D c = new PointD2D(x, y);
+            final Shape2D c = getPoint(x, y);
             locs.put(n, c);
             geomap.add(c,n);
             assertEquals("size() @" + n, locs.size(), geomap.size());
@@ -78,7 +81,7 @@ public abstract class AbstractMetricMapTest extends TestCase {
             double y = c.yctr();
             assertTrue(t, findAllKeys(locs, x, y).contains(t));
             System.err.println(t);
-            assertEquals("findClosest() @[" + x + "," + y + "]", findAll(locs, x, y), geomap.getAll(x, y, Double.MIN_NORMAL));
+            assertEquals("findClosest() @[" + x + "," + y + "]", findAll(locs, x, y), geomap.getAll(x, y, prec));
         }
         for(int i=0; i<size; i++) {
             double x = xmin+(xmax-xmin)*rand.nextDouble();
@@ -89,12 +92,12 @@ public abstract class AbstractMetricMapTest extends TestCase {
         }
     }
 
-    protected void bmarkClosest(Random rand, Rect2D bounds, MetricMap<Shape2D, String> geomap, long size, int count, int depth) {
+    protected void bmarkClosest(Random rand, Rect2D bounds, MetricMap<Shape2D,String> geomap, long size, int count, int depth, double prec) {
         double xmin = bounds.xmin();
         double xmax = bounds.xmax();
         double ymin = bounds.ymin();
         double ymax = bounds.ymax();
-        testSearch(rand, bounds, geomap, size);
+        testSearch(rand, bounds, geomap, size, prec);
         List<double[]> points = new ArrayList<double[]>(count);
         for(int i=0; i< count; i++) {
             double x = xmin+(xmax-xmin)* rand.nextDouble();
