@@ -3,7 +3,6 @@
  */
 package net.varkhan.base.management.config;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,14 +101,14 @@ public class MapConfiguration implements SettableConfiguration {
 
     @Override
     public SettableConfiguration.Context context(final String ctx) {
-        if(ctx==null||ctx.length()==0) return new Context("",defentries);
+        if(ctx==null||ctx.length()==0) return new MapContext("",defentries);
         ConcurrentMap<String,Object> k2e=ctxentries.get(ctx);
         if(k2e==null) {
             k2e=new ConcurrentHashMap<String,Object>();
             ConcurrentMap<String,Object> k2ex=ctxentries.putIfAbsent(ctx, k2e);
             if(k2ex!=null) k2e=k2ex;
         }
-        return new Context(ctx, k2e);
+        return new MapContext(ctx, k2e);
     }
 
     @Override
@@ -153,121 +152,4 @@ public class MapConfiguration implements SettableConfiguration {
         }
     }
 
-    protected static class Context implements SettableConfiguration.Context {
-        private final String ctx;
-        private final Map<String,Object> map;
-
-        public Context(String ctx, ConcurrentMap<String,Object> map) {
-            this.ctx=ctx;
-            this.map=map;
-        }
-
-        @Override
-        public String name() {
-            return ctx;
-        }
-
-        @Override
-        public boolean has(String key) {
-            return map.containsKey(key);
-        }
-
-        @Override
-        public Object get(String key) {
-            return map.get(key);
-        }
-
-        @Override
-        public Map<String,?> get() {
-            return Collections.unmodifiableMap(map);
-        }
-
-        public Iterator<Configuration.Entry> iterator() {
-            return new Iterator<Configuration.Entry>() {
-                private final Iterator<Map.Entry<String,Object>> it=map.entrySet().iterator();
-
-                public boolean hasNext() { return it.hasNext(); }
-
-                public Configuration.Entry next() {
-                    final Map.Entry<String,Object> ent=it.next();
-                    return new Entry(ctx,ent);
-                }
-
-                public void remove() { it.remove(); }
-            };
-        }
-
-        @Override
-        public boolean add(String key, Object val) {
-            Object ret=map.put(key, val);
-            return ret==val || ret!=null&&ret.equals(val);
-        }
-
-        @Override
-        public boolean add(Configuration.Entry cfg) {
-            return add(cfg.key(),cfg.value());
-        }
-
-        @Override
-        public boolean add(Map<String,?> cfgs) {
-            boolean mod=false;
-            for(Map.Entry<String,?> cfg: cfgs.entrySet()) {
-                Object ret=map.put(cfg.getKey(),cfg.getValue());
-                mod |= ret==cfg.getValue() || ret!=null&&ret.equals(cfg.getValue());
-            }
-            return mod;
-        }
-
-        @Override
-        public boolean del(String key) {
-            return null!=map.remove(key);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder buf = new StringBuilder();
-            buf.append("[").append(ctx==null?"":ctx).append("]\n");
-            for(Map.Entry<String,Object> e: map.entrySet()) {
-                buf.append("\t").append(e.getKey()).append("=").append(e.getValue()).append("\n");
-            }
-            return buf.toString();
-        }
-    }
-
-    protected static class Entry implements Configuration.Entry {
-        private final String                   ctx;
-        private final Map.Entry<String,Object> ent;
-
-        public Entry(String ctx, Map.Entry<String,Object> ent) {
-            this.ctx=ctx;
-            this.ent=ent;
-        }
-
-        public String ctx() { return ctx; }
-
-        public String key() { return ent.getKey(); }
-
-        public Object value() { return ent.getValue(); }
-
-        @Override
-        public boolean equals(Object obj) {
-            if(!(obj instanceof Configuration.Entry)) return false;
-            Configuration.Entry that = (Configuration.Entry) obj;
-            if(ctx==null || that.ctx()==null) return false;
-            if(!ctx.equals(that.ctx())) return false;
-            String key=ent.getKey();
-            if(key==null) return that.key()==null;
-            return key.equals(that.key());
-        }
-
-        @Override
-        public int hashCode() {
-            return 31 * (ctx==null?0:ctx.hashCode()) + (ent.getKey()==null?0:ent.getKey().hashCode());
-        }
-
-        @Override
-        public String toString() {
-            return (ctx==null?"":ctx)+":"+(ent.getKey()==null?"":ent.getKey())+"="+(ent.getValue()==null?"":ent.getValue());
-        }
-    }
 }
