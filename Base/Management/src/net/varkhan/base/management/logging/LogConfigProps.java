@@ -46,8 +46,8 @@ public class LogConfigProps implements LogConfig {
                 throw new IllegalArgumentException("Filter keys must be strings");
             if(!(propdefs[i+2] instanceof Number) && !(propdefs[i+2] instanceof CharSequence))
                 throw new ConfigurationError("Logging masks must be numbers or strings",ctx,key,val);
-            if(ctx==null || ctx.length()==0) config.setEntry(key, parseLevelMask(val));
-            else config.setEntry(ctx, key, parseLevelMask(val));
+            if(ctx==null || ctx.length()==0) config.add(key, parseLevelMask(val));
+            else config.add(ctx, key, parseLevelMask(val));
         }
     }
 
@@ -74,7 +74,7 @@ public class LogConfigProps implements LogConfig {
     }
 
     public long getLevelMask(String ctx, String key) {
-        Object val = config.getConfig(ctx, key);
+        Object val = config.get(ctx, key);
         if(val==null) return 0L;
         return parseLevelMask(val.toString());
     }
@@ -101,22 +101,28 @@ public class LogConfigProps implements LogConfig {
 
     public Iterable<Level> levels(final String ctx) {
         return new Iterable<Level>() {
-            protected final Iterable<Configuration.Entry> itb = config.entries(ctx);
+            protected final Iterable<Configuration.Entry> itb=config.context(ctx);
+
             public Iterator<Level> iterator() {
                 return new Iterator<Level>() {
-                    protected final Iterator<Configuration.Entry> itr = itb.iterator();
+                    protected final Iterator<Configuration.Entry> itr=itb.iterator();
+
                     public boolean hasNext() { return itr.hasNext(); }
+
                     public Level next() {
-                        final Configuration.Entry ent = itr.next();
+                        final Configuration.Entry ent=itr.next();
                         return new Level() {
                             public String ctx() { return ent.ctx(); }
+
                             public String key() { return ent.key(); }
+
                             public long mask() {
-                                Object val = ent.value();
-                                return val==null?0L:parseLevelMask(val);
+                                Object val=ent.value();
+                                return val==null ? 0L : parseLevelMask(val);
                             }
                         };
                     }
+
                     public void remove() { itr.remove(); }
                 };
             }
@@ -125,25 +131,25 @@ public class LogConfigProps implements LogConfig {
 
 
     public void setLevelMask(String ctx, String key, long lev) {
-        config.setEntry(ctx,key,lev);
+        config.add(ctx, key, lev);
     }
 
     public void setLevelMask(Level lev) {
-        setLevelMask(lev.ctx(),lev.key(),lev.mask());
+        setLevelMask(lev.ctx(), lev.key(), lev.mask());
     }
 
     public void loadConfig(LogConfig cfg) {
-        for(String ctx: cfg.contexts()) {
-            for(Level lev: cfg.levels(ctx)) {
+        for(String ctx : cfg.contexts()) {
+            for(Level lev : cfg.levels(ctx)) {
                 setLevelMask(lev);
             }
         }
     }
 
     public void loadConfig(String ctx, Map<String,Object> props) {
-        for(Map.Entry<String,Object> prop: props.entrySet()) {
-            if(prop.getValue()==null) setLevelMask(ctx,prop.getKey(),0);
-            else setLevelMask(ctx,prop.getKey(),parseLevelMask(prop.getValue()));
+        for(Map.Entry<String,Object> prop : props.entrySet()) {
+            if(prop.getValue()==null) setLevelMask(ctx, prop.getKey(), 0);
+            else setLevelMask(ctx, prop.getKey(), parseLevelMask(prop.getValue()));
         }
     }
 
