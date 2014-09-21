@@ -17,7 +17,7 @@ import java.util.*;
  * @date 11/9/12
  * @time 8:19 PM
  */
-public abstract class MetricMapTest extends TestCase {
+public abstract class AbstractMetricMapTest extends TestCase {
 
     protected void testClosest(Random rand, Rect2D bounds, MetricMap<Shape2D, String> geomap, long size) {
         double xmin = bounds.xmin();
