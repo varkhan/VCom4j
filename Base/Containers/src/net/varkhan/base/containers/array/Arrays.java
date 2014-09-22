@@ -746,6 +746,21 @@ public class Arrays {
         public List<T> sublist(long beg, long end) {
             return new _List<T>(vals,(int)(this.beg+beg),(int)(end-beg));
         }
+
+        public String toString() {
+            StringBuilder buf=new StringBuilder();
+            buf.append('[');
+            boolean first = true;
+            for(int i=0;i<len;i++) {
+                T obj=vals[beg+i];
+                if(first) first=false;
+                else buf.append(',');
+                buf.append(' ').append(obj);
+                i++;
+            }
+            buf.append(' ').append(']');
+            return buf.toString();
+        }
     }
 
 

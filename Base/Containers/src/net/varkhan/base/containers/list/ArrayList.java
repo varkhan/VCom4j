@@ -424,6 +424,23 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
         public List<Type> sublist(long beg, long end) {
             return new SubList((int)(this.beg+beg),(int)(end-beg));
         }
+
+        public String toString() {
+            StringBuilder buf=new StringBuilder();
+            buf.append('[');
+            boolean first = true;
+            for(int i=0;i<len;i++) {
+                @SuppressWarnings("unchecked")
+                Type obj=(Type) list[beg+i];
+                if(first) first=false;
+                else buf.append(',');
+                buf.append(' ').append(obj);
+                i++;
+            }
+            buf.append(' ').append(']');
+            return buf.toString();
+        }
+
     }
 
 
