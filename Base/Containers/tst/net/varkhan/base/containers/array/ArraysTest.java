@@ -370,13 +370,26 @@ public class ArraysTest extends TestCase {
     }
 
     public void testAsList() throws Exception {
-        List<String> list = Arrays.asList("val1", "val2", "val3");
-        assertEquals("asList(...).size()", 3, list.size());
+        List<String> list = Arrays.asList("val1", "val2", "val3", "val4");
+        assertEquals("asList(...).size()", 4, list.size());
         Iterator<? extends String> it=list.iterator();
         assertEquals("asList(...).iterator().next()", "val1", it.next());
-        assertEquals("asList(...).iterator().next().next()", "val2", it.next());
-        assertEquals("asList(...).iterator().next().next().next()", "val3", it.next());
-        assertFalse("asList(...).iterator().next().next().next().hasNext()", it.hasNext());
+        assertEquals("asList(...).iterator().next()2", "val2", it.next());
+        assertEquals("asList(...).iterator().next()3", "val3", it.next());
+        assertEquals("asList(...).iterator().next()4", "val4", it.next());
+        assertFalse("asList(...).iterator().next()4.hasNext()", it.hasNext());
+        List<String> slist = list.sublist(1,2);
+        assertEquals("asList(...).sublist(1,2).size()", 1, slist.size());
+        Iterator<? extends String> sit=slist.iterator();
+        assertEquals("asList(...).sublist(1,2).iterator().next()", "val2", sit.next());
+        assertFalse("asList(...).sublist(1,2).iterator().next().hasNext()", sit.hasNext());
+        slist = list.sublist(1,4);
+        assertEquals("asList(...).sublist(1,4).size()", 3, slist.size());
+        sit=slist.iterator();
+        assertEquals("asList(...).sublist(1,4).iterator().next()", "val2", sit.next());
+        assertEquals("asList(...).sublist(1,4).iterator().next()2", "val3", sit.next());
+        assertEquals("asList(...).sublist(1,4).iterator().next()3", "val4", sit.next());
+        assertFalse("asList(...).sublist(1,4).iterator().next()3.hasNext()", sit.hasNext());
     }
 
     public void testAsMap() throws Exception {

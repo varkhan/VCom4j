@@ -677,44 +677,77 @@ public class Arrays {
      * @return a list holding the elements of the array, in order
      */
     public static <T> List<T> asList(final T... values) {
-        return new List<T>() {
-            private T[] array = (values==null)?null:values.clone();
-            public long size() { return array==null?0:array.length; }
-            public boolean isEmpty() { return array==null||array.length==0; }
-            public void clear() { }
-            public boolean add(T elt) { return false; }
-            public T get(long idx) { return array[(int) idx]; }
-            public boolean set(long idx, T elt) {
-                if(0<=idx && idx<array.length && array[(int) idx] != elt) {
-                    array[(int) idx] = elt;
-                    return true;
-                }
-                else return false;
-            }
-            public boolean del(long idx) { return false; }
-            public boolean del(T elt) { return false; }
-            public Iterator<? extends T> iterator() {
-                return new Iterator<T>() {
-                    private volatile int pos = 0;
-                    public boolean hasNext() { return array!=null&&pos<array.length; }
-                    public T next() {
-                        if(array==null||pos>=array.length) throw new NoSuchElementException();
-                        return array[pos++];
-                    }
-                    public void remove() { throw new UnsupportedOperationException(); }
-                };
-            }
-            public <Par> long visit(Visitor<T,Par> vis, Par par) {
-                long ret = 0;
-                if(array!=null) for(T obj: array) {
-                    long r = vis.invoke(obj, par);
-                    if(r<0) return ret;
-                    ret += r;
-                }
-                return ret;
-            }
-        };
+        if(values==null) return new _List<T>(null,0,0);
+        return new _List<T>(values.clone(),0,values.length);
     }
+
+    protected static class _List<T> implements List<T> {
+        private final int beg;
+        private final int len;
+        private final T[] vals;
+
+        public _List(T[] vals, int beg, int len) {
+            this.vals=vals;
+            this.beg=beg;
+            this.len=len;
+        }
+
+        public long size() { return vals==null?0:len; }
+
+        public boolean isEmpty() { return vals==null||len==0; }
+
+        public void clear() { }
+
+        public boolean add(T elt) { return false; }
+
+        public boolean add(long idx, T elt) { return false; }
+
+        public T get(long idx) { return vals==null||idx<0||idx>=len ? null : vals[beg+(int)idx]; }
+
+        public boolean set(long idx, T elt) {
+            if(vals==null) return false;
+            if(0<=idx && idx<len && vals[beg+(int)idx]!=elt) {
+                vals[beg+(int)idx]=elt;
+                return true;
+            }
+            else return false;
+        }
+
+        public boolean del(long idx) { return false; }
+
+        public boolean del(T elt) { return false; }
+
+        public Iterator<? extends T> iterator() {
+            return new Iterator<T>() {
+                private volatile int pos=0;
+
+                public boolean hasNext() { return vals!=null&&pos<len; }
+
+                public T next() {
+                    if(vals==null||pos>=len) throw new NoSuchElementException();
+                    return vals[beg+pos++];
+                }
+
+                public void remove() { throw new UnsupportedOperationException(); }
+            };
+        }
+
+        public <Par> long visit(Visitor<T,Par> vis, Par par) {
+            long ret=0;
+            if(vals!=null) for(int i=0;i<len;i++) {
+                T obj=vals[beg+i];
+                long r=vis.invoke(obj, par);
+                if(r<0) return ret;
+                ret+=r;
+            }
+            return ret;
+        }
+
+        public List<T> sublist(long beg, long end) {
+            return new _List<T>(vals,(int)(this.beg+beg),(int)(end-beg));
+        }
+    }
+
 
     /**
      * Returns an array of alternating keys and values as a map.
@@ -727,16 +760,18 @@ public class Arrays {
      * @return a map associating the object at even indexes in the array to the immediately following (odd index) element
      */
     @SuppressWarnings({ "unchecked" })
-    public static <K,V> Map<K,V> asMap(final Class<K> kclass, final Class<V> vclass, final Object... values) {
-        ArrayOpenHashMap<K,V> map = new ArrayOpenHashMap<K,V>();
+    public static <K, V> Map<K,V> asMap(final Class<K> kclass, final Class<V> vclass, final Object... values) {
+        ArrayOpenHashMap<K,V> map=new ArrayOpenHashMap<K,V>();
         if(values==null) return map;
         if((values.length&1)!=0) throw new IllegalArgumentException("Key/Value array must be of even size");
-        for(int i=0; i<values.length; i+=2) {
+        for(int i=0;i<values.length;i+=2) {
             Object key=values[i];
-            if(key!=null && !kclass.isAssignableFrom(key.getClass())) throw new IllegalArgumentException("Invalid key type at "+i);
+            if(key!=null&&!kclass.isAssignableFrom(key.getClass()))
+                throw new IllegalArgumentException("Invalid key type at "+i);
             Object val=values[i+1];
-            if(val!=null && !vclass.isAssignableFrom(val.getClass())) throw new IllegalArgumentException("Invalid value type at "+(i+1));
-            map.add((K) key,(V) val);
+            if(val!=null&&!vclass.isAssignableFrom(val.getClass()))
+                throw new IllegalArgumentException("Invalid value type at "+(i+1));
+            map.add((K) key, (V) val);
         }
         return map;
     }
@@ -758,7 +793,7 @@ public class Arrays {
      *
      * @throws java.io.IOException if the output buffer raises this exception on {@code append()}
      */
-    public static <T,A extends Appendable> A toString(A buf, T... array) throws IOException {
+    public static <T, A extends Appendable> A toString(A buf, T... array) throws IOException {
         buf.append("[").append(Integer.toString(array.length)).append("|");
         for(int i=0;i<array.length;i++) {
             if(i>0) buf.append(",");
@@ -818,7 +853,7 @@ public class Arrays {
      *
      * @throws IOException if the output buffer raises this exception on {@code append()}
      */
-    public static <T,A extends Appendable> A join(A buf, String sep, String ldl, String rdl, T... array) throws IOException {
+    public static <T, A extends Appendable> A join(A buf, String sep, String ldl, String rdl, T... array) throws IOException {
         if(sep==null) for(int i=0;i<array.length;i++) {
             T elt=array[i];
             if(elt!=null) {

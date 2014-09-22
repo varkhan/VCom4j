@@ -24,6 +24,13 @@ public class ArrayListTest extends AbstractListTest {
         featureTestAdd(rand, vals, ilst);
     }
 
+    public void testAddI() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        List<Integer> ilst = new ArrayList<Integer>();
+        featureTestAddI(rand, vals, ilst);
+    }
+
     public void testSet() throws Exception {
         Random rand=new Random(baseseed);
         Integer[] vals=genIntegerList(rand, 1000000, 0.9);
@@ -57,6 +64,27 @@ public class ArrayListTest extends AbstractListTest {
         Integer[] vals=genIntegerList(rand, 1000000, 0.9);
         List<Integer> ilst = new ArrayList<Integer>();
         featureTestVisit(rand, vals, ilst);
+    }
+
+    public void testSublist() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer i = Integer.valueOf(-1);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        List<Integer> ilst = new ArrayList<Integer>();
+        featureTestSublist(rand, vals, i, ilst, 0, 0);
+        ilst.clear();
+        featureTestSublist(rand, vals, i, ilst, 1, 1);
+        ilst.clear();
+        featureTestSublist(rand, vals, i, ilst, 1, 2);
+        ilst.clear();
+        featureTestSublist(rand, vals, i, ilst, 0, 2);
+        ilst.clear();
+        featureTestSublist(rand, vals, i, ilst, 0, 200);
+        ilst.clear();
+        featureTestSublist(rand, vals, i, ilst, 200, 400);
+        ilst.clear();
+        featureTestSublist(rand, vals, i, ilst, 0, 1000000);
+        ilst.clear();
     }
 
     public void testSerialize() throws Exception {

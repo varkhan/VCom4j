@@ -52,16 +52,6 @@ public interface List<Type> extends Collection<Type> {
      **/
 
     /**
-     * Adds an element to this list.
-     *
-     * @param elt the element to add
-     *
-     * @return {@literal true} if the list has been modified as a result of
-     *         this operation, {@literal false} if the list remains unchanged
-     */
-    public boolean add(Type elt);
-
-    /**
      * Gets an element from this list.
      *
      * @param idx the index of the element
@@ -71,9 +61,31 @@ public interface List<Type> extends Collection<Type> {
     public Type get(long idx);
 
     /**
+     * Adds an element to this list.
+     *
+     * @param elt the element to add at the end of the list
+     *
+     * @return {@literal true} if the list has been modified as a result of
+     *         this operation, {@literal false} if the list remains unchanged
+     */
+    public boolean add(Type elt);
+
+    /**
+     * Adds an element to this list.
+     *
+     * @param idx the index of the element that will be moved toward the end of the list
+     * @param elt the element to set
+     *
+     * @return {@literal true} if the list has been modified as a result of
+     *         this operation, {@literal false} if the list remains unchanged (for
+     *         instance, because the element was not initially in the list)
+     */
+    public boolean add(long idx, Type elt);
+
+    /**
      * Sets an element in this list.
      *
-     * @param idx the index of the element
+     * @param idx the index of the element to replace
      * @param elt the element to set
      *
      * @return {@literal true} if the list has been modified as a result of
@@ -126,5 +138,16 @@ public interface List<Type> extends Collection<Type> {
      * @return the sum of all positive return values from the visitor
      */
     public <Par> long visit(Visitor<Type,Par> vis, Par par);
+
+    /**
+     * Returns a view of the portion of this list between the specified
+     * beginning index (inclusive), and end index (exclusive)
+     * empty.)  The returned list is backed by this list, so non-structural
+     * changes in the returned list are reflected in this list, and vice-versa.
+     * The returned list supports all of the optional list operations supported
+     * by this list.<p>
+     *
+     */
+    public List<Type> sublist(long beg, long end);
 
 }

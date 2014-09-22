@@ -52,6 +52,31 @@ public abstract class AbstractListTest extends TestCase {
         System.out.println("add(T) OK");
     }
 
+    public <T> void featureTestAddI(Random rand, T[] vals, List<T> lst) throws Exception {
+        Set<Integer> add=new HashSet<Integer>();
+        int size=0;
+        int[] pos = new int[vals.length];
+        while(add.size()<vals.length) {
+            int i=rand.nextInt(vals.length);
+            if(add.contains(i)) continue;
+            add.add(i);
+            if(vals[i]==null) {
+                continue;
+            }
+            int j = rand.nextInt(size+1);
+            System.arraycopy(pos,j,pos,j+1,size-j);
+            pos[j] = i;
+            size++;
+            assertTrue("add("+j+","+i+")",lst.add(j,vals[i]));
+            assertEquals("size()", size, lst.size());
+        }
+        assertEquals("size()", size, lst.size());
+        for(int i=0; i<size; i++) {
+            assertSame("get(i)",vals[pos[i]],lst.get(i));
+        }
+        System.out.println("add(i,T) OK");
+    }
+
     public <T> void featureTestSet(Random rand, T[] vals, List<T> lst) throws Exception {
         Set<Integer> add=new HashSet<Integer>();
         int size=0;
@@ -158,6 +183,26 @@ public abstract class AbstractListTest extends TestCase {
         };
         assertEquals("size()==visit()", lst.size(), lst.visit(vv, ref));
         System.out.println("visit(Visitor) OK");
+    }
+
+    public <T> void featureTestSublist(Random rand, T[] vals, T ext, List<T> lst, int beg, int end) {
+        for(int i=0;i<vals.length;i++) lst.add(vals[i]);
+        List<T> sl = lst.sublist(beg, end);
+        assertEquals("size()==end-beg",end-beg,sl.size());
+        assertEquals("isEmpty() iff beg==end",beg==end,sl.isEmpty());
+        Iterator<? extends T> it=sl.iterator();
+        for(int i=0;i<end-beg;i++) {
+//            if(vals[beg+i]!=null) {
+                assertTrue(i+": hasNext()", it.hasNext());
+                assertEquals(i+": next()", vals[beg+i], it.next());
+//            }
+        }
+        assertFalse("hasNext()", it.hasNext());
+        assertTrue("add()",sl.add(ext));
+        assertEquals("add()?",ext,lst.get(end));
+        assertTrue("add(i)",sl.add(0,ext));
+        assertEquals("add(i)?",ext,lst.get(beg));
+        System.out.println("sublist() OK");
     }
 
     public <T> void featureTestSerialize(Random rand, T[] vals, List<T> lst) throws Exception {

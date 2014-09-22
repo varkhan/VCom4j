@@ -170,6 +170,7 @@ public class ContainersTest extends TestCase {
         public boolean isEmpty() { return array==null||array.length==0; }
         public void clear() { }
         public boolean add(T elt) { return false; }
+        public boolean add(long idx, T elt) { return false; }
         public T get(long idx) { return array[(int) idx]; }
         public boolean set(long idx, T elt) { array[(int) idx] = elt; return true; }
         public boolean del(long idx) { return false; }
@@ -193,6 +194,9 @@ public class ContainersTest extends TestCase {
                 ret += r;
             }
             return ret;
+        }
+        public List<T> sublist(long beg, long len) {
+            return null;
         }
     }
 

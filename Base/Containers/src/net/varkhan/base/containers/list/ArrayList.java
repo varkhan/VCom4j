@@ -161,19 +161,51 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
     /**
      * Adds an element to this list.
      *
-     * @param elt the element to add
+     * @param elt the element to add at the end of the list
      *
      * @return {@literal true} if the list has been modified as a result of
      *         this operation, {@literal false} if the list remains unchanged
      */
     public boolean add(Type elt) {
-        return set(size, elt);
+        return add(size, elt);
     }
 
     /**
-     * Gets an element in this list.
+     * Adds an element to this list.
      *
-     * @param idx the index of the element
+     * @param idx the index of the element that will be moved toward the end of the list
+     * @param elt the element to set
+     *
+     * @return {@literal true} if the list has been modified as a result of
+     *         this operation, {@literal false} if the list remains unchanged (for
+     *         instance, because the element was not initially in the list)
+     */
+    public boolean add(long idx, Type elt) {
+        if(idx<0 || idx>size) return false;
+        if(list==null) {
+            list=new Object[(int) (idx+1)];
+        }
+        else if(size>=list.length) {
+            // We need to realloc
+            int newLen=(int) ((list.length+1)*growthfact);
+            if(newLen<=idx) newLen=(int) (idx+1);
+            Object[] newlist=new Object[newLen];
+            if(idx>0) System.arraycopy(list, 0, newlist, 0, (int)idx);
+            if(idx<size) System.arraycopy(list, (int)idx, newlist, (int)idx+1, (int)(size-idx));
+            list=newlist;
+        }
+        else if(idx<size) {
+            System.arraycopy(list, (int)idx, list, (int)idx+1, (int)(size-idx));
+        }
+        size++;
+        list[(int) idx]=elt;
+        return true;
+    }
+
+    /**
+     * Sets an element in this list.
+     *
+     * @param idx the index of the element to replace
      * @param elt the element to set
      *
      * @return {@literal true} if the list has been modified as a result of
@@ -302,6 +334,98 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
         }
         return c;
     }
+
+    @Override
+    public List<Type> sublist(long beg, long end) {
+        return new SubList((int)beg,(int)(end-beg));
+    }
+
+    protected class SubList implements List<Type> {
+        private final int beg;
+        private int len;
+
+        public SubList(int beg, int len) {
+            this.beg=beg;
+            this.len=len;
+        }
+
+        public long size() { return list==null?0:len; }
+
+        public boolean isEmpty() { return list==null||len==0; }
+
+        public void clear() { }
+
+        public boolean add(Type elt) {
+            if(ArrayList.this.add(beg+len, elt)) {
+                len ++;
+                return true;
+            }
+            return false;
+        }
+
+        public boolean add(long idx, Type elt) {
+            if(idx<0 || idx>len) return false;
+            if(ArrayList.this.add(beg+idx, elt)) {
+                len ++;
+                return true;
+            }
+            return false;
+        }
+
+        public Type get(long idx) {
+            if(idx<0 || idx>=len) return null;
+            return ArrayList.this.get(beg+idx);
+        }
+
+        public boolean set(long idx, Type elt) {
+            if(idx<0 || idx>len) return false;
+            if(idx==len) len++;
+            return ArrayList.this.set(beg+idx,elt);
+        }
+
+        public boolean del(long idx) {
+            if(idx<0 || idx>=len) return false;
+            if(ArrayList.this.del(beg+idx)) {
+                len --;
+                return true;
+            }
+            return false;
+        }
+
+        public boolean del(Type elt) { return false; }
+
+        public Iterator<? extends Type> iterator() {
+            return new Iterator<Type>() {
+                private volatile int pos=0;
+
+                public boolean hasNext() { return list!=null&&pos<len; }
+
+                @SuppressWarnings("unchecked")
+                public Type next() { if(list==null||pos>=len) throw new NoSuchElementException();
+                    return (Type) list[beg+pos++];
+                }
+
+                public void remove() { throw new UnsupportedOperationException(); }
+            };
+        }
+
+        public <Par> long visit(Visitor<Type,Par> vis, Par par) {
+            long ret=0;
+            if(list!=null) for(int i=0;i<len;i++) {
+                @SuppressWarnings("unchecked")
+                Type obj=(Type) list[beg+i];
+                long r=vis.invoke(obj, par);
+                if(r<0) return ret;
+                ret+=r;
+            }
+            return ret;
+        }
+
+        public List<Type> sublist(long beg, long end) {
+            return new SubList((int)(this.beg+beg),(int)(end-beg));
+        }
+    }
+
 
     /**********************************************************************************
      **  Externalization
