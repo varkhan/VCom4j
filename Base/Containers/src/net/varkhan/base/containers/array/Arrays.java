@@ -767,7 +767,8 @@ public class Arrays {
             hash^=len;
             if(len>0) {
                 for(int i=0;i<len;i++) {
-                    hash^=vals[beg+i].hashCode();
+                    Object o=vals[beg+i];
+                    if(o!=null) hash^=o.hashCode();
                 }
             }
             return hash;

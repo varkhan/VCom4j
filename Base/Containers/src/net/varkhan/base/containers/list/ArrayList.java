@@ -446,7 +446,8 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
             hash^=len;
             if(len>0) {
                 for(int i=0;i<len;i++) {
-                    hash^=list[beg+i].hashCode();
+                    Object o=list[beg+i];
+                    if(o!=null) hash^=o.hashCode();
                 }
             }
             return hash;
@@ -537,7 +538,8 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
         hash^=size^(size>>>32);
         if(size>0) {
             for(int i=0;i<size;i++) {
-                hash^=list[i].hashCode();
+                Object o=list[i];
+                if(o!=null) hash^=o.hashCode();
             }
         }
         return hash;

@@ -190,6 +190,11 @@ public abstract class AbstractListTest extends TestCase {
         List<T> sl = lst.sublist(beg, end);
         assertEquals("size()==end-beg",end-beg,sl.size());
         assertEquals("isEmpty() iff beg==end",beg==end,sl.isEmpty());
+        assertEquals("hashCode()",lst.sublist(beg, end).hashCode(),sl.hashCode());
+        assertEquals("hashCode()",lst.hashCode(),lst.sublist(0, lst.size()).hashCode());
+        assertTrue("equals()",lst.sublist(beg, end).equals(sl));
+        assertTrue("equals()",lst.sublist(0, lst.size()).equals(lst));
+        assertTrue("equals()",lst.equals(lst.sublist(0, lst.size())));
         Iterator<? extends T> it=sl.iterator();
         for(int i=0;i<end-beg;i++) {
 //            if(vals[beg+i]!=null) {
