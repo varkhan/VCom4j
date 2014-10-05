@@ -441,6 +441,34 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
             return buf.toString();
         }
 
+        public int hashCode() {
+            int hash=0;
+            hash^=len;
+            if(len>0) {
+                for(int i=0;i<len;i++) {
+                    hash^=list[beg+i].hashCode();
+                }
+            }
+            return hash;
+        }
+
+        public boolean equals(Object obj) {
+            if(!(obj instanceof List)) return false;
+            List<?> that=(List<?>) obj;
+            if(list==null) return that.size()==0;
+            if(len!=that.size()) return false;
+            if(len>0) {
+                for(int i=0;i<len;i++) {
+                    Object thiso=list[beg+i];
+                    Object thato=that.get(i);
+                    if(thiso==thato) continue;
+                    if(thiso==null||thato==null) return false;
+                    if(!thiso.equals(thato)) return false;
+                }
+            }
+            return true;
+        }
+
     }
 
 
@@ -516,14 +544,16 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
     }
 
     public boolean equals(Object obj) {
-        if(!(obj instanceof ArrayList)) return false;
-        ArrayList<?> that=(ArrayList<?>) obj;
-        if(this.size!=that.size) return false;
+        if(!(obj instanceof List)) return false;
+        List<?> that=(List<?>) obj;
+        if(size!=that.size()) return false;
         if(size>0) {
             for(int i=0;i<size;i++) {
-                if(this.list[i]==that.list[i]) continue;
-                if(this.list[i]==null||that.list[i]==null) return false;
-                if(!this.list[i].equals(that.list[i])) return false;
+                Object thiso=list[i];
+                Object thato=that.get(i);
+                if(thiso==thato) continue;
+                if(thiso==null||thato==null) return false;
+                if(!thiso.equals(thato)) return false;
             }
         }
         return true;

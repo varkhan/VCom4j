@@ -761,6 +761,34 @@ public class Arrays {
             buf.append(' ').append(']');
             return buf.toString();
         }
+
+        public int hashCode() {
+            int hash=0;
+            hash^=len;
+            if(len>0) {
+                for(int i=0;i<len;i++) {
+                    hash^=vals[beg+i].hashCode();
+                }
+            }
+            return hash;
+        }
+
+        public boolean equals(Object obj) {
+            if(!(obj instanceof List)) return false;
+            List<?> that=(List<?>) obj;
+            if(vals==null) return that.size()==0;
+            if(len!=that.size()) return false;
+            if(len>0) {
+                for(int i=0;i<len;i++) {
+                    Object thiso=vals[beg+i];
+                    Object thato=that.get(i);
+                    if(thiso==thato) continue;
+                    if(thiso==null||thato==null) return false;
+                    if(!thiso.equals(thato)) return false;
+                }
+            }
+            return true;
+        }
     }
 
 
