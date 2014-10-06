@@ -391,7 +391,7 @@ public class Xon {
     /**
      * State-aware wrapper for a reader and current char, needed to be able to read JSON types that do not have delimiters
      */
-    protected static class Parser {
+    public static class Parser {
         private final Reader in;
         private int st = ' ';
         private int ln = 0;
@@ -428,360 +428,442 @@ public class Xon {
             while(st>=0 && isWhiteSpace(st)) { next(); }
             return st;
         }
+
+        protected boolean readBoolean() throws IOException, FormatException {
+            StringBuilder buf = new StringBuilder();
+            while(st>=0 && st>='a' && st<='z') {
+                buf.append((char)st);
+                next();
+            }
+            if(isEqualSequence(buf, LITERAL_FALSE)) return false;
+            if(isEqualSequence(buf, LITERAL_TRUE)) return true;
+            throw exception("Invalid boolean format",buf);
+        }
+
+        protected Number readNumber() throws IOException, FormatException {
+            StringBuilder buf = new StringBuilder();
+            boolean isInteger = true;
+            boolean isFloat = true;
+            while(st>=0 && !isWhiteSpace(st)) {
+                isInteger &= isValidIntegerChar(st);
+                isFloat &= isValidNumberChar(st);
+                buf.append((char)st);
+                next();
+            }
+            if(isInteger) try {
+                return Long.parseLong(buf.toString());
+            }
+            catch(NumberFormatException e) {
+                throw exception("Invalid number format",buf,e);
+            }
+            if(isFloat) try {
+                return Double.parseDouble(buf.toString());
+            }
+            catch(NumberFormatException e) {
+                throw exception("Invalid number format",buf,e);
+            }
+            throw exception("Invalid number format",buf);
+        }
+
+        protected Object readLiteral() throws IOException, FormatException {
+            StringBuilder buf = new StringBuilder();
+            boolean isInteger = true;
+            boolean isFloat = true;
+            while(st>=0 && !isWhiteSpace(st) && !isReservedChar(st)) {
+                isInteger &= isValidIntegerChar(st);
+                isFloat &= isValidNumberChar(st);
+                buf.append((char)st);
+                next();
+            }
+            if(isEqualSequence(buf, LITERAL_NULL)) return null;
+            if(isEqualSequence(buf, LITERAL_FALSE)) return false;
+            if(isEqualSequence(buf, LITERAL_TRUE)) return true;
+            if(isInteger) try {
+                return Long.parseLong(buf.toString());
+            }
+            catch(NumberFormatException e) {
+                throw exception("Invalid number format", buf, e);
+            }
+            if(isFloat) try {
+                return Double.parseDouble(buf.toString());
+            }
+            catch(NumberFormatException e) {
+                throw exception("Invalid number format", buf, e);
+            }
+            throw exception("Invalid literal", buf);
+        }
+
+        protected String readString(int t) throws IOException, FormatException {
+            StringBuilder buf = new StringBuilder();
+            // Read all characters until an unescaped terminator is found
+            while(st>=0 && st!=t) {
+                // Decode escape sequences
+                if(st=='\\') {
+                    next();
+                    if(st<=0) throw new IOException("Unterminated character escape");
+                    switch(st) {
+                        case '\\': buf.append('\\'); break;
+                        case '\"': buf.append('\"'); break;
+                        case '\'': buf.append('\''); break;
+                        case 'b': buf.append('\b'); break;
+                        case 'f': buf.append('\f'); break;
+                        case 'n': buf.append('\n'); break;
+                        case 'r': buf.append('\r'); break;
+                        case 't': buf.append('\t'); break;
+                        case 'u':
+                            // Decode unicode escapes
+                            int x = 0;
+                            next();
+                            if(st<0) throw exception("Unterminated unicode escape");
+                            int d = asHexDigit(st);
+                            if(d<0) throw exception("Invalid unicode escape character "+(char) st);
+                            x |= d<<12;
+                            next();
+                            if(st<0) throw exception("Unterminated unicode escape");
+                            d = asHexDigit(st);
+                            if(d<0) throw exception("Invalid unicode escape character "+(char) st);
+                            x |= d<<8;
+                            next();
+                            if(st<0) throw exception("Unterminated unicode escape");
+                            d = asHexDigit(st);
+                            if(d<0) throw exception("Invalid unicode escape character "+(char) st);
+                            x |= d<<4;
+                            next();
+                            if(st<0) throw exception("Unterminated unicode escape");
+                            d = asHexDigit(st);
+                            if(d<0) throw exception("Invalid unicode escape character "+(char) st);
+                            x |= d;
+                            buf.append((char)x);
+                            break;
+                        default: buf.append((char)st); break;
+                    }
+                }
+                else buf.append((char)st);
+                next();
+            }
+            return buf.toString();
+        }
+
+        protected List<Object> readCollec(char r, char t) throws IOException, FormatException {
+            List<Object> lst = new ArrayList<Object>();
+            // Read all objects until t is found or the end of the stream is reached
+            while(st>=0) {
+                // Skip leading whitespace
+                skipWhitespace();
+                if(st==t|| st<0) break;
+                Object val = read();
+                lst.add(val);
+                // Skip trailing whitespace
+                skipWhitespace();
+                // Return on terminator
+                if(st==t || st<0) break;
+                // Validate and skip separator
+                else if(st==r) next();
+                else throw exception("Unexpected character in collection");
+            }
+            return lst;
+        }
+
+        protected Object[] readVector(char r, char t) throws IOException, FormatException {
+            Object[] ary = new Object[16];
+            int len = 0;
+            // Read all objects until t is found or the end of the stream is reached
+            while(st>=0) {
+                // Skip leading whitespace
+                skipWhitespace();
+                if(st==t|| st<0) break;
+                Object val = read();
+                if(len>=ary.length) {
+                    // Multiply capacity by 1.25
+                    Object[] a = new Object[ary.length+(ary.length>>2)+1];
+                    System.arraycopy(ary,0,a,0,len);
+                    ary = a;
+                }
+                ary[len++] = (val);
+                // Skip trailing whitespace
+                skipWhitespace();
+                // Return on terminator
+                if(st==t || st<0) break;
+                // Validate and skip separator
+                else if(st==r) next();
+                else throw exception("Unexpected character in array");
+            }
+            if(len<ary.length) {
+                Object[] a = new Object[len];
+                System.arraycopy(ary,0,a,0,len);
+                return a;
+            }
+            return ary;
+        }
+
+        protected Map<CharSequence,Object> readObject(char f, char k, char r, char t) throws IOException, FormatException {
+            Map<CharSequence,Object> map = new LinkedHashMap<CharSequence,Object>();
+            // Read all objects until t is found or the end of the stream is reached
+            while(st>=0) {
+                // Skip leading whitespace
+                skipWhitespace();
+                // Return on terminator
+                if(st==t||st<0) break;
+                String key;
+                if(st==f) {
+                    // Skip first quote
+                    next();
+                    key = readString(f);
+                    if(st!=f) throw exception("Unterminated field");
+                    // Skip last quote
+                    next();
+                }
+                else {
+                    // Parse in raw field: sequence of non-whitespace, non-reserved chars
+                    StringBuilder buf = new StringBuilder();
+                    while(st>=0 && !isWhiteSpace(st) && !isReservedChar(st)) { buf.append((char)st); next(); }
+                    key = buf.toString();
+                }
+                // Skip intermediary whitespace
+                skipWhitespace();
+                // Return on terminator
+                if(st==t||st<0) {
+                    map.put(key, null);
+                    break;
+                }
+                // Validate and skip entry separator, if no value specified
+                else if(st==r) {
+                    map.put(key, null);
+                    next();
+                    continue;
+                }
+                // Otherwise, verify we have a key separator
+                else if(st!=k) throw exception("Unexpected character in map");
+                // Skip key separator
+                next();
+                // Skip intermediary whitespace
+                skipWhitespace();
+                Object val = read();
+                map.put(key, val);
+                // Skip trailing whitespace
+                skipWhitespace();
+                // Return on terminator
+                if(st==t||st<0) break;
+                // Validate and skip entry separator
+                else if(st==r) next();
+                else throw exception("Unexpected character in map");
+            }
+            return map;
+        }
+
+        protected Object read() throws IOException, FormatException {
+            switch(st) {
+                case SEP_OBJECT_S: {
+                    next();
+                    Map<CharSequence,Object> obj=readObject(SEP_STRING, SEP_ENTRY, SEP_ELEMENT, SEP_OBJECT_E);
+                    if(st!=SEP_OBJECT_E) throw exception("Unterminated object");
+                    next();
+                    return obj;
+                }
+                case SEP_COLLEC_S: {
+                    // Skip first parenthesis
+                    next();
+                    Collection<Object> obj=readCollec(SEP_ELEMENT, SEP_COLLEC_E);
+                    if(st!=SEP_COLLEC_E) throw exception("Unterminated collection");
+                    next();
+                    return obj;
+                }
+                case SEP_VECTOR_S: {
+                    // Skip first bracket
+                    next();
+                    Object[] obj=readVector(SEP_ELEMENT, SEP_VECTOR_E);
+                    if(st!=SEP_VECTOR_E) throw exception("Unterminated vector");
+                    next();
+                    return obj;
+                }
+                case SEP_STRING: {
+                    // Skip first quote
+                    next();
+                    String obj=readString(SEP_STRING);
+                    if(st!=SEP_STRING) throw exception("Unterminated string");
+                    next();
+                    return obj;
+                }
+                default:
+                    return readLiteral();
+            }
+        }
+
+        /**
+         * Create a new format exception.
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near '"+(char)st+"'", ln, cn, null);
+        }
+
+        /**
+         * Create a new format exception.
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg, CharSequence ctx) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near '"+(char)st+"': "+ctx, ln, cn, ctx.toString());
+        }
+
+        /**
+         * Create a new format exception.
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg, CharSequence ctx, Throwable exc) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near '"+(char)st+"': "+ctx, ln, cn, ctx.toString(), exc);
+        }
+
     }
 
+    /**
+     * Read a XON value from a string.
+     *
+     * @param str the string representation of the XON value
+     * @return the XON value
+     * @throws FormatException if the input is not valid XON
+     */
     public static Object read(CharSequence str) throws FormatException {
         if(str==null) return null;
         try { return read(new StringReader(str.toString())); }
         catch(IOException e) { return null; }
     }
 
+    /**
+     * Read a XON value from a stream.
+     *
+     * @param in the input stream containing a representation of the XON value
+     * @return the XON value
+     * @throws FormatException if the input is not valid XON
+     * @throws IOException     if reading from the input failed
+     */
     public static Object read(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         p.skipWhitespace();
-        return read(p);
+        return p.read();
     }
 
-    protected static Object read(Parser p) throws IOException, FormatException {
-        int c=p.last();
-        switch(c) {
-            case SEP_OBJECT_S: {
-                p.next();
-                Map<CharSequence,Object> obj=readObject(p, SEP_STRING, SEP_ENTRY, SEP_ELEMENT, SEP_OBJECT_E);
-                c=p.last();
-                if(c!=SEP_OBJECT_E) throw new FormatException("Unterminated object at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-                p.next();
-                return obj;
-            }
-            case SEP_COLLEC_S: {
-                p.next();
-                Collection<Object> obj=readCollec(p, SEP_ELEMENT, SEP_COLLEC_E);
-                c=p.last();
-                if(c!=SEP_COLLEC_E) throw new FormatException("Unterminated collection at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-                p.next();
-                return obj;
-            }
-            case SEP_VECTOR_S: {
-                p.next();
-                Object[] obj=readVector(p, SEP_ELEMENT, SEP_VECTOR_E);
-                c=p.last();
-                if(c!=SEP_VECTOR_E) throw new FormatException("Unterminated vector at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-                p.next();
-                return obj;
-            }
-            case SEP_STRING: {
-                p.next();
-                String obj=readString(p, c);
-                c=p.last();
-                if(c!=SEP_STRING) throw new FormatException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-                p.next();
-                return obj;
-            }
-            default:
-                return readLiteral(p);
-        }
-    }
-
+    /**
+     * Read a XON number from a stream.
+     *
+     * @param in the input stream containing a representation of the XON number
+     * @return the XON number
+     * @throws FormatException if the input is not valid XON
+     * @throws IOException     if reading from the input failed
+     */
     public static Number readNumber(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         p.skipWhitespace();
-        return readNumber(p);
+        return p.readNumber();
     }
 
-    protected static Number readNumber(Parser p) throws IOException, FormatException {
-        StringBuilder buf = new StringBuilder();
-        boolean isInteger = true;
-        boolean isFloat = true;
-        int c = p.last();
-        while(c>=0 && !isWhiteSpace(c)) {
-            isInteger &= isValidIntegerChar(c);
-            isFloat &= isValidNumberChar(c);
-            buf.append((char)c);
-            c = p.next();
-        }
-        if(isInteger) try {
-            return Long.parseLong(buf.toString());
-        }
-        catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
-        }
-        if(isFloat) try {
-            return Double.parseDouble(buf.toString());
-        }
-        catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
-        }
-        throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
-    }
-
+    /**
+     * Read a XON boolean from a stream.
+     *
+     * @param in the input stream containing a representation of the XON boolean
+     * @return the XON boolean
+     * @throws FormatException if the input is not valid XON
+     * @throws IOException     if reading from the input failed
+     */
     public static boolean readBoolean(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         p.skipWhitespace();
-        return readBoolean(p);
+        return p.readBoolean();
     }
 
-    protected static boolean readBoolean(Parser p) throws IOException, FormatException {
-        StringBuilder buf = new StringBuilder();
-        int c = p.last();
-        while(c>=0 && c>='a' && c<='z') {
-            buf.append((char)c);
-            c = p.next();
-        }
-        if(isEqualSequence(buf, LITERAL_FALSE)) return false;
-        if(isEqualSequence(buf, LITERAL_TRUE)) return true;
-        throw new FormatException("Invalid boolean format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
-    }
-
-    protected static Object readLiteral(Parser p) throws IOException, FormatException {
-        StringBuilder buf = new StringBuilder();
-        boolean isInteger = true;
-        boolean isFloat = true;
-        int c = p.last();
-        while(c>=0 && !isWhiteSpace(c) && !isReservedChar(c)) {
-            isInteger &= isValidIntegerChar(c);
-            isFloat &= isValidNumberChar(c);
-            buf.append((char)c);
-            c = p.next();
-        }
-        if(isEqualSequence(buf, LITERAL_NULL)) return null;
-        if(isEqualSequence(buf, LITERAL_FALSE)) return false;
-        if(isEqualSequence(buf, LITERAL_TRUE)) return true;
-        if(isInteger) try {
-            return Long.parseLong(buf.toString());
-        }
-        catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
-        }
-        if(isFloat) try {
-            return Double.parseDouble(buf.toString());
-        }
-        catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
-        }
-        throw new FormatException("Invalid literal at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
-    }
-
+    /**
+     * Read a XON string from a stream.
+     *
+     * @param in the input stream containing a representation of the XON string
+     * @return the XON string
+     * @throws FormatException if the input is not valid XON
+     * @throws IOException     if reading from the input failed
+     */
     public static String readString(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
         char t=SEP_STRING;
-        if(c!=t) throw new FormatException("Invalid string format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-        // Skip leading "
+        if(c!=t) throw p.exception("Invalid string format");
+        // Skip first quote
         p.next();
-        String obj=readString(p, t);
+        String obj=p.readString(t);
         c=p.last();
-        if(c!=t) throw new FormatException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=t) throw p.exception("Unterminated string");
         p.next();
         return obj;
     }
 
-    protected static String readString(Parser p, int t) throws IOException, FormatException {
-        StringBuilder buf = new StringBuilder();
-        int c = p.last();
-        // Read all characters until an unescaped terminator is found
-        while(c>=0 && c!=t) {
-            // Decode escape sequences
-            if(c=='\\') {
-                c = p.next();
-                if(c<=0) throw new IOException("Unterminated character escape");
-                switch(c) {
-                    case '\\': buf.append('\\'); break;
-                    case '\"': buf.append('\"'); break;
-                    case '\'': buf.append('\''); break;
-                    case 'b': buf.append('\b'); break;
-                    case 'f': buf.append('\f'); break;
-                    case 'n': buf.append('\n'); break;
-                    case 'r': buf.append('\r'); break;
-                    case 't': buf.append('\t'); break;
-                    case 'u':
-                        // Decode unicode escapes
-                        int x = 0;
-                        c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
-                        int d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
-                        x |= d<<12;
-                        c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
-                        d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
-                        x |= d<<8;
-                        c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
-                        d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
-                        x |= d<<4;
-                        c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
-                        d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
-                        x |= d;
-                        buf.append((char)x);
-                        break;
-                    default: buf.append((char)c); break;
-                }
-            }
-            else buf.append((char)c);
-            c = p.next();
-        }
-        return buf.toString();
-    }
-
+    /**
+     * Read a XON collection from a stream.
+     *
+     * @param in the input stream containing a representation of the XON collection
+     * @return the XON collection
+     * @throws FormatException if the input is not valid XON
+     * @throws IOException     if reading from the input failed
+     */
     public static List<Object> readCollec(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!=SEP_COLLEC_S) throw new FormatException("Invalid collection format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_COLLEC_S) throw p.exception("Invalid collection format");
         // Skip leading (
         p.next();
-        List<Object> obj=readCollec(p, SEP_ELEMENT, SEP_COLLEC_E);
+        List<Object> obj=p.readCollec(SEP_ELEMENT, SEP_COLLEC_E);
         c=p.last();
-        if(c!=SEP_COLLEC_E) throw new FormatException("Unterminated collection at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_COLLEC_E) throw p.exception("Unterminated collection");
         // Skip trailing )
         p.next();
         return obj;
     }
 
-    protected static List<Object> readCollec(Parser p, char r, char t) throws IOException, FormatException {
-        List<Object> lst = new ArrayList<Object>();
-        int c = p.last();
-        // Read all objects until t is found or the end of the stream is reached
-        while(c>=0) {
-            // Skip leading whitespace
-            c = p.skipWhitespace();
-            if(c==t|| c<0) break;
-            Object val = read(p);
-            lst.add(val);
-            // Skip trailing whitespace
-            c = p.skipWhitespace();
-            // Return on terminator
-            if(c==t || c<0) break;
-            // Validate and skip separator
-            else if(c==r) c = p.next();
-            else throw new FormatException("Unexpected character in collection at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-        }
-        return lst;
-    }
-
+    /**
+     * Read a XON vector from a stream.
+     *
+     * @param in the input stream containing a representation of the XON vector
+     * @return the XON vector
+     * @throws FormatException if the input is not valid XON
+     * @throws IOException     if reading from the input failed
+     */
     public static Object[] readVector(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!=SEP_VECTOR_S) throw new FormatException("Invalid vector format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_VECTOR_S) throw p.exception("Invalid vector format");
         // Skip leading [
         p.next();
-        Object[] obj=readVector(p, SEP_ELEMENT, SEP_VECTOR_E);
+        Object[] obj=p.readVector(SEP_ELEMENT, SEP_VECTOR_E);
         c=p.last();
-        if(c!=SEP_VECTOR_E) throw new FormatException("Unterminated vector at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_VECTOR_E) throw p.exception("Unterminated vector");
         // Skip trailing ]
         p.next();
         return obj;
     }
 
-    protected static Object[] readVector(Parser p, char r, char t) throws IOException, FormatException {
-        Object[] ary = new Object[16];
-        int len = 0;
-        int c = p.last();
-        // Read all objects until t is found or the end of the stream is reached
-        while(c>=0) {
-            // Skip leading whitespace
-            c = p.skipWhitespace();
-            if(c==t|| c<0) break;
-            Object val = read(p);
-            if(len>=ary.length) {
-                // Multiply capacity by 1.25
-                Object[] a = new Object[ary.length+(ary.length>>2)+1];
-                System.arraycopy(ary,0,a,0,len);
-                ary = a;
-            }
-            ary[len++] = (val);
-            // Skip trailing whitespace
-            c = p.skipWhitespace();
-            // Return on terminator
-            if(c==t || c<0) break;
-            // Validate and skip separator
-            else if(c==r) c = p.next();
-            else throw new FormatException("Unexpected character in array at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-        }
-        if(len<ary.length) {
-            Object[] a = new Object[len];
-            System.arraycopy(ary,0,a,0,len);
-            return a;
-        }
-        return ary;
-    }
-
+    /**
+     * Read a XON object (map) from a stream.
+     *
+     * @param in the input stream containing a representation of the XON object
+     * @return the XON object
+     * @throws FormatException if the input is not valid XON
+     * @throws IOException     if reading from the input failed
+     */
     public static Map<CharSequence,Object> readObject(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!=SEP_OBJECT_S) throw new FormatException("Invalid map format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_OBJECT_S) throw p.exception("Invalid map format");
         // Skip leading {
         p.next();
-        Map<CharSequence,Object> obj=readObject(p, SEP_STRING, SEP_ENTRY, SEP_ELEMENT, SEP_OBJECT_E);
+        Map<CharSequence,Object> obj=p.readObject(SEP_STRING, SEP_ENTRY, SEP_ELEMENT, SEP_OBJECT_E);
         c=p.last();
-        if(c!=SEP_OBJECT_E) throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=SEP_OBJECT_E) throw p.exception("Unterminated map");
         // Skip trailing
         p.next();
         return obj;
     }
 
-    protected static Map<CharSequence,Object> readObject(Parser p, char f, char k, char r, char t) throws IOException, FormatException {
-        Map<CharSequence,Object> map = new LinkedHashMap<CharSequence,Object>();
-        int c = p.last();
-        // Read all objects until } is found or the end of the stream is reached
-        while(c>=0) {
-            // Skip leading whitespace
-            c = p.skipWhitespace();
-            // Return on terminator
-            if(c==t||c<0) break;
-            String key;
-            if(c==f) {
-                // Skip first quote
-                p.next();
-                key = readString(p, f);
-                c=p.last();
-                if(c!=f) throw new FormatException("Unterminated field at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-                // Skip last quote
-                p.next();
-            }
-            else {
-                // Parse in raw field: sequence of non-whitespace, non-reserved chars
-                StringBuilder buf = new StringBuilder();
-                while(c>=0 && !isWhiteSpace(c) && !isReservedChar(c)) { buf.append((char)c); c = p.next(); }
-                key = buf.toString();
-            }
-            // Skip intermediary whitespace
-            c = p.skipWhitespace();
-            // Return on terminator
-            if(c==t||c<0) {
-                map.put(key, null);
-                break;
-            }
-            // Validate and skip entry separator, if no value specified
-            else if(c==r) {
-                map.put(key, null);
-                c = p.next();
-                continue;
-            }
-            // Otherwise, verify we have a key separator
-            else if(c!=k) throw new FormatException("Unexpected character in map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-            // Skip key separator
-            p.next();
-            // Skip intermediary whitespace
-            p.skipWhitespace();
-            Object val = read(p);
-            map.put(key, val);
-            // Skip trailing whitespace
-            c = p.skipWhitespace();
-            // Return on terminator
-            if(c==t||c<0) break;
-            // Validate and skip entry separator
-            else if(c==r) c = p.next();
-            else throw new FormatException("Unexpected character in map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-        }
-        return map;
-    }
 
     /**
-     * Checks whether a character is white-space
+     * Checks whether a character is white-space.
      *
      * @param c the character to check
      * @return {@literal true} if the character is whitespace
@@ -835,10 +917,10 @@ public class Xon {
     }
 
     /**
-     * Checks whether a character is a reserved JSON character.
+     * Checks whether a character is a reserved XON character.
      *
      * @param c the character to check
-     * @return {@literal true} if the character is one of ,:[]{}'"
+     * @return {@literal true} if the character is one of ,:()[]{}'"
      */
     public static boolean isReservedChar(int c) {
         return c=='\'' || c==SEP_STRING

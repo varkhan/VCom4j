@@ -2,7 +2,7 @@ package net.varkhan.base.conversion.formats;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -64,6 +64,44 @@ public class Xml {
     }
 
     /**
+     * Writes an element, its attributes and text content to an {@link Appendable}.
+     * <p/>
+     * The element name must be an alpha-numeric character sequence (see {@link #isValidElmtName(CharSequence)}).
+     * <p/>
+     * The text content entities are escaped (see {@link #writeText(Appendable, CharSequence)}).
+     * <p/>
+     * Attributes whose value object is {@literal null} are ignored, and only
+     * the attribute name is written for values that resolve to an empty String.
+     * The character entities in each String value are escaped (see {@link #writeText(Appendable, CharSequence)}).
+     *
+     * @param out the output Appendable
+     * @param tag the element name
+     * @param txt the text content
+     * @param atr the attributes arrays
+     *
+     * @throws java.io.IOException      if the output Appendable generated an exception
+     * @throws NullPointerException     if the element name or an attribute name is {@literal null}
+     * @throws IllegalArgumentException if the element name is not a valid element (see
+     *                                  {@link #isValidElmtName(CharSequence)}), the attribute arrays are not in the expected
+     *                                  { name, value } pair format, an attribute name is not a CharSequence, or is not
+     *                                  a valid attribute (see {@link #isValidAttrName(CharSequence)})
+     */
+    public static <A extends Appendable> A writeElmt(A out, String tag, CharSequence txt, Map<CharSequence, Object> atr) throws IOException, NullPointerException, IllegalArgumentException {
+        if(tag==null) throw new NullPointerException("Element names must not be null");
+        if(!isValidElmtName(tag))
+            throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
+        out.append('<').append(tag);
+        writeAttr(out, atr);
+        if(txt==null) out.append('/').append('>');
+        else {
+            out.append('>');
+            writeText(out, txt);
+            out.append('<').append('/').append(tag).append('>');
+        }
+        return out;
+    }
+
+    /**
      * Writes an element's opening tag and attributes to an {@link Appendable}.
      * <p/>
      * The element name must be an alpha-numeric character sequence (see {@link #isValidElmtName(CharSequence)}).
@@ -90,6 +128,39 @@ public class Xml {
      *                                  a valid attribute (see {@link #isValidAttrName(CharSequence)})
      */
     public static <A extends Appendable> A writeElmtOpen(A out, String tag, Object[]... atr) throws IOException, NullPointerException, IllegalArgumentException {
+        if(tag==null) throw new NullPointerException("Element names must not be null");
+        if(!isValidElmtName(tag))
+            throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
+        out.append('<').append(tag);
+        writeAttr(out, atr);
+        out.append('>');
+        return out;
+    }
+
+    /**
+     * Writes an element's opening tag and attributes to an {@link Appendable}.
+     * <p/>
+     * The element name must be an alpha-numeric character sequence (see {@link #isValidElmtName(CharSequence)}).
+     * <p/>
+     * Attributes whose value object is {@literal null} are ignored, and only
+     * the attribute name is written for values that resolve to an empty String.
+     * The character entities in each String value are escaped (see {@link #writeText(Appendable, CharSequence)}).
+     *
+     * @param out the output Appendable
+     * @param tag the element name
+     * @param atr the attributes arrays
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
+     * @throws java.io.IOException      if the output Appendable generated an exception
+     * @throws NullPointerException     if the element name or an attribute name is {@literal null}
+     * @throws IllegalArgumentException if the element name is not a valid element (see
+     *                                  {@link #isValidElmtName(CharSequence)}), the attribute arrays are not in the expected
+     *                                  { name, value } pair format, an attribute name is not a CharSequence, or is not
+     *                                  a valid attribute (see {@link #isValidAttrName(CharSequence)})
+     */
+    public static <A extends Appendable> A writeElmtOpen(A out, String tag, Map<CharSequence, Object> atr) throws IOException, NullPointerException, IllegalArgumentException {
         if(tag==null) throw new NullPointerException("Element names must not be null");
         if(!isValidElmtName(tag))
             throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
@@ -173,6 +244,49 @@ public class Xml {
                             out.append('"');
                         }
                     }
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Writes the attributes of an element to an {@link Appendable}.
+     * <p/>
+     * Attributes whose value object is {@literal null} are ignored, and only
+     * the attribute name is written for values that resolve to an empty String.
+     * The character entities in each String value are escaped (see {@link #writeText(Appendable, CharSequence)}).
+     *
+     * @param out the output Appendable
+     * @param atr the attribute map
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
+     * @throws java.io.IOException      if the output Appendable generated an exception
+     * @throws NullPointerException     if an attribute name is {@literal null}
+     * @throws IllegalArgumentException if the attribute arrays are not in the expected
+     *                                  { name, value } pair format, an attribute name is not a CharSequence, or is not
+     *                                  a valid attribute (see {@link #isValidAttrName(CharSequence)})
+     */
+    public static <A extends Appendable> A writeAttr(A out, Map<CharSequence, Object> atr) throws IOException, NullPointerException, IllegalArgumentException {
+        if(atr!=null) for(Map.Entry<CharSequence,Object> at : atr.entrySet()) {
+            CharSequence atn = at.getKey();
+            // Specifically trap the null case
+            if(atn==null) throw new NullPointerException("Attribute names must not be null");
+            if(!isValidAttrName(atn))
+                throw new IllegalArgumentException("Attribute names must contain only alphanumeric characters");
+            // Suppress attributes with null values
+            Object ato=at.getValue();
+            if(ato!=null) {
+                out.append(' ').append(atn);
+                String atv=ato.toString();
+                // Suppress equal sign for empty attributes
+                if(atv!=null&&!atv.isEmpty()) {
+                    out.append('=').append('"');
+                    // Escape character entities
+                    writeText(out, atv);
+                    out.append('"');
                 }
             }
         }
@@ -273,117 +387,260 @@ public class Xml {
         return out;
     }
 
+    public static <A extends Appendable> A write(A out, Node node) throws IOException {
+        if(node==null) return out;
+        switch(node.type()) {
+            case TEXT:
+                writeText(out,node.text());
+                break;
+            case ELEM:
+                if(node.iterator().hasNext()) {
+                    writeElmtOpen(out, node.name(), node.attrs());
+                    for(Node n : node) {
+                        write(out, n);
+                    }
+                    writeElmtClose(out, node.name());
+                }
+                else {
+                    writeElmt(out, node.name(), null, node.attrs());
+                }
+                break;
+            case COMM:
+                writeComm(out,node.text());
+                break;
+            case CDATA:
+//                writeCData(out,node.data());
+                break;
+        }
+        return out;
+    }
 
 
     /**********************************************************************************
      **  XML reading
      **/
 
+    /**
+     * State-aware wrapper for a reader and current XML tag
+     */
+    protected static class Parser {
+        private final Reader in;
+        private int st = ' ';
+        private int ln = 0;
+        private int cn = 0;
 
-    public static boolean readElmtOpen(Reader in, Appendable elt, Map<CharSequence,Object> atr) throws IOException, NullPointerException, IllegalArgumentException {
-        int c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        if(c!='<') throw new IllegalArgumentException("Malformed element opening");
-        c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        // Name extraction loop
-        StringBuilder name = new StringBuilder();
-        while(c>=0 && !isWhiteSpace(c) && c!='>' && c!='/') {
-            name.append((char)c);
-            c = in.read();
+        public Parser(Reader in) {
+            this.in=in;
         }
-        if(!isValidElmtName(name)) throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
-        if(elt!=null) elt.append(name.toString());
-        c = readAttr(in,atr);
-        if(c<0) throw new IllegalArgumentException("Malformed element opening");
-        if(c=='/') {
-            c = in.read();
-            if(c!='>') throw new IllegalArgumentException("Malformed element opening");
-            return true;
+
+        /**
+         * The last character read.
+         * @return the last character read, or -1 if EOS has been reached
+         */
+        public int last() { return st; }
+
+        /**
+         * Reads one character from the stream.
+         * @return the character read from the stream, or -1 if EOS has been reached
+         * @throws IOException if an I/O error occurred while reading from the stream
+         */
+        public int next() throws IOException {
+            st = in.read();
+            if(st=='\n') { ln++; cn=0; }
+            else if(st>=0) cn ++;
+            return st;
         }
-        return false;
-    }
 
-    public static void readElmtClose(Reader in, Appendable elt) throws IOException, NullPointerException, IllegalArgumentException {
-        int c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        if(c!='<') throw new IllegalArgumentException("Malformed element closing");
-        c = in.read();
-        if(c!='/') throw new IllegalArgumentException("Malformed element closing");
-        c = in.read();
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        // Name extraction loop
-        StringBuilder name = new StringBuilder();
-        while(c>=0 && !isWhiteSpace(c) && c!='>' && c!='/') {
-            name.append((char)c);
-            c = in.read();
+        /**
+         * Reads and discards all whitespace characters until a non-whitespace character is reached
+         * @return the last (non-whitespace) character read from the stream, or -1 if EOS has been reached
+         * @throws IOException if an I/O error occurred while reading from the stream
+         */
+        public int skipWhitespace() throws IOException {
+            while(st>=0 && isWhiteSpace(st)) { next(); }
+            return st;
         }
-        if(!isValidElmtName(name)) throw new IllegalArgumentException("Element names must contain only alphanumeric characters");
-        while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-        if(c!='>') throw new IllegalArgumentException("Malformed element closing");
-        if(elt!=null) elt.append(name.toString());
-    }
 
-
-    public static int readAttr(Reader in, Map<CharSequence, Object> atr) throws IOException, NullPointerException, IllegalArgumentException {
-        // One turn of loop for each attr
-        int c = in.read();
-        while(c>=0) {
-            // Skip whitespace
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-            // End of seq/tag? done
-            if(c<0 || c=='>' || c=='/') return c;
-            // First character of name -> find end
-            StringBuilder name = new StringBuilder();
-            while(c>=0 && !isWhiteSpace(c) && c!='=' && c!='>' && c!='/') {
-                name.append((char)c);
-                c = in.read();
+        /**
+         * Reads into a buffer all characters until a non-text or whitespace character is found
+         * @return the last (non-text or whitespace) character read from the stream, or -1 if EOS has been reached
+         * @throws IOException if an I/O error occurred while reading from the stream
+         */
+        public int readName(Appendable buf) throws IOException {
+            while(st>=0 && !isWhiteSpace(st) && st!='=' && st!='>' && st!='/') {
+                buf.append((char) st);
+                next();
             }
-            if(!isValidAttrName(name)) throw new IllegalArgumentException("Attribute names must contain only alphanumeric characters");
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-            // Empty attribute: next attribute with no intervening =, or EOL reached
-            if(c!='=') {
-                if(atr!=null) atr.put(name.toString(), null);
-                continue;
-            }
-            while(c>=0 && isWhiteSpace(c)) { c = in.read(); }
-            StringBuilder buf = new StringBuilder();
-            if(c=='\"' || c=='\'') {
-                char d = (char)c;
-                c = in.read();
-                while(c!=d) {
-                    if(c<0) throw new IllegalArgumentException("Unterminated delimited string sequence");
-                    // Escape sequences
-                    if(c=='\\') {
-                        c = in.read();
-                        if(c<0) throw new IllegalArgumentException("Unterminated escape sequence");
-                    }
-                    buf.append(c);
-                    c = in.read();
+            return st;
+        }
+
+        public int readString(Appendable buf) throws IOException, FormatException {
+            // Acquire and skip delimiter char
+            int d = st;
+            next();
+            while(st!=d) {
+                if(st<0) throw exception("Unterminated delimited string sequence");
+                // Escape sequences
+                if(st=='\\') {
+                    next();
+                    if(st<0) throw exception("Unterminated escape sequence");
                 }
+                buf.append((char) st);
+                next();
+            }
+            return st;
+        }
+
+        /**
+         * Reads into a buffer all characters until a tag delimiter is found
+         * @return the last (non-text) character read from the stream, or -1 if EOS has been reached
+         * @throws IOException if an I/O error occurred while reading from the stream
+         */
+        public int readText(Appendable buf) throws IOException {
+            while(st!='<' && st>=0) {
+                buf.append((char) st);
+                next();
+            }
+            return st;
+        }
+
+        protected int readElemAttr(Map<CharSequence,Object> atr) throws IOException, IllegalArgumentException {
+            // One turn of loop for each attr
+            while(st>=0) {
+                // Skip whitespace
+                skipWhitespace();
+                // End of seq/tag? done
+                if(st<0 || st=='>' || st=='/') return st;
+                // First character of name -> find end
+                StringBuilder name = new StringBuilder();
+                readName(name);
+                if(!isValidAttrName(name)) throw exception("Attribute names must contain only alphanumeric characters");
+                skipWhitespace();
+                // Empty attribute: next attribute with no intervening =, or EOL reached
+                if(st!='=') {
+                    if(atr!=null) atr.put(name.toString(), null);
+                    continue;
+                }
+                skipWhitespace();
+                StringBuilder buf = new StringBuilder();
+                if(st=='\"' || st=='\'') {
+                    readString(buf);
+                }
+                else {
+                    readName(buf);
+                }
+                if(atr!=null) atr.put(name.toString(), buf.toString());
+            }
+            return st;
+        }
+
+        protected boolean readElemNodes(String name, List<Node> nodes) throws IOException, FormatException {
+            skipWhitespace();
+            while(st>=0) {
+                Node n = read(name);
+                if(n==null) return true;
+            }
+            return false;
+        }
+
+        protected Node read(String root) throws IOException, FormatException {
+            skipWhitespace();
+            if(st=='<') {
+                next();
+                if(st=='!') {
+                    next();
+                    if(st=='-') {
+                        next();
+                        if(st!='-') throw exception("Malformed element opening");
+                        StringBuilder buf = new StringBuilder();
+                        readText(buf);
+                        if(!buf.toString().endsWith("--")) throw exception("Malformed comment block");
+                        buf.setLength(buf.length()-2);
+                        return new Comm(buf.toString());
+                    }
+                    else {
+                        while(st>=0 && st!='>') {
+                            next();
+                        }
+                        return null;
+                    }
+                }
+                else if(st=='/') {
+                    skipWhitespace();
+                    StringBuilder name = new StringBuilder();
+                    readName(name);
+                    if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters");
+                    skipWhitespace();
+                    if(st!='>') throw exception("Malformed element closing");
+                    if(root!=null) {
+                        if(root.equals(name.toString())) return null;
+                    }
+                    throw exception("Mismatched closing element",name);
+                }
+                skipWhitespace();
+                // Name extraction loop
+                StringBuilder name = new StringBuilder();
+                readName(name);
+                if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters");
+                Map<CharSequence,Object> attrs = new LinkedHashMap<CharSequence,Object>();
+                readElemAttr(attrs);
+                if(st<0) throw exception("Malformed element opening");
+                if(st=='/') {
+                    next();
+                    if(st!='>') throw exception("Malformed element closing");
+                    return new Elem(name.toString(), attrs);
+                }
+                List<Node> nodes = new ArrayList<Node>();
+                readElemNodes(name.toString(), nodes);
+                return new Elem(name.toString(), attrs,nodes);
             }
             else {
-                while(!isWhiteSpace(c) && c!='>' && c!='/') {
-                    if(c<0) throw new IllegalArgumentException("Unterminated delimited string sequence");
-                    // Escape sequences
-                    if(c=='\\') {
-                        c = in.read();
-                        if(c<0) throw new IllegalArgumentException("Unterminated escape sequence");
-                    }
-                    buf.append(c);
-                    c = in.read();
-                }
+                StringBuilder buf = new StringBuilder();
+                readText(buf);
+                return new Text(buf.toString());
             }
-            if(atr!=null) atr.put(name.toString(), buf.toString());
         }
-        return c;
+
+        /**
+         * Create a new format exception.
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near '"+(char)st+"'", ln, cn, null);
+        }
+
+        /**
+         * Create a new format exception.
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg, CharSequence ctx) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near '"+(char)st+"': "+ctx, ln, cn, ctx.toString());
+        }
+
+        /**
+         * Create a new format exception.
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg, CharSequence ctx, Throwable exc) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near '"+(char)st+"': "+ctx, ln, cn, ctx.toString(), exc);
+        }
+
     }
+
+
+    public static Node read(Reader in) throws IOException, FormatException {
+        Parser p = new Parser(in);
+        return p.read(null);
+    }
+
 
 
     /**********************************************************************************
      **  XML syntax checks
      **/
-
 
 
     /**
@@ -417,10 +674,10 @@ public class Xml {
      * @return {@literal true} if the character is legal
      */
     public static boolean isValidAttrChar(int c) {
-        if(c=='_' || c=='+' || c=='-' || c=='.') return true;
-        if('0'<=c && c<='9') return true;
-        if('A'<=c && c<='Z') return true;
-        if('a'<=c && c<='z') return true;
+        if(c=='_'||c=='+'||c=='-'||c=='.') return true;
+        if('0'<=c&&c<='9') return true;
+        if('A'<=c&&c<='Z') return true;
+        if('a'<=c&&c<='z') return true;
         return false;
     }
 
@@ -455,10 +712,10 @@ public class Xml {
      * @return {@literal true} if the character is legal
      */
     public static boolean isValidElmtChar(int c) {
-        if(c=='_' || c=='+' || c=='-' || c=='.') return true;
-        if('0'<=c && c<='9') return true;
-        if('A'<=c && c<='Z') return true;
-        if('a'<=c && c<='z') return true;
+        if(c=='_'||c=='+'||c=='-'||c=='.') return true;
+        if('0'<=c&&c<='9') return true;
+        if('A'<=c&&c<='Z') return true;
+        if('a'<=c&&c<='z') return true;
         return false;
 
     }
@@ -523,4 +780,68 @@ public class Xml {
         return buf;
     }
 
+
+    /**********************************************************************************
+     **  XML document object model
+     **/
+
+    public static abstract class Node implements Iterable<Node> {
+        public static enum Type {
+            TEXT, ELEM, COMM, CDATA
+        }
+        protected final Type type;
+        protected Node(Type type) { this.type=type; }
+        public Type type() { return type; }
+        public String name() { return null; }
+        public String text() { return null; }
+        public byte[] data() { return null; }
+        public Map<CharSequence, Object> attrs() { return null; }
+        public Iterator<Node> iterator() {
+            return new Iterator<Node>() {
+                public boolean hasNext() { return false; }
+                public Node next() { throw new NoSuchElementException(); }
+                public void remove() { throw new UnsupportedOperationException(); }
+            };
+        }
+    }
+
+    public static class Text extends Node {
+        protected final String text;
+        public Text(String text) {
+            super(Type.TEXT);
+            this.text=text;
+        }
+        public String text() { return text; }
+    }
+
+    public static class Comm extends Node {
+        protected final String text;
+        public Comm(String text) {
+            super(Type.TEXT);
+            this.text=text;
+        }
+        public String text() { return text; }
+    }
+
+    public static class Elem extends Node {
+        protected final String name;
+        protected final List<Node> nodes;
+        protected final Map<CharSequence,Object> attrs;
+        public Elem(String name, Map<CharSequence,Object> attrs) {
+            super(Type.ELEM);
+            this.name=name;
+            this.attrs=attrs;
+            this.nodes=null;
+        }
+        public Elem(String name, Map<CharSequence,Object> attrs, List<Node> nodes) {
+            super(Type.ELEM);
+            this.name=name;
+            this.attrs=attrs;
+            this.nodes=nodes;
+        }
+        public String name() { return name; }
+        public Iterator<Node> iterator() {
+            return nodes==null?super.iterator():nodes.iterator();
+        }
+    }
 }

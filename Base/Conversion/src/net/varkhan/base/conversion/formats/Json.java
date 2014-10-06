@@ -263,6 +263,34 @@ public class Json {
             while(st>=0 && isWhiteSpace(st)) { next(); }
             return st;
         }
+
+        /**
+         * Create a new format exception
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near "+st, ln, cn, null);
+        }
+
+        /**
+         * Create a new format exception
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg, CharSequence ctx) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near "+st+": "+ctx, ln, cn, ctx.toString());
+        }
+
+        /**
+         * Create a new format exception
+         *
+         * @return a FormatException indicating line and column numbers
+         */
+        public FormatException exception(String msg, CharSequence ctx, Throwable exc) {
+            return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near "+st+": "+ctx, ln, cn, ctx.toString(), exc);
+        }
+
     }
 
     public static Object asJson(CharSequence str) throws FormatException {
@@ -284,7 +312,7 @@ public class Json {
                 p.next();
                 Map<CharSequence,Object> obj=readMap(p, '"', ':', ',', '}');
                 c=p.last();
-                if(c!='}') throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!='}') throw p.exception("Unterminated map");
                 p.next();
                 return obj;
             }
@@ -292,7 +320,7 @@ public class Json {
                 p.next();
                 List<Object> obj=readList(p, ',', ']');
                 c=p.last();
-                if(c!=']') throw new FormatException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!=']') throw p.exception("Unterminated list");
                 p.next();
                 return obj;
             }
@@ -300,7 +328,7 @@ public class Json {
                 p.next();
                 String obj=readString(p, c);
                 c=p.last();
-                if(c!='"') throw new FormatException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!='"') throw p.exception("Unterminated string");
                 p.next();
                 return obj;
             }
@@ -330,15 +358,15 @@ public class Json {
             return Long.parseLong(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
+            throw p.exception("Invalid number format",buf,e);
         }
         if(isFloat) try {
             return Double.parseDouble(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
+            throw p.exception("Invalid number format",buf,e);
         }
-        throw new FormatException("Invalid number at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
+        throw p.exception("Invalid number",buf);
     }
 
     public static boolean readBoolean(Reader in) throws IOException, FormatException {
@@ -356,7 +384,7 @@ public class Json {
         }
         if(isEqualSequence(buf, LITERAL_FALSE)) return false;
         if(isEqualSequence(buf, LITERAL_TRUE)) return true;
-        throw new FormatException("Invalid boolean at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
+        throw p.exception("Invalid boolean",buf);
     }
 
     protected static Object readLiteral(Parser p) throws IOException, FormatException {
@@ -377,27 +405,27 @@ public class Json {
             return Long.parseLong(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
+            throw p.exception("Invalid number format",buf,e);
         }
         if(isFloat) try {
             return Double.parseDouble(buf.toString());
         }
         catch(NumberFormatException e) {
-            throw new FormatException("Invalid number format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf,e);
+            throw p.exception("Invalid number format",buf,e);
         }
-        throw new FormatException("Invalid literal at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c+": "+buf);
+        throw p.exception("Invalid literal",buf);
     }
 
     public static String readString(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
         char t='"';
-        if(c!=t) throw new FormatException("Invalid character sequence format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=t) throw p.exception("Invalid character sequence format");
         // Skip leading "
         p.next();
         String obj=readString(p, t);
         c=p.last();
-        if(c!=t) throw new FormatException("Unterminated string at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=t) throw p.exception("Unterminated string");
         p.next();
         return obj;
     }
@@ -424,24 +452,24 @@ public class Json {
                         // Decode unicode escapes
                         int x = 0;
                         c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
+                        if(c<0) throw p.exception("Unterminated unicode escape");
                         int d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
+                        if(d<0) throw p.exception("Invalid unicode escape character "+(char)c);
                         x |= d<<12;
                         c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
+                        if(c<0) throw p.exception("Unterminated unicode escape");
                         d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
+                        if(d<0) throw p.exception("Invalid unicode escape character "+(char)c);
                         x |= d<<8;
                         c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
+                        if(c<0) throw p.exception("Unterminated unicode escape");
                         d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
+                        if(d<0) throw p.exception("Invalid unicode escape character "+(char)c);
                         x |= d<<4;
                         c = p.next();
-                        if(c<0) throw new FormatException("Unterminated unicode escape");
+                        if(c<0) throw p.exception("Unterminated unicode escape");
                         d = asHexDigit(c);
-                        if(d<0) throw new FormatException("Invalid unicode escape character "+(char)c);
+                        if(d<0) throw p.exception("Invalid unicode escape character "+(char)c);
                         x |= d;
                         buf.append((char)x);
                         break;
@@ -457,12 +485,12 @@ public class Json {
     public static List<Object> readList(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!='[') throw new FormatException("Invalid list format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!='[') throw p.exception("Invalid list format");
         // Skip leading [
         p.next();
         List<Object> obj=readList(p, ',', ']');
         c=p.last();
-        if(c!=']') throw new FormatException("Unterminated list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!=']') throw p.exception("Unterminated list");
         // Skip trailing ]
         p.next();
         return obj;
@@ -484,7 +512,7 @@ public class Json {
             if(c==t || c<0) break;
             // Validate and skip separator
             else if(c==r) c = p.next();
-            else throw new FormatException("Unexpected bare object in list at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+            else throw p.exception("Unexpected bare object in list");
         }
         return lst;
     }
@@ -492,12 +520,12 @@ public class Json {
     public static Map<CharSequence,Object> readMap(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
         int c = p.skipWhitespace();
-        if(c!='{') throw new FormatException("Invalid map format at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!='{') throw p.exception("Invalid map format");
         // Skip leading {
         p.next();
         Map<CharSequence,Object> obj=readMap(p, '"', ':', ',', '}');
         c=p.last();
-        if(c!='}') throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+        if(c!='}') throw p.exception("Unterminated map");
         // Skip trailing
         p.next();
         return obj;
@@ -518,7 +546,7 @@ public class Json {
                 p.next();
                 key = readString(p, f);
                 c=p.last();
-                if(c!=f) throw new FormatException("Unterminated field at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+                if(c!=f) throw p.exception("Unterminated field");
                 // Skip last quote
                 p.next();
             }
@@ -530,8 +558,8 @@ public class Json {
             }
             // Skip intermediary whitespace
             c = p.skipWhitespace();
-            if(c!=k) throw new FormatException("Unexpected bare object in map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
-            else if(c<0) throw new FormatException("Unterminated map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+            if(c!=k) throw p.exception("Unexpected bare object in map");
+            else if(c<0) throw p.exception("Unterminated map");
             // Skip key separator
             p.next();
             // Skip intermediary whitespace
@@ -544,7 +572,7 @@ public class Json {
             if(c==t|| c<0) break;
             // Validate and skip separator
             else if(c==r) c = p.next();
-            else throw new FormatException("Unexpected bare object in map at ln:"+p.ln+",cn:"+p.cn+" near "+(char)c);
+            else throw p.exception("Unexpected bare object in map");
         }
         return map;
     }
