@@ -93,8 +93,8 @@ public class XonTest extends TestCase {
     public void testReadObject() throws Exception {
         String json="{\"a\":2,\"b\":true,\"c\",\"d\":(\"x\",\"y\",1.2,\"abc _\\t\\f\\r\\u4a9dgh\\u0003\"), \"e\":[\"m\",1,2,3,.14]}";
         assertEquals(json,
-                     Xon.write(Xon.read(new StringReader(json))),
-                     Xon.write(asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", Arrays.asList("x", "y", 1.2, "abc _\t\f\r\u4a9dgh\3"), "e", new Object[] { "m", 1, 2, 3, .14 }))
+                     Xon.write(asMap(String.class, Object.class, "a", 2, "b", true, "c", null, "d", Arrays.asList("x", "y", 1.2, "abc _\t\f\r\u4a9dgh\3"), "e", new Object[] { "m", 1, 2, 3, .14 })),
+                     Xon.write(Xon.read(new StringReader(json)))
                     );
     }
 
