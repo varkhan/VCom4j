@@ -229,62 +229,11 @@ public class EugeneMyersDiff<T, S extends Container<T>, X> implements Diff<T,S,X
                 while(endR<lenR&& (endL>=lenL||edtR[endR])) endR++;
 
                 if( begL<endL || begR<endR ) {
-                    c.add(new Block<T>(datLa, begL, endL, datRa, begR, endR));
+                    c.add(new DiffBlock<T>(datLa, begL, endL, datRa, begR, endR));
                 }
             }
         }
         return c;
-    }
-
-
-    protected static class Block<T> implements Diff.Block<T> {
-        protected int          begL;
-        protected int          begR;
-        protected int          endL;
-        protected int          endR;
-        protected Container<T> blockL;
-        protected Container<T> blockR;
-
-        @SuppressWarnings("unchecked")
-        protected Block(List datL, int begL, int endL, List datR, int begR, int endR) {
-            this.begL=begL;
-            this.begR=begR;
-            this.endL=endL;
-            this.endR=endR;
-            blockL = datL.sublist(begL, endL);
-            blockR = datR.sublist(begR, endR);
-        }
-
-        @Override
-        public int begL() { return begL; }
-
-        @Override
-        public int begR() { return begR; }
-
-        @Override
-        public int endL() { return endL; }
-
-        @Override
-        public int endR() { return endR; }
-
-        @Override
-        public Container<T> blockL() {
-            return blockL;
-        }
-
-        @Override
-        public Container<T> blockR() {
-            return blockR;
-        }
-
-        @Override
-        public String toString() {
-            return "[ "+
-                   begL+","+endL+
-                   " x "+
-                   begR+","+endR+
-                  " ]";
-        }
     }
 
 

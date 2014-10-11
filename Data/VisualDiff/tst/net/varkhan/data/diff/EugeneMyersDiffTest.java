@@ -1,7 +1,6 @@
 package net.varkhan.data.diff;
 
 import junit.framework.TestCase;
-import net.varkhan.base.containers.Container;
 import net.varkhan.base.containers.Iterable;
 import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.array.Arrays;
@@ -31,8 +30,8 @@ public class EugeneMyersDiffTest extends TestCase {
         assertIteratorEquals(
                 "diff("+ls1.toString()+"<>"+ls2.toString()+")",
                 Arrays.asList(
-                        new B<String>(null, 2, 2, null, 2, 3),
-                        new B<String>(null, 3, 5, null, 4, 6)
+                        new DiffBlock<String>(null, 2, 2, null, 2, 3),
+                        new DiffBlock<String>(null, 3, 5, null, 4, 6)
                 ).iterator(),
                 diffs.iterator()
         );
@@ -47,75 +46,5 @@ public class EugeneMyersDiffTest extends TestCase {
         assertEquals(mes+" ["+i+"]++", false, act.hasNext());
     }
 
-    protected static class B<T> implements Diff.Block<T> {
-        protected int          begL;
-        protected int          begR;
-        protected int          endL;
-        protected int          endR;
-        protected Container<T> blockL;
-        protected Container<T> blockR;
-
-        @SuppressWarnings("unchecked")
-        protected B(List datL, int begL, int endL, List datR, int begR, int endR) {
-            this.begL=begL;
-            this.begR=begR;
-            this.endL=endL;
-            this.endR=endR;
-//            blockL=datL.sublist(begL, endL);
-//            blockR=datR.sublist(begR, endR);
-        }
-
-        @Override
-        public int begL() { return begL; }
-
-        @Override
-        public int begR() { return begR; }
-
-        @Override
-        public int endL() { return endL; }
-
-        @Override
-        public int endR() { return endR; }
-
-        @Override
-        public Container<T> blockL() {
-            return blockL;
-        }
-
-        @Override
-        public Container<T> blockR() {
-            return blockR;
-        }
-
-        @Override
-        public String toString() {
-            return "[ "+
-                   begL+","+endL+
-                   " x "+
-                   begR+","+endR+
-                  " ]";
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if(this==o) return true;
-            if(!(o instanceof Diff.Block)) return false;
-            Diff.Block b=(Diff.Block) o;
-            if(begL!=b.begL()) return false;
-            if(begR!=b.begR()) return false;
-            if(endL!=b.endL()) return false;
-            if(endR!=b.endR()) return false;
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result=begL;
-            result=31*result+begR;
-            result=31*result+endL;
-            result=31*result+endR;
-            return result;
-        }
-    }
 
 }

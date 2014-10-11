@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+    <info organisation="net.varkhan" module="VCom4j-Data-VisualDiff" branch="prod" revision="0.1.0" status="release"/>
+    <publications>
+        <artifact name="VCom4j-Data-VisualDiff" ext="jar" type="src"/>
+        <artifact name="VCom4j-Data-VisualDiff" ext="jar" type="bin"/>
+        <artifact name="VCom4j-Data-VisualDiff" ext="jar" type="doc"/>
+        <artifact name="VCom4j-Data-VisualDiff" ext="ivy" type="ivy"/>
+        <artifact name="VCom4j-Data-VisualDiff" ext="pom" type="pom"/>
+    </publications>
+    <dependencies>
+    </dependencies>
+</ivy-module>
