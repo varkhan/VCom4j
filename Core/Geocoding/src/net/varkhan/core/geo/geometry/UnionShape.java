@@ -13,7 +13,7 @@ public class UnionShape extends AbstractShape {
     protected int dim;
     protected Shape[] shapes;
 
-    public UnionShape(int dim, Shape... shapes) {
+    public <S extends Shape> UnionShape(int dim, S... shapes) {
         this.dim=dim;
         for(Shape s: shapes) if(s.dim()!=dim)
             throw new IllegalArgumentException("Illegal shape of dimension "+s.dim()+" in a "+dim+"-dimensional union");
@@ -77,8 +77,8 @@ public class UnionShape extends AbstractShape {
     public double rad2() {
         // No exact answer can be computed here on generic shapes.
         // We will just use:
-        //  - the max of center distances plus radius
-        //  - the radius of the bounding box
+        //  - the radius of the bounding box  = O(n)
+        //  - the max of center distances plus radius = O(n^2) (which we hope is interrupted early enough)
         // (whichever is smallest)
         double[] cmin = new double[dim];
         double[] cmax = new double[dim];
@@ -91,7 +91,7 @@ public class UnionShape extends AbstractShape {
             }
             double[] scmax = s.cmax();
             if(scmax!=null) for(int i=0; i<dim && i<scmax.length; i++) {
-                if(first || cmax[i]>scmax[i]) cmax[i]=scmax[i];
+                if(first || cmax[i]<scmax[i]) cmax[i]=scmax[i];
             }
             first = false;
         }
@@ -104,10 +104,10 @@ public class UnionShape extends AbstractShape {
         double cdr2 = 0;
         for(Shape s1: shapes) {
             double r1=s1.rad2();
-            PointD c1=new PointD(s1.cctr());
+            Point c1=s1.ctr();
             for(Shape s2: shapes) {
                 double r2=s2.rad2();
-                double d2 = r1 + c1.dmin2(s2.cctr()) + r2;
+                double d2 = r1 + c1.dmin2(s2.ctr()) + r2;
                 if(d2>bbr2) return bbr2;
                 else if(cdr2<d2) cdr2=d2;
             }
