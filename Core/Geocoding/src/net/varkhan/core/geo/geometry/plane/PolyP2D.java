@@ -8,12 +8,9 @@ package net.varkhan.core.geo.geometry.plane;
  * @date 9/23/12
  * @time 12:16 PM
  */
-public class Poly2D extends AbstractShape2D {
+public class PolyP2D extends AbstractShape2D {
 
     protected Point2D[] pts;
-
-//    r^2 = 1/n * sum(i:(xi-xc)^2+(yi-yc)^2) = 1/n * ( sum(i:xi^2+yi^2) - 2*xc*sum(i:xi) - 2*yc*sum(i:yi) + n*xc^2 + n*yc^2 )
-//                                           = 1/n * ( sum(i:xi^2+yi^2) - 2*n*xc^2 - 2*n*yc^2 + n*xc^2 + n*yc^2 )
 
     protected double x1sm;
     protected double y1sm;
@@ -24,7 +21,7 @@ public class Poly2D extends AbstractShape2D {
     protected double ymin;
     protected double ymax;
 
-    public Poly2D(double[] xpts, double[] ypts) {
+    public PolyP2D(double[] xpts, double[] ypts) {
         if(xpts.length!=ypts.length) throw new IllegalArgumentException("X coordinates and Y coordinates must have the same lengths");
         this.pts=new Point2D[xpts.length];
         for(int i=0; i<xpts.length && i<ypts.length; i++) {
@@ -33,7 +30,7 @@ public class Poly2D extends AbstractShape2D {
         computeInvariants();
     }
 
-    public Poly2D(float[] xpts, float[] ypts) {
+    public PolyP2D(float[] xpts, float[] ypts) {
         if(xpts.length!=ypts.length) throw new IllegalArgumentException("X coordinates and Y coordinates must have the same lengths");
         this.pts=new Point2D[xpts.length];
         for(int i=0; i<xpts.length && i<ypts.length; i++) {
@@ -42,7 +39,7 @@ public class Poly2D extends AbstractShape2D {
         computeInvariants();
     }
 
-    public <P extends Point2D> Poly2D(P... pts) {
+    public <P extends Point2D> PolyP2D(P... pts) {
         this.pts=pts.clone();
     }
 
@@ -90,7 +87,14 @@ public class Poly2D extends AbstractShape2D {
 
     @Override
     public double rad2() {
-        return (x2sm+y2sm-x1sm*x1sm-y1sm*y1sm)/pts.length;
+        double d = 0;
+        double xc = x1sm/pts.length;
+        double yc = y1sm/pts.length;
+        for(int i=0; i<pts.length; i++) {
+            double dc = pts[i].dmin2(xc,yc);
+            if(d<dc) d=dc;
+        }
+        return d;
     }
 
     @Override
@@ -113,18 +117,8 @@ public class Poly2D extends AbstractShape2D {
     }
 
     @Override
-    public double dmin(double x, double y) {
-        return Math.sqrt(dmin2(x, y));
-    }
-
-    @Override
-    public double dmax(double x, double y) {
-        return Math.sqrt(dmax2(x, y));
-    }
-
-    @Override
     public double dmin2(double x, double y) {
-        if((winding(x, y, pts)&1)!=0) return 0;
+        if(contains(x,y)) return 0;
         return distmin2(x, y, pts);
     }
 

@@ -14,9 +14,6 @@ public class PolyD2D extends AbstractShape2D {
     protected double[] xpts;
     protected double[] ypts;
 
-//    r^2 = 1/n * sum(i:(xi-xc)^2+(yi-yc)^2) = 1/n * ( sum(i:xi^2+yi^2) - 2*xc*sum(i:xi) - 2*yc*sum(i:yi) + n*xc^2 + n*yc^2 )
-//                                           = 1/n * ( sum(i:xi^2+yi^2) - 2*n*xc^2 - 2*n*yc^2 + n*xc^2 + n*yc^2 )
-
     protected double x1sm;
     protected double y1sm;
     protected double x2sm;
@@ -89,7 +86,16 @@ public class PolyD2D extends AbstractShape2D {
 
     @Override
     public double rad2() {
-        return (x2sm+y2sm-x1sm*x1sm-y1sm*y1sm)/num;
+        double d = 0;
+        double xc = x1sm/num;
+        double yc = y1sm/num;
+        for(int i=0; i<num; i++) {
+            double dx = xpts[i]-xc;
+            double dy = ypts[i]-yc;
+            double dc = dx*dx+dy*dy;
+            if(d<dc) d=dc;
+        }
+        return d;
     }
 
     @Override
@@ -116,18 +122,8 @@ public class PolyD2D extends AbstractShape2D {
     }
 
     @Override
-    public double dmin(double x, double y) {
-        return Math.sqrt(dmin2(x, y));
-    }
-
-    @Override
-    public double dmax(double x, double y) {
-        return Math.sqrt(dmax2(x, y));
-    }
-
-    @Override
     public double dmin2(double x, double y) {
-        if((winding(x, y, num, xpts, ypts)&1)!=0) return 0;
+        if(contains(x,y)) return 0;
         return distmin2(x, y, num, xpts, ypts);
     }
 

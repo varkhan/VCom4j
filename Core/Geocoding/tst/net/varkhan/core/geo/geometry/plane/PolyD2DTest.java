@@ -64,9 +64,13 @@ public class PolyD2DTest extends TestCase {
                                                ));
     }
 
-    public void testContains() throws Exception {
+    public void testWinding() throws Exception {
         assertEquals("0,0 loz", -1, winding(0, 0, 4,
                                            new double[]{0, 1, 0, -1},
+                                           new double[]{1, 0, -1, 0 }
+                                          ));
+        assertEquals("0,0 loz x", 1, winding(0, 0, 4,
+                                           new double[]{0, -1, 0, 1},
                                            new double[]{1, 0, -1, 0 }
                                           ));
         assertEquals("1,1 loz", 0, winding(1, 1, 4,

@@ -74,9 +74,23 @@ public abstract class AbstractShape2D extends AbstractShape implements Shape2D {
         return dist2;
     }
 
+    @Override
     public boolean contains(double x, double y) { return dmin2(x, y)==0; }
 
+    @Override
     public double dmax(double x, double y) { return Math.sqrt(dmax2(x, y)); }
+    @Override
     public double dmin(double x, double y) { return Math.sqrt(dmin2(x, y)); }
+
+    @Override
+    public boolean contains(Point2D point) { return contains(point.xctr(),point.yctr()); }
+    @Override
+    public double dmin(Point2D point) { return dmin(point.xctr(),point.yctr()); }
+    @Override
+    public double dmax(Point2D point) { return dmax(point.xctr(),point.yctr()); }
+    @Override
+    public double dmin2(Point2D point) { return dmin2(point.xctr(),point.yctr()); }
+    @Override
+    public double dmax2(Point2D point) { return dmax2(point.xctr(),point.yctr()); }
 
 }
