@@ -59,6 +59,10 @@ public class RectD2D extends AbstractShape2D implements Rect2D {
         return deltax*deltay;
     }
 
+    public boolean contains(double x, double y) {
+        return xmin<=x && x<=xmax && ymin<=y && y<=ymax;
+    }
+
     @Override
     public double dmin2(double x, double y) {
         double deltax = 0;
