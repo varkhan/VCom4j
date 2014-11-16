@@ -13,12 +13,13 @@ import net.varkhan.core.geo.geometry.AbstractShape;
  */
 public abstract class AbstractShape3D extends AbstractShape implements Shape3D {
 
-    public int dim() { return 2; }
+    public int dim() { return 3; }
 
     public double cmin(int d) {
         switch(d) {
             case 0: return xmin();
             case 1: return ymin();
+            case 2: return zmin();
             default: return 0;
         }
     }
@@ -26,20 +27,22 @@ public abstract class AbstractShape3D extends AbstractShape implements Shape3D {
         switch(d) {
             case 0: return xmax();
             case 1: return ymax();
+            case 2: return zmax();
             default: return 0;
         }
     }
-    public double[] cmin() { return new double[] { xmin(), ymin() }; }
-    public double[] cmax() { return new double[] { xmax(), ymax() }; }
+    public double[] cmin() { return new double[] { xmin(), ymin(), zmin() }; }
+    public double[] cmax() { return new double[] { xmax(), ymax(), zmax() }; }
 
     public double cctr(int d) {
         switch(d) {
             case 0: return xctr();
             case 1: return yctr();
+            case 2: return zctr();
             default: return 0;
         }
     }
-    public double[] cctr() { return new double[] { xctr(), yctr() }; }
+    public double[] cctr() { return new double[] { xctr(), yctr(), zctr() }; }
     public Point3D ctr() { return new AbstractPoint3D() {
         public double xctr() { return AbstractShape3D.this.xctr(); }
         public double yctr() { return AbstractShape3D.this.yctr(); }
@@ -51,8 +54,9 @@ public abstract class AbstractShape3D extends AbstractShape implements Shape3D {
     public double dmin2(double... point) {
         double x = point.length>=1?point[0]:0;
         double y = point.length>=2?point[1]:0;
-        double dist2 = dmin2(x, y);
-        int i=2;
+        double z = point.length>=3?point[2]:0;
+        double dist2 = dmin2(x, y, z);
+        int i=3;
         while(i<point.length) {
             double delta = point[i];
             dist2 += delta*delta;
@@ -65,8 +69,9 @@ public abstract class AbstractShape3D extends AbstractShape implements Shape3D {
     public double dmax2(double... point) {
         double x = point.length>=1?point[0]:0;
         double y = point.length>=2?point[1]:0;
-        double dist2 = dmax2(x, y);
-        int i=2;
+        double z = point.length>=3?point[2]:0;
+        double dist2 = dmax2(x, y, z);
+        int i=3;
         while(i<point.length) {
             double delta = point[i];
             dist2 += delta*delta;

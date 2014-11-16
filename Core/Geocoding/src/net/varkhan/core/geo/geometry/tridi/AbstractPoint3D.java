@@ -11,7 +11,7 @@ package net.varkhan.core.geo.geometry.tridi;
  */
 public abstract class AbstractPoint3D extends AbstractShape3D implements Point3D {
 
-    public int dim() { return 2; }
+    public int dim() { return 3; }
     public double xmin() { return xctr(); }
     public double xmax() { return xctr(); }
     public double ymin() { return yctr(); }
@@ -73,7 +73,7 @@ public abstract class AbstractPoint3D extends AbstractShape3D implements Point3D
 
     public String toString() {
         StringBuilder buf = new StringBuilder("Point");
-        buf.append('(').append(xctr()).append(',').append(yctr()).append(')');
+        buf.append('(').append(xctr()).append(',').append(yctr()).append(',').append(zctr()).append(')');
         return buf.toString();
     }
 }
