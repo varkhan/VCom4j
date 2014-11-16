@@ -8,11 +8,9 @@ package net.varkhan.core.geo.geometry.plane;
  * @date 9/23/12
  * @time 12:16 PM
  */
-public class PolyD2D extends AbstractShape2D {
+public class Poly2D extends AbstractShape2D {
 
-    protected int num;
-    protected double[] xpts;
-    protected double[] ypts;
+    protected Point2D[] pts;
 
 //    r^2 = 1/n * sum(i:(xi-xc)^2+(yi-yc)^2) = 1/n * ( sum(i:xi^2+yi^2) - 2*xc*sum(i:xi) - 2*yc*sum(i:yi) + n*xc^2 + n*yc^2 )
 //                                           = 1/n * ( sum(i:xi^2+yi^2) - 2*n*xc^2 - 2*n*yc^2 + n*xc^2 + n*yc^2 )
@@ -26,32 +24,35 @@ public class PolyD2D extends AbstractShape2D {
     protected double ymin;
     protected double ymax;
 
-    public PolyD2D(double[] xpts, double[] ypts) {
+    public Poly2D(double[] xpts, double[] ypts) {
         if(xpts.length!=ypts.length) throw new IllegalArgumentException("X coordinates and Y coordinates must have the same lengths");
-        this.num=xpts.length;
-        this.xpts=xpts.clone();
-        this.ypts=ypts.clone();
+        this.pts=new Point2D[xpts.length];
+        for(int i=0; i<xpts.length && i<ypts.length; i++) {
+            pts[i] = new PointD2D(xpts[i],ypts[i]);
+        }
         computeInvariants();
     }
 
-    public PolyD2D(Point2D ... pts) {
-        this.num=pts.length;
-        this.xpts=new double[num];
-        this.ypts=new double[num];
-        for(int i=0; i<num; i++) {
-            this.xpts[i] = pts[i].xctr();
-            this.ypts[i] = pts[i].yctr();
+    public Poly2D(float[] xpts, float[] ypts) {
+        if(xpts.length!=ypts.length) throw new IllegalArgumentException("X coordinates and Y coordinates must have the same lengths");
+        this.pts=new Point2D[xpts.length];
+        for(int i=0; i<xpts.length && i<ypts.length; i++) {
+            pts[i] = new PointF2D(xpts[i],ypts[i]);
         }
         computeInvariants();
+    }
+
+    public Poly2D(Point2D... pts) {
+        this.pts=pts.clone();
     }
 
     protected void computeInvariants() {
         xmin = ymin = +Double.MAX_VALUE;
         xmax = ymax = -Double.MAX_VALUE;
         x1sm = y1sm = x2sm = y2sm = 0;
-        for(int i=0; i<num; i++) {
-            double x = xpts[i];
-            double y = ypts[i];
+        for(int i=0; i<pts.length; i++) {
+            double x = pts[i].xctr();
+            double y = pts[i].yctr();
             if(xmin>x) xmin=x;
             if(xmax<x) xmax=x;
             if(ymin>y) ymin=y;
@@ -71,48 +72,44 @@ public class PolyD2D extends AbstractShape2D {
 
     @Override
     public double xctr() {
-        return x1sm/num;
+        return x1sm/pts.length;
     }
 
     @Override
     public double yctr() {
-        return y1sm/num;
+        return y1sm/pts.length;
     }
 
     @Override
     public Point2D ctr() {
         return new AbstractPoint2D() {
-            public double xctr() { return x1sm/num; }
-            public double yctr() { return y1sm/num; }
+            public double xctr() { return x1sm/pts.length; }
+            public double yctr() { return y1sm/pts.length; }
         };
     }
 
     @Override
     public double rad2() {
-        return (x2sm+y2sm-x1sm*x1sm-y1sm*y1sm)/num;
+        return (x2sm+y2sm-x1sm*x1sm-y1sm*y1sm)/pts.length;
     }
 
     @Override
     public double msr() {
-        if(num<=2) return 0;
-        double x0 = xpts[0];
-        double y0 = ypts[0];
-        double x1 = xpts[1];
-        double y1 = ypts[1];
+        if(pts.length<=2) return 0;
+        Point2D p0 = pts[0];
+        Point2D p1 = pts[1];
         double a = 0;
-        for(int i=2; i<num; i++) {
-            double x2 = xpts[i];
-            double y2 = ypts[i];
-            a += area(x0,y0,x1,y1,x2,y2);
-            x1 = x2;
-            y1 = y2;
+        for(int i=2; i<pts.length; i++) {
+            Point2D p2 = pts[i];
+            a += area(p0,p1,p2);
+            p1 = p2;
         }
         return a<0? -a:a;
     }
 
     @Override
     public boolean contains(double x, double y) {
-        return (winding(x, y, num, xpts, ypts)&1)!=0;
+        return (winding(x, y, pts)&1)!=0;
     }
 
     @Override
@@ -127,25 +124,25 @@ public class PolyD2D extends AbstractShape2D {
 
     @Override
     public double dmin2(double x, double y) {
-        if((winding(x, y, num, xpts, ypts)&1)!=0) return 0;
-        return distmin2(x, y, num, xpts, ypts);
+        if((winding(x, y, pts)&1)!=0) return 0;
+        return distmin2(x, y, pts);
     }
 
     @Override
     public double dmax2(double x, double y) {
-        return distmax2(x, y, num, xpts, ypts);
+        return distmax2(x, y, pts);
     }
 
 
-    public static int winding(double x, double y, int num, double[] xpts, double[] ypts) {
-        if(num<2) return 0;
+    public static int winding(double x, double y, Point2D[] pts) {
+        if(pts.length<2) return 0;
         // MacMartin's algorithm
         int nc = 0;
-        double x0 = xpts[num-1];
-        double y0 = ypts[num-1];
-        for(int i=0; i<num; i++) {
-            double xi = xpts[i];
-            double yi = ypts[i];
+        double x0 = pts[pts.length-1].xctr();
+        double y0 = pts[pts.length-1].yctr();
+        for(int i=0; i<pts.length; i++) {
+            double xi = pts[i].xctr();
+            double yi = pts[i].yctr();
             if(y0<=y && yi>y) {
                 double dx = xi-x0;
                 double dy = yi-y0;
@@ -162,15 +159,15 @@ public class PolyD2D extends AbstractShape2D {
         return nc;
     }
 
-    public static double distmin2(double x, double y, int num, double[] xpts, double[] ypts) {
-        if(num<1) return Double.MAX_VALUE;
-        double x0 = xpts[num-1]-x;
-        double y0 = ypts[num-1]-y;
+    public static double distmin2(double x, double y, Point2D[] pts) {
+        if(pts.length<1) return Double.MAX_VALUE;
+        double x0 = pts[pts.length-1].xctr()-x;
+        double y0 = pts[pts.length-1].yctr()-y;
         double d0 = x0*x0+y0*y0;
         double d = d0;
-        for(int i=0; i<num; i++) {
-            double xi = xpts[i]-x;
-            double yi = ypts[i]-y;
+        for(int i=0; i<pts.length; i++) {
+            double xi = pts[i].xctr()-x;
+            double yi = pts[i].yctr()-y;
             double dx = xi-x0;
             double dy = yi-y0;
             double p0 = x0*dx+y0*dy;
@@ -196,46 +193,58 @@ public class PolyD2D extends AbstractShape2D {
         return d;
     }
 
-    public static double distmax2(double x, double y, int num, double[] xpts, double[] ypts) {
-        if(num<1) return Double.MAX_VALUE;
+    public static double distmax2(double x, double y, Point2D[] pts) {
+        if(pts.length<1) return Double.MAX_VALUE;
         double d = 0;
-        for(int i=0; i<num; i++) {
-            double xi = xpts[i]-x;
-            double yi = ypts[i]-y;
+        for(int i=0; i<pts.length; i++) {
+            double xi = pts[i].xctr()-x;
+            double yi = pts[i].yctr()-y;
             double di = xi*xi+yi*yi;
             if(d<di) d = di;
         }
         return d;
     }
 
-    public static double area(double x0, double y0, double x1, double y1, double x2, double y2) {
-        x1 -= x0;
-        y1 -= y0;
-        x2 -= x0;
-        y2 -= y0;
-        double dx = x2-x1;
-        double dy = y2-y1;
-        double d0 = dx*dx+dy*dy;
-        double d1 = x1*x1+y1*y1;
-        double d2 = x2*x2+y2*y2;
+    public static double area(Point2D p0, Point2D p1, Point2D p2) {
+        double x0 = p0.xctr();
+        double y0 = p0.yctr();
+        double x1 = p1.xctr();
+        double y1 = p1.yctr();
+        double x2 = p2.xctr();
+        double y2 = p2.yctr();
+        double dx0 = x1-x0;
+        double dy0 = y1-y0;
+        double dx1 = x2-x0;
+        double dy1 = y2-y0;
+        double dx2 = x2-x1;
+        double dy2 = y2-y1;
+        double d0 = dx0*dx0+dy0*dy0;
+        double d1 = dx1*dx1+dy1*dy1;
+        double d2 = dx2*dx2+dy2*dy2;
         double s = d0+d1+d2;
         // Derived from Heron's formula
         double a = s*s - 2 * (d0*d0+d1*d1+d2*d2);
         double d = 0.25 * Math.sqrt(a);
-        double z = x1*y2-x2*y1;
+        double z = dx0*dy1-dx1*dy0;
         return (z>=0) ? d:-d;
     }
 
-    public static double angle(double x0, double y0, double x1, double y1, double x2, double y2) {
-        x1 -= x0;
-        y1 -= y0;
-        x2 -= x0;
-        y2 -= y0;
-        double d1 = x1*x1 + y1*y1;
-        double d2 = x2*x2 + y2*y2;
-        double dp = x1*x2 + y1*y2;
+    public static double angle(Point2D p0, Point2D p1, Point2D p2) {
+        double x0 = p0.xctr();
+        double y0 = p0.yctr();
+        double x1 = p1.xctr();
+        double y1 = p1.yctr();
+        double x2 = p2.xctr();
+        double y2 = p2.yctr();
+        double dx0 = x1-x0;
+        double dy0 = y1-y0;
+        double dx1 = x2-x0;
+        double dy1 = y2-y0;
+        double d1 = dx0*dx0 + dy0*dy0;
+        double d2 = dx1*dx1 + dy1*dy1;
+        double dp = dx0*dx1 + dy0*dy1;
         double a = Math.acos(dp/Math.sqrt(d1 * d2));
-        double z = x1*y2-x2*y1;
+        double z = dx0*dy1-dx1*dy0;
         return (z>=0) ? a:-a;
     }
 
