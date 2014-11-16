@@ -137,6 +137,22 @@ public class UnionShape2D extends AbstractShape2D {
     }
 
     @Override
+    public boolean contains(Point2D point) {
+        for(Shape2D s: shapes) {
+            if(s.contains(point)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean contains(double x, double y) {
+        for(Shape2D s: shapes) {
+            if(s.contains(x,y)) return true;
+        }
+        return false;
+    }
+
+    @Override
     public double dmin2(double x, double y) {
         double d = 0;
         for(Shape2D s: shapes) {

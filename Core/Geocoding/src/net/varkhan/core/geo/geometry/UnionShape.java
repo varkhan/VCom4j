@@ -125,6 +125,22 @@ public class UnionShape extends AbstractShape {
     }
 
     @Override
+    public boolean contains(Point point) {
+        for(Shape s: shapes) {
+            if(s.contains(point)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean contains(double... point) {
+        for(Shape s: shapes) {
+            if(s.contains(point)) return true;
+        }
+        return false;
+    }
+
+    @Override
     public double dmin2(double... point) {
         double d = 0;
         for(Shape s: shapes) {
