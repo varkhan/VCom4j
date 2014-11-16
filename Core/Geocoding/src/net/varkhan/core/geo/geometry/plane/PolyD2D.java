@@ -34,7 +34,7 @@ public class PolyD2D extends AbstractShape2D {
         computeInvariants();
     }
 
-    public PolyD2D(Point2D ... pts) {
+    public <P extends Point2D> PolyD2D(P ... pts) {
         this.num=pts.length;
         this.xpts=new double[num];
         this.ypts=new double[num];

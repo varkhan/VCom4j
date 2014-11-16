@@ -42,7 +42,7 @@ public class Poly2D extends AbstractShape2D {
         computeInvariants();
     }
 
-    public Poly2D(Point2D... pts) {
+    public <P extends Point2D> Poly2D(P... pts) {
         this.pts=pts.clone();
     }
 
