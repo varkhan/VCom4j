@@ -95,7 +95,7 @@ public class CircleD2D extends AbstractShape2D implements Shape2D {
         StringBuilder buf = new StringBuilder();
         buf.append('(').append(' ');
         buf.append('(').append(x).append(' ').append(y).append(')');
-        buf.append(" x ").append(r);
+        buf.append(" @ ").append(r);
         buf.append(' ').append(')');
         return buf.toString();
     }

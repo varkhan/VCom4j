@@ -171,4 +171,19 @@ public class UnionShape2D extends AbstractShape2D {
         }
         return d;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('}').append(' ');
+        boolean first = true;
+        for(Shape2D s: shapes) {
+            if(first) first = false;
+            else buf.append(" U ");
+            buf.append(s.toString());
+        }
+        buf.append(' ').append('}');
+        return buf.toString();
+    }
+
 }

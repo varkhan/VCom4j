@@ -90,8 +90,8 @@ public class PolyP2D extends AbstractShape2D {
         double d = 0;
         double xc = x1sm/pts.length;
         double yc = y1sm/pts.length;
-        for(int i=0; i<pts.length; i++) {
-            double dc = pts[i].dmin2(xc,yc);
+        for(Point2D p: pts) {
+            double dc=p.dmin2(xc, yc);
             if(d<dc) d=dc;
         }
         return d;
@@ -127,6 +127,19 @@ public class PolyP2D extends AbstractShape2D {
         return distmax2(x, y, pts);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('[').append(' ');
+        boolean first = true;
+        for(Point2D p: pts) {
+            if(first) first = false;
+            else buf.append(" - ");
+            buf.append(p.toString());
+        }
+        buf.append(' ').append(']');
+        return buf.toString();
+    }
 
     public static int winding(double x, double y, Point2D[] pts) {
         if(pts.length<2) return 0;
@@ -134,21 +147,21 @@ public class PolyP2D extends AbstractShape2D {
         int nc = 0;
         double x0 = pts[pts.length-1].xctr();
         double y0 = pts[pts.length-1].yctr();
-        for(int i=0; i<pts.length; i++) {
-            double xi = pts[i].xctr();
-            double yi = pts[i].yctr();
-            if(y0<=y && yi>y) {
-                double dx = xi-x0;
-                double dy = yi-y0;
-                if(((x0-x)*dy-(y0-y)*dx)*dy>0) nc ++;
+        for(Point2D p: pts) {
+            double xi=p.xctr();
+            double yi=p.yctr();
+            if(y0<=y&&yi>y) {
+                double dx=xi-x0;
+                double dy=yi-y0;
+                if(((x0-x)*dy-(y0-y)*dx)*dy>0) nc++;
             }
-            else if(y0>=y && yi<y) {
-                double dx = xi-x0;
-                double dy = yi-y0;
-                if(((x0-x)*dy-(y0-y)*dx)*dy>0) nc --;
+            else if(y0>=y&&yi<y) {
+                double dx=xi-x0;
+                double dy=yi-y0;
+                if(((x0-x)*dy-(y0-y)*dx)*dy>0) nc--;
             }
-            x0 = xi;
-            y0 = yi;
+            x0=xi;
+            y0=yi;
         }
         return nc;
     }
@@ -159,42 +172,41 @@ public class PolyP2D extends AbstractShape2D {
         double y0 = pts[pts.length-1].yctr()-y;
         double d0 = x0*x0+y0*y0;
         double d = d0;
-        for(int i=0; i<pts.length; i++) {
-            double xi = pts[i].xctr()-x;
-            double yi = pts[i].yctr()-y;
-            double dx = xi-x0;
-            double dy = yi-y0;
-            double p0 = x0*dx+y0*dy;
-            double pi = xi*dx+yi*dy;
-            double di = xi*xi+yi*yi;
+        for(Point2D p: pts) {
+            double xi=p.xctr()-x;
+            double yi=p.yctr()-y;
+            double dx=xi-x0;
+            double dy=yi-y0;
+            double p0=x0*dx+y0*dy;
+            double pi=xi*dx+yi*dy;
+            double di=xi*xi+yi*yi;
             if(p0*pi<0) {
-                double dd = dx*dx+dy*dy;
-                double z2 = dd+d0+di;
+                double dd=dx*dx+dy*dy;
+                double z2=dd+d0+di;
                 /** Derived from Heron's formula:
                  * a2 is the square area of the triangle
                  * a2 = dl*di/4
                  * a2 = ((dd+d0+di)^2-2*(dd^2+d0^2+di^2))/16;
                  * => dl = 4*a2/di = ((z2*z2)-2*(dd*dd+d0*d0+di*di))/(4*di);
                  **/
-                double dl = (0.125*(z2*z2)-0.25*(dd*dd+d0*d0+di*di))/di;
+                double dl=(0.125*(z2*z2)-0.25*(dd*dd+d0*d0+di*di))/di;
                 if(d>dl) d=dl;
             }
-            else if(d>di) d = di;
-            x0 = xi;
-            y0 = yi;
-            d0 = di;
+            else if(d>di) d=di;
+            x0=xi;
+            y0=yi;
+            d0=di;
         }
         return d;
     }
 
     public static double distmax2(double x, double y, Point2D[] pts) {
-        if(pts.length<1) return Double.MAX_VALUE;
         double d = 0;
-        for(int i=0; i<pts.length; i++) {
-            double xi = pts[i].xctr()-x;
-            double yi = pts[i].yctr()-y;
-            double di = xi*xi+yi*yi;
-            if(d<di) d = di;
+        for(Point2D p: pts) {
+            double xi=p.xctr()-x;
+            double yi=p.yctr()-y;
+            double di=xi*xi+yi*yi;
+            if(d<di) d=di;
         }
         return d;
     }

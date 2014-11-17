@@ -132,6 +132,20 @@ public class PolyD2D extends AbstractShape2D {
         return distmax2(x, y, num, xpts, ypts);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('[').append(' ');
+        boolean first = true;
+        for(int i=0; i<num; i++) {
+            if(first) first = false;
+            else buf.append(" - ");
+            buf.append('(').append(' ').append(xpts[i]).append(' ').append(ypts[i]).append(' ').append(')');
+        }
+        buf.append(' ').append(']');
+        return buf.toString();
+    }
+
 
     public static int winding(double x, double y, int num, double[] xpts, double[] ypts) {
         if(num<2) return 0;
@@ -193,7 +207,6 @@ public class PolyD2D extends AbstractShape2D {
     }
 
     public static double distmax2(double x, double y, int num, double[] xpts, double[] ypts) {
-        if(num<1) return Double.MAX_VALUE;
         double d = 0;
         for(int i=0; i<num; i++) {
             double xi = xpts[i]-x;

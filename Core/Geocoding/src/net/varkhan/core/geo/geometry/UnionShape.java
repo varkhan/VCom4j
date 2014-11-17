@@ -159,4 +159,19 @@ public class UnionShape extends AbstractShape {
         }
         return d;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append('}').append(' ');
+        boolean first = true;
+        for(Shape s: shapes) {
+            if(first) first = false;
+            else buf.append(" U ");
+            buf.append(s.toString());
+        }
+        buf.append(' ').append('}');
+        return buf.toString();
+    }
+
 }
