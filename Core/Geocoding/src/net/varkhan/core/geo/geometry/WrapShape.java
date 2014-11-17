@@ -77,4 +77,10 @@ public class WrapShape extends AbstractShape {
 
     @Override
     public double dmax2(Point point) {return shape.dmax2(point);}
+
+    @Override
+    public String toString() {
+        return shape.toString();
+    }
+
 }
