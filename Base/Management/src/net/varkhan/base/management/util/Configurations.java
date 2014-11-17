@@ -494,11 +494,57 @@ public class Configurations {
      **/
 
     /**
+     * Load configuration mappings from a character stream.
+     * <p/>
+     * Configuration streams are line-oriented. Each line can contain one of:
+     * <li><em>a comment</em>: a hash sign '#',
+     *      followed by any number of characters,
+     *      and a newline character</li>
+     * <li><em>a context</em>: a opening square bracket sign ']',
+     *      the context name (any number of characters, except for closing square brackets and newlines),
+     *      a closing square bracket ']',
+     *      any number of non-newline characters (ignored)
+     *      and a newline character</li>
+     * <li><em>a configuration mapping</em>: a configuration key
+     *      (any number of non-newline characters, where '\', '=' and '#' are escaped by a '\' character),
+     *      followed by an '=' sign,
+     *      a configuration value (where '\' and newline characters are escaped by a '\' character)
+     *      and a newline character</li>
+     * <p/>
+     * A physical line equals a logical line, except for configuration mappings
+     * where physical lines can be merged by escaping with a '\' (backslash) the
+     * final newline character of each physical line.
+     * <p/>
+     * Each configuration mapping is set within the context defined by the last
+     * seen context line. If no context line is specified, the default context
+     * will be used. A context name equal to the empty string or a single '*'
+     * character will switch back to the default context.
+     * <p/>
+     * An example configuration file:
+     * <pre>
+     *     # [] implicit default context
+     *     # Set default context properties
+     *     com.example.property1=value1
      *
-     * @param cfg
-     * @param rdr
-     * @return
-     * @throws IOException
+     *     [internal] the rest of this line is ignored
+     *     com.example.property1=internal_value1
+     *
+     *     [validation]
+     *     com.example.property1=validation_value1
+     *     com.example.property2=validation_value2_line1\
+     *     validation_value2_line2\
+     *     validation_value2_line3\
+     *
+     *     [*] (equivalent to [])
+     *     # Override default context values
+     *     com.example.property1=override_value1
+     * </pre>
+     *
+     *
+     * @param cfg the configuration to load mappings into
+     * @param rdr the reader to read mappings from
+     * @return the number of configuration mapping reads (including duplicates)
+     * @throws IOException if an error occurred while reading from the stream
      */
     public static int loadConfig(SettableConfiguration cfg, Reader rdr) throws IOException {
         BufferedReader lrd = (rdr instanceof BufferedReader)?(BufferedReader)rdr:new BufferedReader(rdr);
@@ -582,6 +628,18 @@ public class Configurations {
         return count;
     }
 
+    /**
+     * Save configuration mappings to a character stream.
+     * <p/>
+     * See {@link  #loadConfig(SettableConfiguration, Reader) loadConfig}
+     * for a description of the format.
+     *
+     * @param cfg the configuration
+     * @param wrt the writer to write mappings to
+     * @return the number of configuration mappings written
+     * @throws IOException if an error occurred while writing to the stream
+     * @see #loadConfig(SettableConfiguration, Reader)
+     */
     public static int saveConfig(Configuration cfg, Writer wrt) throws IOException {
         int count=0;
         for(String ctx: cfg.contexts()) {

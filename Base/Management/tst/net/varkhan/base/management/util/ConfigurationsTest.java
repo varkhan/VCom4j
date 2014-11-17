@@ -62,7 +62,7 @@ public class ConfigurationsTest extends TestCase {
                 + "[dd]\n"
                 + "foo.bar=c1\n"
                 + "foo.baz1=c1\n"
-                + "[]\n"
+                + "[] remaining text ignored\n"
                 + "foo.baz3=c3\n"
                 + "[dd]\n"
                 + "foo.baz4=c4\n"
