@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+    <info organisation="net.varkhan" module="VCom4j-Data-HttpServer" branch="prod" revision="0.1.0" status="release"/>
+    <publications>
+        <artifact name="VCom4j-Data-HttpServer" ext="jar" type="src"/>
+        <artifact name="VCom4j-Data-HttpServer" ext="jar" type="bin"/>
+        <artifact name="VCom4j-Data-HttpServer" ext="jar" type="doc"/>
+        <artifact name="VCom4j-Data-HttpServer" ext="ivy" type="ivy"/>
+        <artifact name="VCom4j-Data-HttpServer" ext="pom" type="pom"/>
+    </publications>
+    <dependencies>
+        <dependency org="org.eclipse.jetty" name="jetty-server" rev="7.0.0.M1" conf="*"/>
+        <dependency org="org.eclipse.jetty" name="jetty-servlet" rev="7.0.0.M1" conf="*"/>
+        <dependency org="org.eclipse.jetty" name="jetty-security" rev="7.0.0.M1" conf="*"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="0.8.+"/>
+    </dependencies>
+</ivy-module>
