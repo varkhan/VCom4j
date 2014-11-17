@@ -163,14 +163,14 @@ public class UnionShape extends AbstractShape {
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('}').append(' ');
+        buf.append("{ ");
         boolean first = true;
         for(Shape s: shapes) {
             if(first) first = false;
             else buf.append(" U ");
             buf.append(s.toString());
         }
-        buf.append(' ').append('}');
+        buf.append(" }");
         return buf.toString();
     }
 
