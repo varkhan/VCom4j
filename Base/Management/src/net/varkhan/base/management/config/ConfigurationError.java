@@ -49,7 +49,7 @@ public class ConfigurationError extends Exception {
      *
      * @return the context for the erroneous configuration
      */
-    public final String ctx() { return key; }
+    public final String ctx() { return ctx; }
 
     /**
      * The configuration name.

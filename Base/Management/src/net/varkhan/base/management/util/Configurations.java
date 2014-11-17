@@ -2,6 +2,10 @@ package net.varkhan.base.management.util;
 
 import net.varkhan.base.management.config.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -20,33 +24,59 @@ public class Configurations {
     /** Private constructor to enforce static method collection status */
     protected Configurations() { }
 
-    public static final SettableConfiguration.Context environment;
+    /**********************************************************************************
+     **  Globally accessible config and contexts
+     **/
+
+    /**
+     * The system environment, properties and settings as a Configuration.
+     * <p/>
+     * The contexts names for each subsets are, respectively:
+     * <li><em>environment</em></li>
+     * <li><em>properties</em></li>
+     *
+     * @return a settable configuration containing all system parameters
+     */
+    public static CompoundConfiguration<SettableConfiguration.Context> sysconf() { return systemConfiguration; }
+
+    public static final String SYS_CTX_ENVIRONMENT="environment";
+    public static final String SYS_CTX_PROPERTIES="properties";
+
+
+    /** The system environment, properties and settings as a settable configuration. */
+    protected static final CompoundConfiguration<SettableConfiguration.Context> systemConfiguration;
+    /** The system environment variables, as a settable context */
+    protected static final SettableConfiguration.Context systemEnvironment;
+    /** The system properties, as a settable context */
+    protected static final Properties systemProperties;
+
+
     static {
         SettableConfiguration.Context env;
         try {
-            env = new Environment("environment");
+            env=new Environment(SYS_CTX_ENVIRONMENT);
         }
         catch(Exception e) {
             try {
-                env = new Environment2("environment");
+                env=new Environment2(SYS_CTX_ENVIRONMENT);
             }
             catch(Exception e2) {
-                env = new MapContext("environment",new HashMap<String,Object>());
+                env=new MapContext(SYS_CTX_ENVIRONMENT, new HashMap<String,Object>());
             }
         }
-        environment = env;
+        systemEnvironment= env;
+        systemProperties=new Properties(SYS_CTX_PROPERTIES);
+        systemConfiguration=new CompoundConfiguration<SettableConfiguration.Context>(
+                    systemEnvironment,
+                    systemProperties
+            );
     }
 
-    public static final Properties properties=new Properties("properties");
 
-    protected static final CompoundConfiguration<SettableConfiguration.Context> configs=new CompoundConfiguration<SettableConfiguration.Context>(
-            environment,
-            properties
-    );
 
-    public static CompoundConfiguration<SettableConfiguration.Context> configs() {
-        return configs;
-    }
+    /**********************************************************************************
+     **  System environment context magic
+     **/
 
 
     /**
@@ -348,6 +378,10 @@ public class Configurations {
     }
 
 
+    /**********************************************************************************
+     **  System properties context wrapper
+     **/
+
     /**
      * <b>A wrapper implementation of the system properties</b>.
      * <p/>
@@ -453,4 +487,117 @@ public class Configurations {
             return true;
         }
     }
+
+
+    /**********************************************************************************
+     **  Generic properties loader
+     **/
+
+    /**
+     *
+     * @param cfg
+     * @param rdr
+     * @return
+     * @throws IOException
+     */
+    public static int loadConfig(SettableConfiguration cfg, Reader rdr) throws IOException {
+        BufferedReader lrd = (rdr instanceof BufferedReader)?(BufferedReader)rdr:new BufferedReader(rdr);
+        StringBuilder buf = new StringBuilder();
+        // Start with null (default) context
+        String ctx=null;
+        String line;
+        int count = 0;
+        while((line=lrd.readLine())!=null) {
+            // Skip whitespace at the beginning
+            int p=0;
+            char c = '\0';
+            while(p<line.length()) {
+                c = line.charAt(p);
+                if(c!=' '&&c!='\t'&&c!='\f') break;
+                p ++;
+            }
+            // Empty/blank line
+            if(p>=line.length() || c=='\n') continue;
+            if(c=='#') continue;
+            else if(c=='[') {
+                p ++;
+                int q = line.indexOf(']',p);
+                // Err on the safe side: non-terminated context
+                if(q<0) throw new IOException("Malformed context switch at \""+line+"\"");
+                // A context switch of [] or [*] resets to the default context
+                if(q==p || (q==p+1 && line.charAt(p)=='*')) ctx = null;
+                else ctx = line.substring(p,q);
+            }
+            else {
+                boolean esc = false;
+                int q=p;
+                buf.setLength(0);
+                while(q<line.length()) {
+                    c = line.charAt(q);
+                    if(c=='=' && !esc) break;
+                    if(!esc && c=='\\') esc = true;
+                    else {
+                        esc = false;
+                        buf.append(c);
+                    }
+                    q ++;
+                }
+                // Err on the safe side: malformed config definition
+                if(esc||c!='=') throw new IOException("Malformed config definition at \""+line+"\"");
+                String key = buf.toString();
+                String val;
+                p = ++q;
+                if(p>=line.length()) {
+                    val = "";
+                }
+                // Handle multi-line values (partial lines terminated by a lone \ character)
+                else if(line.charAt(line.length()-1)=='\\') {
+                    buf.setLength(0);
+                    while(line!=null) {
+                        esc=false;
+                        while(q<line.length()) {
+                            c=line.charAt(q++);
+                            if(!esc && c=='\\') esc = true;
+                            else {
+                                esc = false;
+                                buf.append(c);
+                            }
+                        }
+                        if(esc) {
+                            buf.append('\n');
+                            line=lrd.readLine();
+                            q = 0;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    val = buf.toString();
+                }
+                else val = line.substring(p);
+                cfg.add(ctx,key,val);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int saveConfig(Configuration cfg, Writer wrt) throws IOException {
+        int count=0;
+        for(String ctx: cfg.contexts()) {
+            wrt.append('[').append(ctx).append(']').append('\n');
+            for(Configuration.Entry var: cfg.context(ctx)) {
+                if(var.key().startsWith("#")) {
+                    if(var.value()!=null) wrt.append('\\');
+                }
+                wrt.append(var.key().replace("\\", "\\\\").replace("=", "\\=")).append('=');
+                if(var.value()!=null) wrt.append(var.value().toString().replace("\\","\\\\").replace("\n", "\\\n"));
+                wrt.append('\n');
+                count++;
+            }
+            wrt.append('\n');
+        }
+        return count;
+    }
+
 }
