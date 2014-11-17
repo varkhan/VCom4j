@@ -171,7 +171,7 @@ public class Level implements Serializable {
 
     /**
      * Resolved deserialized level to one of the stock instances.
-     * May be overriden in classes derived from Level.
+     * May be overridden in classes derived from Level.
      * @return resolved object.
      * @throws java.io.ObjectStreamException if exception during resolution.
      */
