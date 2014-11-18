@@ -232,11 +232,14 @@ public class PolyP2D extends AbstractShape2D implements Iterable<Point2D>  {
         double d0 = dx0*dx0+dy0*dy0;
         double d1 = dx1*dx1+dy1*dy1;
         double d2 = dx2*dx2+dy2*dy2;
-        double s = d0+d1+d2;
         // Derived from Heron's formula
-        double a = s*s - 2 * (d0*d0+d1*d1+d2*d2);
+//        double s = d0+d1+d2;
+//        double a = s*s - 2 * (d0*d0+d1*d1+d2*d2);
+        // Careful of numerical drift here... it's easy to get a<0 with the wrong sequence like above
+        double a = 2*d0*d1 + 2*d1*d2 + 2*d2*d0 - d0*d0 - d1*d1 - d2*d2;
         double d = 0.25 * Math.sqrt(a);
         double z = dx0*dy1-dx1*dy0;
+        if(Double.isNaN(d)) System.err.println("Poly area ??? d="+d+" a="+a+" z="+z);
         return (z>=0) ? d:-d;
     }
 

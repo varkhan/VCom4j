@@ -231,9 +231,11 @@ public class PolyD2D extends AbstractShape2D implements Iterable<Point2D> {
         double d0 = dx*dx+dy*dy;
         double d1 = x1*x1+y1*y1;
         double d2 = x2*x2+y2*y2;
-        double s = d0+d1+d2;
         // Derived from Heron's formula
-        double a = s*s - 2 * (d0*d0+d1*d1+d2*d2);
+//        double s = d0+d1+d2;
+//        double a = s*s - 2 * (d0*d0+d1*d1+d2*d2);
+        // Careful of numerical drift here... it's easy to get a<0 with the wrong sequence like above
+        double a = 2*d0*d1 + 2*d1*d2 + 2*d2*d0 - d0*d0 - d1*d1 - d2*d2;
         double d = 0.25 * Math.sqrt(a);
         double z = x1*y2-x2*y1;
         return (z>=0) ? d:-d;

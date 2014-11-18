@@ -28,14 +28,16 @@ public class PolyP2Dc extends PolyP2D {
 
     @Override
     public boolean contains(double x, double y) {
+        int w=winding(x, y, pts);
+//        if(w!=0) System.err.println("Contains "+chr+" ("+x+","+y+") "+w+" "+new RectD2D(this)+" "+this);
         switch(chr) {
             case NONE:
-                return (winding(x, y, pts)&1)!=0;
+                return (w&1)!=0;
             case DEX:
-                return winding(x, y, pts)>0;
+                return w>0;
             case LEV:
-                return winding(x, y, pts)<0;
+                return w<0;
         }
-        return (winding(x, y, pts)&1)!=0;
+        return (w&1)!=0;
     }
 }
