@@ -1,5 +1,8 @@
 package net.varkhan.core.geo.geometry;
 
+import java.util.Iterator;
+
+
 /**
  * <b></b>.
  * <p/>
@@ -8,7 +11,7 @@ package net.varkhan.core.geo.geometry;
  * @date 11/16/14
  * @time 12:34 PM
  */
-public class UnionShape extends AbstractShape {
+public class UnionShape extends AbstractShape implements Iterable<Shape> {
 
     protected int dim;
     protected Shape[] shapes;
@@ -142,7 +145,7 @@ public class UnionShape extends AbstractShape {
 
     @Override
     public double dmin2(double... point) {
-        double d = 0;
+        double d = Double.MAX_VALUE;
         for(Shape s: shapes) {
             double sd = s.dmin2(point);
             if(d>sd) d=sd;
@@ -152,9 +155,9 @@ public class UnionShape extends AbstractShape {
 
     @Override
     public double dmax2(double... point) {
-        double d = Double.MAX_VALUE;
+        double d = 0;
         for(Shape s: shapes) {
-            double sd = s.dmin2(point);
+            double sd = s.dmax2(point);
             if(d<sd) d=sd;
         }
         return d;
@@ -172,6 +175,19 @@ public class UnionShape extends AbstractShape {
         }
         buf.append(" }");
         return buf.toString();
+    }
+
+    @Override
+    public Iterator<Shape> iterator() {
+        return new Iterator<Shape>() {
+            private volatile int pos=0;
+            @Override
+            public boolean hasNext() { return pos<shapes.length; }
+            @Override
+            public Shape next() { return shapes[pos++]; }
+            @Override
+            public void remove() { }
+        };
     }
 
 }

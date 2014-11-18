@@ -1,5 +1,8 @@
 package net.varkhan.core.geo.geometry.plane;
 
+import java.util.Iterator;
+
+
 /**
  * <b></b>.
  * <p/>
@@ -8,7 +11,7 @@ package net.varkhan.core.geo.geometry.plane;
  * @date 11/16/14
  * @time 12:34 PM
  */
-public class UnionShape2D extends AbstractShape2D {
+public class UnionShape2D extends AbstractShape2D implements Iterable<Shape2D> {
 
     protected Shape2D[] shapes;
 
@@ -154,9 +157,11 @@ public class UnionShape2D extends AbstractShape2D {
 
     @Override
     public double dmin2(double x, double y) {
-        double d = 0;
+        double d = Double.MAX_VALUE;
         for(Shape2D s: shapes) {
             double sd = s.dmin2(x,y);
+            // Distance can't be smaller than dist to bbox
+            if(sd<new RectD2D(s).dmin2(x,y)) System.err.println("Dist from "+x+","+y+" is "+sd+" ("+new RectD2D(s).dmin2(x,y)+")"+" to "+s.toString());
             if(d>sd) d=sd;
         }
         return d;
@@ -164,9 +169,9 @@ public class UnionShape2D extends AbstractShape2D {
 
     @Override
     public double dmax2(double x, double y) {
-        double d = Double.MAX_VALUE;
+        double d = 0;
         for(Shape2D s: shapes) {
-            double sd = s.dmin2(x,y);
+            double sd = s.dmax2(x,y);
             if(d<sd) d=sd;
         }
         return d;
@@ -184,6 +189,19 @@ public class UnionShape2D extends AbstractShape2D {
         }
         buf.append(" }");
         return buf.toString();
+    }
+
+    @Override
+    public Iterator<Shape2D> iterator() {
+        return new Iterator<Shape2D>() {
+            private volatile int pos=0;
+            @Override
+            public boolean hasNext() { return pos<shapes.length; }
+            @Override
+            public Shape2D next() { return shapes[pos++]; }
+            @Override
+            public void remove() { }
+        };
     }
 
 }

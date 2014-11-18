@@ -1,5 +1,8 @@
 package net.varkhan.core.geo.geometry.plane;
 
+import java.util.Iterator;
+
+
 /**
  * <b></b>.
  * <p/>
@@ -8,7 +11,7 @@ package net.varkhan.core.geo.geometry.plane;
  * @date 9/23/12
  * @time 12:16 PM
  */
-public class PolyD2D extends AbstractShape2D {
+public class PolyD2D extends AbstractShape2D implements Iterable<Point2D> {
 
     protected int num;
     protected double[] xpts;
@@ -123,7 +126,7 @@ public class PolyD2D extends AbstractShape2D {
 
     @Override
     public double dmin2(double x, double y) {
-        if(contains(x,y)) return 0;
+        if(contains(x,y)) return 0.0;
         return distmin2(x, y, num, xpts, ypts);
     }
 
@@ -183,22 +186,23 @@ public class PolyD2D extends AbstractShape2D {
             double yi = ypts[i]-y;
             double dx = xi-x0;
             double dy = yi-y0;
-            double p0 = x0*dx+y0*dy;
-            double pi = xi*dx+yi*dy;
+            double p0 = -(x0*dx+y0*dy);
+//            double pi = xi*dx+yi*dy;
             double di = xi*xi+yi*yi;
-            if(p0*pi<0) {
-                double dd = dx*dx+dy*dy;
-                double z2 = dd+d0+di;
-                /** Derived from Heron's formula:
-                 * a2 is the square area of the triangle
-                 * a2 = dl*di/4
-                 * a2 = ((dd+d0+di)^2-2*(dd^2+d0^2+di^2))/16;
-                 * => dl = 4*a2/di = ((z2*z2)-2*(dd*dd+d0*d0+di*di))/(4*di);
-                 **/
-                double dl = (0.125*(z2*z2)-0.25*(dd*dd+d0*d0+di*di))/di;
+            double dd = dx*dx+dy*dy;
+            if(p0>0 && p0<dd) {
+                double t = p0/dd;
+                double tx = x0 + t*dx;
+                double ty = y0 + t*dy;
+                double dl = tx*tx+ty*ty;
+//                System.err.println("("+xi+","+yi+") <"+d0+","+di+"> ["+dl+"@"+tx+","+ty+"] "+p0+" "+dd);
+                assert dl<d0 && dl<di: "This can't happen: dist to segment "+dl+" > dist to endpoints "+d0+" | "+di;
                 if(d>dl) d=dl;
             }
-            else if(d>di) d = di;
+            else {
+//                System.err.println("("+xi+","+yi+") <"+d0+","+di+"> "+p0+" "+dd);
+                if(d>di) d = di;
+            }
             x0 = xi;
             y0 = yi;
             d0 = di;
@@ -246,6 +250,19 @@ public class PolyD2D extends AbstractShape2D {
         double a = Math.acos(dp/Math.sqrt(d1 * d2));
         double z = x1*y2-x2*y1;
         return (z>=0) ? a:-a;
+    }
+
+    @Override
+    public Iterator<Point2D> iterator() {
+        return new Iterator<Point2D>() {
+            private volatile int pos=0;
+            @Override
+            public boolean hasNext() { return pos<num; }
+            @Override
+            public Point2D next() { PointD2D p = new PointD2D(xpts[pos],ypts[pos]); pos ++; return p; }
+            @Override
+            public void remove() { }
+        };
     }
 
 }
