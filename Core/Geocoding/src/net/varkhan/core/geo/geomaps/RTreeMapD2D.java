@@ -407,11 +407,12 @@ public class RTreeMapD2D<K extends Shape2D,V> implements MetricMap<K,V> {
             else {
                 double din = Double.MAX_VALUE;
                 Node<K,V> nin = null;
+                double dls = 0;
                 for(Node<K,V> n: nodes) {
-                    double d = n.ext(gxmin,gxmax,gymin,gymax);
-                    if(d<din) { din=d; nin=n; }
+                    double d = dls = n.ext(gxmin,gxmax,gymin,gymax);
+                    if(d<=din) { din=d; nin=n; }
                 }
-                if(nin==null) throw new RuntimeException("Whoops! cannot find a matching segment");
+                if(nin==null) throw new RuntimeException("No matching segment found within "+din+" of [ "+gxmin+":"+gymin+" x "+gxmax+":"+gymax+" ]\n\tfor "+key+"\n\tfrom "+Arrays.toString(nodes));
                 // Should we add to an existing node?
                 if(din==0 || nodes.length>=maxNodes) {
                     if(!nin.add(key,val)) return false;
