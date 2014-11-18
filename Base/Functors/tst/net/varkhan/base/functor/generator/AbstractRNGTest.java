@@ -93,7 +93,7 @@ public abstract class AbstractRNGTest extends TestCase {
             if((r&0x0000000000000001L)==0) t++;
         }
         long t1 = System.currentTimeMillis();
-        assertEquals("ratio01 ~ 0.5",0.5,((double)t)/count,1.0/Math.sqrt(count));
+        assertEquals("ratio01 ~ 0.5 +/-"+2.0/Math.sqrt(count),0.5,((double)t)/count,2.0/Math.sqrt(count));
         System.err.println("Computed "+count+" rands in "+((t1-t0)/1000)+"s, "+(1.0e6*(t1-t0)/count)+"ns/call, with "+((double)t)/count+" mix, +/-"+(1.0/Math.sqrt(count)));
 
         // Print 5-sequences
