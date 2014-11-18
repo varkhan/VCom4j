@@ -3,6 +3,9 @@ package net.varkhan.base.functor.predicate;
 import junit.framework.TestCase;
 import net.varkhan.base.functor.Predicate;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 
 /**
  * <b></b>.
@@ -14,7 +17,7 @@ import net.varkhan.base.functor.Predicate;
  */
 public class SetPredicateTest extends TestCase {
 
-    public void testSet() throws Exception {
+    public void testArray() throws Exception {
         class O {
             int i;
             O(int i) { this.i=i; }
@@ -53,4 +56,120 @@ public class SetPredicateTest extends TestCase {
         assertFalse("[01] 11",p20102.invoke(o11,null));
     }
 
+    public void testSet() throws Exception {
+        class O {
+            int i;
+            O(int i) { this.i=i; }
+            public boolean equals(Object o) {
+                if(this==o) return true;
+                if(o==null||getClass()!=o.getClass()) return false;
+                return !(i==0&&((O) o).i==0)&&i==((O) o).i;
+            }
+            public int hashCode() {
+                return i;
+            }
+        }
+        O o01=new O(0);
+        O o02=new O(0);
+        O o11=new O(1);
+        Predicate<O,Object> p00 = new SetPredicate<O, Object>(new HashSet<O>(Arrays.asList(new O[0])));
+        Predicate<O,Object> p101 = new SetPredicate<O, Object>(new HashSet<O>(Arrays.asList(o01)));
+        Predicate<O,Object> p102 = new SetPredicate<O, Object>(new HashSet<O>(Arrays.asList(o02)));
+        Predicate<O,Object> p111 = new SetPredicate<O, Object>(new HashSet<O>(Arrays.asList(o11)));
+        Predicate<O,Object> p20102 = new SetPredicate<O, Object>(new HashSet<O>(Arrays.asList(o01,o02)));
+        assertFalse("[] 01",p00.invoke(o01,null));
+        assertFalse("[] 02",p00.invoke(o02,null));
+        assertFalse("[] 11",p00.invoke(o11,null));
+        assertTrue("[01] 01", p101.invoke(o01, null));
+        assertFalse("[01] 02", p101.invoke(o02, null));
+        assertFalse("[01] 11",p101.invoke(o11,null));
+        assertFalse("[02] 01",p102.invoke(o01,null));
+        assertTrue("[02] 02", p102.invoke(o02, null));
+        assertFalse("[02] 11", p102.invoke(o11, null));
+        assertFalse("[11] 01",p111.invoke(o01,null));
+        assertFalse("[11] 02", p111.invoke(o02, null));
+        assertTrue("[11] 11", p111.invoke(o11, null));
+        assertTrue("[11] 12", p111.invoke(new O(1), null));
+        assertTrue("[01] 01", p20102.invoke(o01, null));
+        assertTrue("[01] 02", p20102.invoke(o02, null));
+        assertFalse("[01] 11",p20102.invoke(o11,null));
+    }
+
+    public void testIterator() throws Exception {
+        class O {
+            int i;
+            O(int i) { this.i=i; }
+            public boolean equals(Object o) {
+                if(this==o) return true;
+                if(o==null||getClass()!=o.getClass()) return false;
+                return !(i==0&&((O) o).i==0)&&i==((O) o).i;
+            }
+            public int hashCode() {
+                return i;
+            }
+        }
+        O o01=new O(0);
+        O o02=new O(0);
+        O o11=new O(1);
+        Predicate<O,Object> p00 = new SetPredicate<O, Object>(Arrays.asList(new O[0]));
+        Predicate<O,Object> p101 = new SetPredicate<O, Object>(Arrays.asList(o01));
+        Predicate<O,Object> p102 = new SetPredicate<O, Object>(Arrays.asList(o02));
+        Predicate<O,Object> p111 = new SetPredicate<O, Object>(Arrays.asList(o11));
+        Predicate<O,Object> p20102 = new SetPredicate<O, Object>(Arrays.asList(o01,o02));
+        assertFalse("[] 01",p00.invoke(o01,null));
+        assertFalse("[] 02",p00.invoke(o02,null));
+        assertFalse("[] 11",p00.invoke(o11,null));
+        assertTrue("[01] 01", p101.invoke(o01, null));
+        assertFalse("[01] 02", p101.invoke(o02, null));
+        assertFalse("[01] 11",p101.invoke(o11,null));
+        assertFalse("[02] 01",p102.invoke(o01,null));
+        assertTrue("[02] 02", p102.invoke(o02, null));
+        assertFalse("[02] 11", p102.invoke(o11, null));
+        assertFalse("[11] 01",p111.invoke(o01,null));
+        assertFalse("[11] 02", p111.invoke(o02, null));
+        assertTrue("[11] 11", p111.invoke(o11, null));
+        assertTrue("[11] 12", p111.invoke(new O(1), null));
+        assertTrue("[01] 01", p20102.invoke(o01, null));
+        assertTrue("[01] 02", p20102.invoke(o02, null));
+        assertFalse("[01] 11",p20102.invoke(o11,null));
+    }
+
+    public void testIterable() throws Exception {
+        class O {
+            int i;
+            O(int i) { this.i=i; }
+            public boolean equals(Object o) {
+                if(this==o) return true;
+                if(o==null||getClass()!=o.getClass()) return false;
+                return !(i==0&&((O) o).i==0)&&i==((O) o).i;
+            }
+            public int hashCode() {
+                return i;
+            }
+        }
+        O o01=new O(0);
+        O o02=new O(0);
+        O o11=new O(1);
+        Predicate<O,Object> p00 = new SetPredicate<O, Object>(Arrays.asList(new O[0]).iterator());
+        Predicate<O,Object> p101 = new SetPredicate<O, Object>(Arrays.asList(o01).iterator());
+        Predicate<O,Object> p102 = new SetPredicate<O, Object>(Arrays.asList(o02).iterator());
+        Predicate<O,Object> p111 = new SetPredicate<O, Object>(Arrays.asList(o11).iterator());
+        Predicate<O,Object> p20102 = new SetPredicate<O, Object>(Arrays.asList(o01,o02).iterator());
+        assertFalse("[] 01",p00.invoke(o01,null));
+        assertFalse("[] 02",p00.invoke(o02,null));
+        assertFalse("[] 11",p00.invoke(o11,null));
+        assertTrue("[01] 01", p101.invoke(o01, null));
+        assertFalse("[01] 02", p101.invoke(o02, null));
+        assertFalse("[01] 11",p101.invoke(o11,null));
+        assertFalse("[02] 01",p102.invoke(o01,null));
+        assertTrue("[02] 02", p102.invoke(o02, null));
+        assertFalse("[02] 11", p102.invoke(o11, null));
+        assertFalse("[11] 01",p111.invoke(o01,null));
+        assertFalse("[11] 02", p111.invoke(o02, null));
+        assertTrue("[11] 11", p111.invoke(o11, null));
+        assertTrue("[11] 12", p111.invoke(new O(1), null));
+        assertTrue("[01] 01", p20102.invoke(o01, null));
+        assertTrue("[01] 02", p20102.invoke(o02, null));
+        assertFalse("[01] 11",p20102.invoke(o11,null));
+    }
 }

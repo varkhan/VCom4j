@@ -44,6 +44,14 @@ public class AggregateFunctionalTest extends TestCase {
         assertEquals("sum()",2.0,AggregateFunctional.sum(ConstFunctional.as(1.0),ConstFunctional.as(2.0),ConstFunctional.as(-1.0)).invoke("foo",null));
     }
 
+    public void testProd() throws Exception {
+        assertEquals("sum()",1.0,AggregateFunctional.prod().invoke("foo",null));
+        assertEquals("sum()",0.0,AggregateFunctional.prod(ConstFunctional.as(0.0)).invoke("foo",null));
+        assertEquals("sum()",1.0,AggregateFunctional.prod(ConstFunctional.as(1.0)).invoke("foo",null));
+        assertEquals("sum()",2.0,AggregateFunctional.prod(ConstFunctional.as(1.0),ConstFunctional.as(2.0)).invoke("foo",null));
+        assertEquals("sum()",-4.0,AggregateFunctional.prod(ConstFunctional.as(2.0),ConstFunctional.as(2.0),ConstFunctional.as(-1.0)).invoke("foo",null));
+    }
+
     public void testMin() throws Exception {
         assertEquals("min()",+Double.MAX_VALUE,AggregateFunctional.min().invoke("foo",null));
         assertEquals("min()",0.0,AggregateFunctional.min(ConstFunctional.as(0.0)).invoke("foo",null));
