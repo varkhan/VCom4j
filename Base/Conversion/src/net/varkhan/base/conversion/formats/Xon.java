@@ -139,6 +139,19 @@ public class Xon {
      **/
 
     /**
+     * <b>An interface that can be implemented by objects that can be written as Xon.</b>
+     * <p/>
+     * This interface defines a #writeXon(Appendable) method, that handles the
+     * serialization of the object's data as Xon to a character stream.
+     * <p/>
+     * It is the responsibility of the implementor to ensure that <em>valid Xon</em>
+     * is produced.
+     */
+    public static interface Writable {
+        public void writeXon(Appendable out) throws IOException;
+    }
+
+    /**
      * Writes an object as a String.
      *
      * @param val the object to write
@@ -202,6 +215,9 @@ public class Xon {
             out.append(SEP_COLLEC_S);
             writeCollec(out, (Collection<Object>) obj);
             out.append(SEP_COLLEC_E);
+        }
+        else if(obj instanceof Writable) {
+            ((Writable) obj).writeXon(out);
         }
         else throw new IllegalArgumentException("Cannot serialize object to XON: unknown class "+obj.getClass().getCanonicalName());
         return out;

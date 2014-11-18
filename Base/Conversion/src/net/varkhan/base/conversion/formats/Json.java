@@ -45,6 +45,19 @@ public class Json {
     }
 
     /**
+     * <b>An interface that can be implemented by objects that can be written as Json.</b>
+     * <p/>
+     * This interface defines a #writeJson(Appendable) method, that handles the
+     * serialization of the object's data as Json to a character stream.
+     * <p/>
+     * It is the responsibility of the implementor to ensure that <em>valid Json</em>
+     * is produced.
+     */
+    public static interface Writable {
+        public void writeJson(Appendable out) throws IOException;
+    }
+
+    /**
      * Writes an object to an {@link Appendable}.
      *
      * @param out the output Appendable
@@ -85,6 +98,9 @@ public class Json {
             out.append('[');
             writeList(out, (List<Object>) obj);
             out.append(']');
+        }
+        else if(obj instanceof Writable) {
+            ((Writable) obj).writeJson(out);
         }
         else throw new IllegalArgumentException("Cannot serialize object to JSON: unknown class "+obj.getClass().getCanonicalName());
         return out;
