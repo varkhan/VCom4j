@@ -41,6 +41,7 @@ public class PolyP2D extends AbstractShape2D {
 
     public <P extends Point2D> PolyP2D(P... pts) {
         this.pts=pts.clone();
+        computeInvariants();
     }
 
     protected void computeInvariants() {

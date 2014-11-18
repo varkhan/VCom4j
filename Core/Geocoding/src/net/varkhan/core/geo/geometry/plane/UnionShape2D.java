@@ -46,7 +46,7 @@ public class UnionShape2D extends AbstractShape2D {
         double xmax=-Double.MAX_VALUE;
         for(Shape2D s: shapes) {
             double sxmax = s.xmax();
-            if(xmax>sxmax) xmax=sxmax;
+            if(xmax<sxmax) xmax=sxmax;
         }
         return xmax;
     }
@@ -56,7 +56,7 @@ public class UnionShape2D extends AbstractShape2D {
         double ymax=-Double.MAX_VALUE;
         for(Shape2D s: shapes) {
             double symax = s.ymax();
-            if(ymax>symax) ymax=symax;
+            if(ymax<symax) ymax=symax;
         }
         return ymax;
     }
