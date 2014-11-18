@@ -118,11 +118,9 @@ public class StringSerializer<C> implements Serializer<CharSequence,C> {
                 }
                 else if(b<0xF0) {
                     ca[p++]=(char) (((b&0x0F)<<12)|((buf.get()&0x3F)<<6)|(buf.get()&0x3F));
-                    p++;
                 }
                 else if(b<0xF8) {
                     ca[p++]=(char) (((b&0x07)<<18)|((buf.get()&0x3F)<<12)|((buf.get()&0x3F)<<6)|(buf.get()&0x3F));
-                    p++;
                 }
                 else {
                     // Invalid character encoding, or in the middle of a character
@@ -141,36 +139,36 @@ public class StringSerializer<C> implements Serializer<CharSequence,C> {
 
     public static String _decode(byte[] dat, long pos, long len) {
         try {
+            int p=(int) pos;
+            int q=(int) (pos+len);
             int l=(int) VariadicSerializer._decode(dat, pos, len);
+            p+=VariadicSerializer._length(l);
             char[] ca=new char[l];
-            pos+=VariadicSerializer._length(l);
-            len-=VariadicSerializer._length(l);
-            int i=0, p=0;
-            while(p<l) {
-                int b=0xFF&dat[i++];
+            int i=0;
+            while(i<l && p<q) {
+                int b=0xFF&dat[p++];
                 if(b<0x80) {
-                    ca[p++]=(char) (b&0x7F);
+                    ca[i++]=(char) (b&0x7F);
                 }
                 else if(b<0xC0) {
                     // Invalid character encoding, or in the middle of a character
-                    throw new DecodingException();
+                    throw new DecodingException("Invalid byte 0x"+Integer.toHexString(b));
                 }
                 else if(b<0xE0) {
-                    ca[p++]=(char) (((b&0x1F)<<6)|(dat[i++]&0x3F));
+                    ca[i++]=(char) (((b&0x1F)<<6)|(dat[p++]&0x3F));
                 }
                 else if(b<0xF0) {
-                    ca[p++]=(char) (((b&0x0F)<<12)|((dat[i++]&0x3F)<<6)|(dat[i++]&0x3F));
-                    p++;
+                    ca[i++]=(char) (((b&0x0F)<<12)|((dat[p++]&0x3F)<<6)|(dat[p++]&0x3F));
                 }
                 else if(b<0xF8) {
-                    ca[p++]=(char) (((b&0x07)<<18)|((dat[i++]&0x3F)<<12)|((dat[i++]&0x3F)<<6)|(dat[i++]&0x3F));
-                    p++;
+                    ca[i++]=(char) (((b&0x07)<<18)|((dat[p++]&0x3F)<<12)|((dat[p++]&0x3F)<<6)|(dat[p++]&0x3F));
                 }
                 else {
                     // Invalid character encoding, or in the middle of a character
-                    throw new DecodingException();
+                    throw new DecodingException("Invalid byte 0x"+Integer.toHexString(b));
                 }
             }
+            if(i<l) throw new DecodingException("Buffer underflow: "+i+" characters out of "+l);
             return new String(ca);
         }
         catch(ArrayIndexOutOfBoundsException e) {
@@ -256,9 +254,10 @@ public class StringSerializer<C> implements Serializer<CharSequence,C> {
     public static long _encode(CharSequence obj, byte[] dat, long pos, long len) {
         try {
             int p=(int) pos;
-            p+=VariadicSerializer._encode((long) obj.length(), dat, p, len);
+            int q=(int) (pos+len);
+            p+=VariadicSerializer._encode((long) obj.length(), dat, pos, len);
             int i=0;
-            while(i<obj.length()) {
+            while(i<obj.length() && p<q) {
                 char c=obj.charAt(i++);
                 if(c<0x80) {
                     dat[p++]=(byte) (0x7F&c);
@@ -279,6 +278,7 @@ public class StringSerializer<C> implements Serializer<CharSequence,C> {
                     dat[p++]=(byte) (0x3F&c);
                 }
             }
+            if(i<obj.length()) throw new EncodingException("Buffer overflow: "+i+" characters out of "+obj.length());
             return p-pos;
         }
         catch(ArrayIndexOutOfBoundsException e) {

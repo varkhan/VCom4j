@@ -96,6 +96,7 @@ public class VariadicSerializer<C> implements Serializer<Long,C> {
             while(off++<9) {
                 if(b>=0) return v|b;
                 v=(v|(-b-1))<<7;
+                if(off>len) throw new DecodingException("Buffer underflow at byte "+off);
                 b=dat[(int) pos++];
             }
             return v|b;

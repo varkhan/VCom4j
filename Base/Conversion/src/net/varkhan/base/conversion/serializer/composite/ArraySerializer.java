@@ -3,6 +3,8 @@
  */
 package net.varkhan.base.conversion.serializer.composite;
 
+import net.varkhan.base.conversion.serializer.DecodingException;
+import net.varkhan.base.conversion.serializer.EncodingException;
 import net.varkhan.base.conversion.serializer.Serializer;
 import net.varkhan.base.conversion.serializer.primitives.VariadicSerializer;
 
@@ -71,12 +73,15 @@ public class ArraySerializer<S,C> implements Serializer<S[],C> {
         long l=VariadicSerializer._decode(dat, pos, len);
         long c=VariadicSerializer._length(l);
         @SuppressWarnings("unchecked")
-        S[] v=(S[]) Array.newInstance(type, (int) l);
+        S[] obj=(S[]) Array.newInstance(type, (int) l);
         int i=0;
-        while(i<l) {
-            c+=serializer.length(v[i++]=serializer.decode(dat, pos+c, len-c, ctx), ctx);
+        while(i<l && c<len) {
+            S v=serializer.decode(dat, pos+c, len-c, ctx);
+            c+=serializer.length(v, ctx);
+            obj[i++]=v;
         }
-        return v;
+        if(i<l) throw new DecodingException("Buffer underflow: "+i+" elements out of "+l);
+        return obj;
     }
 
     public long encode(S[] obj, OutputStream stm, C ctx) {
@@ -93,7 +98,12 @@ public class ArraySerializer<S,C> implements Serializer<S[],C> {
 
     public long encode(S[] obj, byte[] dat, long pos, long len, C ctx) {
         long c=VariadicSerializer._encode(obj.length, dat, pos, len);
-        for(S v : obj) c+=serializer.encode(v, dat, pos+c, len-c, ctx);
+        int i=0;
+        while(i<obj.length && c<len) {
+            S v=obj[i++];
+            c+=serializer.encode(v, dat, pos+c, len-c, ctx);
+        }
+        if(i<obj.length) throw new EncodingException("Buffer overflow: "+i+" characters out of "+obj.length);
         return c;
     }
 
