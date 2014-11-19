@@ -19,6 +19,37 @@ import java.util.Random;
  */
 public class PrimitiveTypeSerializerTest extends TestCase {
 
+    public void testNullIS() {
+        NullSerializer<Object,Object> s=new NullSerializer<Object,Object>();
+        ByteArrayOutputStream os=new ByteArrayOutputStream();
+        s.encode(new Object(), os, null);
+        InputStream is=new ByteArrayInputStream(os.toByteArray());
+        assertEquals("null", null, s.decode(is, null));
+    }
+
+    public void testNullBB() {
+        NullSerializer<Object,Object> s=new NullSerializer<Object,Object>();
+        ByteBuffer bb = ByteBuffer.allocate(10);
+        s.encode(new Object(), bb, null);
+        bb.flip();
+        assertEquals("null", null, s.decode(bb, null));
+    }
+
+    public void testNullAR() {
+        NullSerializer<Object,Object> s=new NullSerializer<Object,Object>();
+        byte[] ar = new byte[10];
+        long pos = 0;
+        pos += s.encode(new Object(), ar, pos, ar.length-pos, null);
+        long len = pos;
+        pos = 0;
+        Object v;
+        v=s.decode(ar, pos, len-pos, null);
+        pos+=s.length(v, null);
+        assertEquals("null", null, v);
+        assertEquals("len",pos,len);
+    }
+
+
     public void testBooleanIS() {
         BooleanSerializer<Object> s=new BooleanSerializer<Object>();
         ByteArrayOutputStream os=new ByteArrayOutputStream();
@@ -87,6 +118,7 @@ public class PrimitiveTypeSerializerTest extends TestCase {
         }
     }
 
+
     public void testShortIS() {
         short[] vals=new short[1000];
         Random rand=new Random();
@@ -125,6 +157,7 @@ public class PrimitiveTypeSerializerTest extends TestCase {
             assertEquals(""+val, val, v.shortValue());
         }
     }
+
 
     public void testIntIS() {
         int[] vals=new int[1000];
@@ -165,6 +198,7 @@ public class PrimitiveTypeSerializerTest extends TestCase {
         }
     }
 
+
     public void testLongIS() {
         long[] vals=new long[1000];
         Random rand=new Random();
@@ -204,6 +238,7 @@ public class PrimitiveTypeSerializerTest extends TestCase {
         }
     }
 
+
     public void testVariadicIS() {
         long[] vals=new long[1000];
         Random rand=new Random();
@@ -240,6 +275,86 @@ public class PrimitiveTypeSerializerTest extends TestCase {
             Long v=s.decode(ar, pos, len-pos, null);
             pos += s.length(v, null);
             assertEquals(""+val, val, v.longValue());
+        }
+    }
+
+
+    public void testFloatIS() {
+        float[] vals=new float[1000];
+        Random rand=new Random();
+        for(int i=0;i<vals.length;i++) vals[i]=Float.MAX_VALUE*rand.nextFloat();
+        FloatSerializer<Object> s=new FloatSerializer<Object>();
+        ByteArrayOutputStream os=new ByteArrayOutputStream();
+        for(float val : vals) s.encode(val, os, null);
+        InputStream is=new ByteArrayInputStream(os.toByteArray());
+        for(float val : vals) assertEquals(""+val, val, s.decode(is, null).floatValue());
+    }
+
+    public void testFloatBB() {
+        float[] vals=new float[1000];
+        Random rand=new Random();
+        for(int i=0;i<vals.length;i++) vals[i]=Float.MAX_VALUE*rand.nextFloat();
+        FloatSerializer<Object> s=new FloatSerializer<Object>();
+        ByteBuffer bb = ByteBuffer.allocate(4*vals.length);
+        for(float val : vals) s.encode(val, bb, null);
+        bb.flip();
+        for(float val : vals) assertEquals(""+val, val, s.decode(bb, null).floatValue());
+    }
+
+    public void testFloatAR() {
+        float[] vals=new float[1000];
+        Random rand=new Random();
+        for(int i=0;i<vals.length;i++) vals[i]=Float.MAX_VALUE*rand.nextFloat();
+        FloatSerializer<Object> s=new FloatSerializer<Object>();
+        byte[] ar = new byte[4*vals.length];
+        long pos = 0;
+        for(float val : vals) pos += s.encode(val, ar, pos, ar.length-pos, null);
+        long len = pos;
+        pos = 0;
+        for(float val : vals) {
+            Float v=s.decode(ar, pos, len-pos, null);
+            pos += s.length(v, null);
+            assertEquals(""+val, val, v.floatValue());
+        }
+    }
+
+
+    public void testDoubleIS() {
+        double[] vals=new double[1000];
+        Random rand=new Random();
+        for(int i=0;i<vals.length;i++) vals[i]=Double.MAX_VALUE*rand.nextDouble();
+        DoubleSerializer<Object> s=new DoubleSerializer<Object>();
+        ByteArrayOutputStream os=new ByteArrayOutputStream();
+        for(double val : vals) s.encode(val, os, null);
+        InputStream is=new ByteArrayInputStream(os.toByteArray());
+        for(double val : vals) assertEquals(""+val, val, s.decode(is, null).doubleValue());
+    }
+
+    public void testDoubleBB() {
+        double[] vals=new double[1000];
+        Random rand=new Random();
+        for(int i=0;i<vals.length;i++) vals[i]=Double.MAX_VALUE*rand.nextDouble();
+        DoubleSerializer<Object> s=new DoubleSerializer<Object>();
+        ByteBuffer bb = ByteBuffer.allocate(8*vals.length);
+        for(double val : vals) s.encode(val, bb, null);
+        bb.flip();
+        for(double val : vals) assertEquals(""+val, val, s.decode(bb, null).doubleValue());
+    }
+
+    public void testDoubleAR() {
+        double[] vals=new double[1000];
+        Random rand=new Random();
+        for(int i=0;i<vals.length;i++) vals[i]=Double.MAX_VALUE*rand.nextDouble();
+        DoubleSerializer<Object> s=new DoubleSerializer<Object>();
+        byte[] ar = new byte[8*vals.length];
+        long pos = 0;
+        for(double val : vals) pos += s.encode(val, ar, pos, ar.length-pos, null);
+        long len = pos;
+        pos = 0;
+        for(double val : vals) {
+            Double v=s.decode(ar, pos, len-pos, null);
+            pos += s.length(v, null);
+            assertEquals(""+val, val, v.doubleValue());
         }
     }
 
