@@ -161,13 +161,25 @@ public abstract class AbstractIndexedListTest extends TestCase {
         ilst.clear();
         for(int i=0;i<vals.length;i++) if(vals[i]!=null) ilst.set(i, vals[i]);
         ilst.clear();
-        assertTrue("isEmpty", ilst.isEmpty());
+        assertTrue("isEmpty()", ilst.isEmpty());
         for(int i=0;i<vals.length;i++) {
             assertFalse("has("+i+")", ilst.has(i));
         }
         assertEquals("size()", 0, ilst.size());
         assertEquals("head()", 0, ilst.head());
         System.out.println("clear() OK");
+    }
+
+    public <T> void featureTestFree(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+        ilst.clear();
+        long maxidx=0;
+        for(int i=0;i<vals.length;i++) if(vals[i]!=null) {
+            long idx = ilst.set(i, vals[i]);
+            if(maxidx<idx) maxidx=idx;
+        }
+        assertFalse("!has(free())",ilst.has(ilst.free()));
+        assertTrue("free()<=head()",ilst.free()<=maxidx);
+        System.out.println("free() OK");
     }
 
     public <T> void featureTestIndexes(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {

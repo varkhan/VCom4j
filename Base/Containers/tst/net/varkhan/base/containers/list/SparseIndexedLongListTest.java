@@ -69,6 +69,24 @@ public class SparseIndexedLongListTest extends AbstractIndexedLongListTest {
         featureTestClear(rand, vals, ilst, defVal);
     }
 
+    public void testFree() throws Exception {
+        Random rand=new Random(baseseed);
+        long defVal = rand.nextInt();
+        long[] vals=genLongList(rand, 1000000, 0.9, defVal);
+        IndexedLongList ilst = new SparseIndexedLongList();
+        ilst.setDefaultValue(defVal);
+        featureTestFree(rand, vals, ilst, defVal);
+    }
+
+    public void testDefault() throws Exception {
+        Random rand=new Random(baseseed);
+        long defVal = rand.nextInt();
+        long[] vals=genLongList(rand, 1000000, 0.9, defVal);
+        IndexedLongList ilst = new SparseIndexedLongList();
+        ilst.setDefaultValue(defVal);
+        featureTestDefault(rand, vals, ilst, defVal, false);
+    }
+
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
         long defVal = rand.nextInt();

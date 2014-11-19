@@ -155,6 +155,39 @@ public abstract class AbstractIndexedIntListTest extends TestCase {
         System.out.println("clear() OK");
     }
 
+    public void featureTestFree(Random rand, int[] vals, IndexedIntList ilst, int defVal) throws Exception {
+        ilst.clear();
+        long maxidx = 0;
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) {
+            long idx = ilst.set(i, vals[i]);
+            if(maxidx<idx) maxidx=idx;
+        }
+        assertFalse("!has(free())", ilst.has(ilst.free()));
+        assertTrue("free()<=head()", ilst.free()<=maxidx);
+        System.out.println("free() OK");
+    }
+
+    public void featureTestDefault(Random rand, int[] vals, IndexedIntList ilst, int defVal, boolean set) throws Exception {
+        ilst.clear();
+        long maxidx = 0;
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) {
+            long idx = ilst.set(i, vals[i]);
+            if(maxidx<idx) maxidx=idx;
+        }
+        maxidx++;
+        assertEquals("getDefault()",defVal,ilst.getDefaultValue());
+        assertEquals("get(!)",defVal,ilst.getInt(maxidx));
+        if(set) {
+            ilst.set(maxidx, defVal);
+            assertEquals("get(!)", defVal, ilst.getInt(maxidx));
+            assertFalse("has(def)", ilst.has(maxidx));
+        }
+        ilst.setDefaultValue(defVal+1);
+        assertEquals("getDefault()",defVal+1,ilst.getDefaultValue());
+        assertEquals("get(!)",defVal+1,ilst.getInt(maxidx));
+        System.out.println("default*() OK");
+    }
+
     public void featureTestIndexes(Random rand, int[] vals, IndexedIntList ilst, int defVal) throws Exception {
         ilst.clear();
         for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);

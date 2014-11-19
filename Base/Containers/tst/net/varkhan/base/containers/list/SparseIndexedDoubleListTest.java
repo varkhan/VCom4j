@@ -69,6 +69,24 @@ public class SparseIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestClear(rand, vals, ilst, defVal);
     }
 
+    public void testFree() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = rand.nextFloat();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new SparseIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestFree(rand, vals, ilst, defVal);
+    }
+
+    public void testDefault() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = rand.nextFloat();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new SparseIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestDefault(rand, vals, ilst, defVal, false);
+    }
+
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
         double defVal = rand.nextFloat();

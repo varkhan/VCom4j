@@ -147,13 +147,46 @@ public abstract class AbstractIndexedLongListTest extends TestCase {
         ilst.clear();
         for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         ilst.clear();
-        assertTrue("isEmpty", ilst.isEmpty());
+        assertTrue("isEmpty90", ilst.isEmpty());
         for(int i=0;i<vals.length;i++) {
             assertFalse("has("+i+")", ilst.has(i));
         }
         assertEquals("size()", 0, ilst.size());
         assertEquals("head()", 0, ilst.head());
         System.out.println("clear() OK");
+    }
+
+    public void featureTestFree(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {
+        ilst.clear();
+        long maxidx = 0;
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) {
+            long idx = ilst.set(i, vals[i]);
+            if(maxidx<idx) maxidx=idx;
+        }
+        assertFalse("!has(free())", ilst.has(ilst.free()));
+        assertTrue("free()<=head()", ilst.free()<=maxidx);
+        System.out.println("free() OK");
+    }
+
+    public void featureTestDefault(Random rand, long[] vals, IndexedLongList ilst, long defVal, boolean set) throws Exception {
+        ilst.clear();
+        long maxidx = 0;
+        for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) {
+            long idx = ilst.set(i, vals[i]);
+            if(maxidx<idx) maxidx=idx;
+        }
+        maxidx++;
+        assertEquals("getDefault()", defVal, ilst.getDefaultValue());
+        assertEquals("get(!)", defVal, ilst.getLong(maxidx));
+        if(set) {
+            ilst.set(maxidx, defVal);
+            assertEquals("get(!)", defVal, ilst.getLong(maxidx));
+            assertFalse("has(def)", ilst.has(maxidx));
+        }
+        ilst.setDefaultValue(defVal+1);
+        assertEquals("getDefault()",defVal+1,ilst.getDefaultValue());
+        assertEquals("get(!)",defVal+1,ilst.getLong(maxidx));
+        System.out.println("default*() OK");
     }
 
     public void featureTestIndexes(Random rand, long[] vals, IndexedLongList ilst, long defVal) throws Exception {

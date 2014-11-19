@@ -69,6 +69,24 @@ public class ArrayIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestClear(rand, vals, ilst, defVal);
     }
 
+    public void testFree() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new ArrayIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestFree(rand, vals, ilst, defVal);
+    }
+
+    public void testDefault() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new ArrayIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestDefault(rand, vals, ilst, defVal, true);
+    }
+
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
         double defVal = 0;//rand.nextDouble();

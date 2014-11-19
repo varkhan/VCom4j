@@ -69,6 +69,24 @@ public class BlockIndexedIntListTest extends AbstractIndexedIntListTest {
         featureTestClear(rand, vals, ilst, defVal);
     }
 
+    public void testFree() throws Exception {
+        Random rand=new Random(baseseed);
+        int defVal = rand.nextInt();
+        int[] vals=genIntegerList(rand, 1000000, 0.9, defVal);
+        IndexedIntList ilst = new BlockIndexedIntList();
+        ilst.setDefaultValue(defVal);
+        featureTestFree(rand, vals, ilst, defVal);
+    }
+
+    public void testDefault() throws Exception {
+        Random rand=new Random(baseseed);
+        int defVal = rand.nextInt();
+        int[] vals=genIntegerList(rand, 1000000, 0.9, defVal);
+        IndexedIntList ilst = new BlockIndexedIntList();
+        ilst.setDefaultValue(defVal);
+        featureTestDefault(rand, vals, ilst, defVal, true);
+    }
+
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
         int defVal = rand.nextInt();

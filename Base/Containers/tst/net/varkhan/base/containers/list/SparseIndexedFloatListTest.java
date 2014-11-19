@@ -69,6 +69,24 @@ public class SparseIndexedFloatListTest extends AbstractIndexedFloatListTest {
         featureTestClear(rand, vals, ilst, defVal);
     }
 
+    public void testFree() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal=rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        IndexedFloatList ilst = new SparseIndexedFloatList();
+        ilst.setDefaultValue(defVal);
+        featureTestFree(rand, vals, ilst, defVal);
+    }
+
+    public void testDefault() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal=rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        IndexedFloatList ilst = new SparseIndexedFloatList();
+        ilst.setDefaultValue(defVal);
+        featureTestDefault(rand, vals, ilst, defVal, false);
+    }
+
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
         float defVal=rand.nextFloat();

@@ -57,6 +57,13 @@ public class ArrayIndexedListTest extends AbstractIndexedListTest {
         featureTestClear(rand, vals, ilst);
     }
 
+    public void testFree() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        IndexedList<Integer> ilst = new ArrayIndexedList<Integer>();
+        featureTestFree(rand, vals, ilst);
+    }
+
     public void testIndexes() throws Exception {
         Random rand=new Random(baseseed);
         Integer[] vals=genIntegerList(rand, 1000000, 0.9);
