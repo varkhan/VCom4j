@@ -24,6 +24,15 @@ public class BlockIndexedFloatListTest extends AbstractIndexedFloatListTest {
         featureTestAdd(rand, vals, ilst, defVal);
     }
 
+    public void testAddO() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal = rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        IndexedFloatList ilst = new BlockIndexedFloatList();
+        ilst.setDefaultValue(defVal);
+        featureTestAddO(rand, vals, ilst, defVal);
+    }
+
     public void testHas() throws Exception {
         Random rand=new Random(baseseed);
         float defVal = rand.nextFloat();
@@ -49,6 +58,15 @@ public class BlockIndexedFloatListTest extends AbstractIndexedFloatListTest {
         IndexedFloatList ilst = new BlockIndexedFloatList();
         ilst.setDefaultValue(defVal);
         featureTestSet(rand, vals, ilst, defVal);
+    }
+
+    public void testSetO() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal = rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        IndexedFloatList ilst = new BlockIndexedFloatList();
+        ilst.setDefaultValue(defVal);
+        featureTestSetO(rand, vals, ilst, defVal);
     }
 
     public void testDel() throws Exception {

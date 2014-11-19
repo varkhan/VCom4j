@@ -100,6 +100,72 @@ public abstract class AbstractIndexedFloatListTest extends TestCase {
         System.out.println("set(long,T) OK");
     }
 
+    public void featureTestAddO(Random rand, float[] vals, IndexedFloatList ilst, double defVal) throws Exception {
+        Set<Integer> add=new HashSet<Integer>();
+        long size=0;
+        long head=0;
+        long[] pos = new long[vals.length];
+        while(add.size()<vals.length) {
+            int i=rand.nextInt(vals.length);
+            if(add.contains(i)) continue;
+            add.add(i);
+            if(vals[i]==defVal) {
+                pos[i] = -1;
+                continue;
+            }
+            size++;
+            long idx=ilst.add(Float.valueOf(vals[i]));
+            if(idx>=head) head=idx+1;
+            assertTrue("add("+i+")", idx>=0);
+            assertEquals("size()", size, ilst.size());
+            assertEquals("head()", head, ilst.head());
+            pos[i] = idx;
+        }
+        assertEquals("size()", size, ilst.size());
+        assertEquals("head()", head, ilst.head());
+        for(int i=0; i<pos.length; i++) {
+            if(pos[i]>=0) assertEquals("get(i)",Float.valueOf(vals[i]),ilst.get(pos[i]));
+        }
+        System.out.println("add(T) OK");
+    }
+
+    public <T> void featureTestSetO(Random rand, float[] vals, IndexedFloatList ilst, double defVal) throws Exception {
+        Set<Integer> add=new HashSet<Integer>();
+        long size=0;
+        long head=0;
+        while(add.size()<vals.length) {
+            int i=rand.nextInt(vals.length);
+            if(add.contains(i)) continue;
+            add.add(i);
+            if(vals[i]==defVal) {
+                continue;
+            }
+            size++;
+            if(i>=head) head=i+1;
+            assertEquals("set("+i+")", i, ilst.set(i, Float.valueOf(vals[i])));
+        }
+        assertEquals("size()", ilst.size(), size);
+        assertEquals("head()", ilst.head(), head);
+        Map<Integer,Integer> ref = new HashMap<Integer,Integer>();
+        while(ref.size()<size/2) {
+            int i=rand.nextInt(vals.length);
+            int j=rand.nextInt(vals.length);
+            if(ref.containsKey(j)) continue;
+            ref.put(j, i);
+            if(vals[i]==defVal) {
+                continue;
+            }
+            if(i>=head) head=i+1;
+            assertEquals("set("+j+")", j, ilst.set(j, vals[i]));
+        }
+        for(Map.Entry<Integer,Integer> e: ref.entrySet()) {
+            int j= e.getKey();
+            int i= e.getValue();
+            if(vals[i]!=defVal) assertEquals("get("+j+")", Float.valueOf(vals[i]), ilst.get(j));
+        }
+        System.out.println("set(long,T) OK");
+    }
+
     public void featureTestHas(Random rand, float[] vals, IndexedFloatList ilst, float defVal) throws Exception {
         ilst.clear();
         for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);

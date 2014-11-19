@@ -24,6 +24,15 @@ public class BlockIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestAdd(rand, vals, ilst, defVal);
     }
 
+    public void testAddO() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = rand.nextFloat();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new BlockIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestAddO(rand, vals, ilst, defVal);
+    }
+
     public void testHas() throws Exception {
         Random rand=new Random(baseseed);
         double defVal = rand.nextFloat();
@@ -49,6 +58,15 @@ public class BlockIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         IndexedDoubleList ilst = new BlockIndexedDoubleList();
         ilst.setDefaultValue(defVal);
         featureTestSet(rand, vals, ilst, defVal);
+    }
+
+    public void testSetO() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = rand.nextFloat();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new BlockIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestSetO(rand, vals, ilst, defVal);
     }
 
     public void testDel() throws Exception {

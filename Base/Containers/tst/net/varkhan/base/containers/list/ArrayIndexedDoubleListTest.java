@@ -24,6 +24,15 @@ public class ArrayIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestAdd(rand, vals, ilst, defVal);
     }
 
+    public void testAddO() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new ArrayIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestAddO(rand, vals, ilst, defVal);
+    }
+
     public void testHas() throws Exception {
         Random rand=new Random(baseseed);
         double defVal = 0;//rand.nextDouble();
@@ -49,6 +58,15 @@ public class ArrayIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         IndexedDoubleList ilst = new ArrayIndexedDoubleList();
         ilst.setDefaultValue(defVal);
         featureTestSet(rand, vals, ilst, defVal);
+    }
+
+    public void testSetO() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new ArrayIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestSetO(rand, vals, ilst, defVal);
     }
 
     public void testDel() throws Exception {

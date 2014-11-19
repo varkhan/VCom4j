@@ -24,6 +24,15 @@ public class ArrayIndexedLongListTest extends AbstractIndexedLongListTest {
         featureTestAdd(rand, vals, ilst, defVal);
     }
 
+    public void testAddO() throws Exception {
+        Random rand=new Random(baseseed);
+        long defVal = 0;//rand.nextLong();
+        long[] vals=genLongList(rand, 1000000, 0.9, defVal);
+        IndexedLongList ilst = new ArrayIndexedLongList();
+        ilst.setDefaultValue(defVal);
+        featureTestAddO(rand, vals, ilst, defVal);
+    }
+
     public void testHas() throws Exception {
         Random rand=new Random(baseseed);
         long defVal = 0;//rand.nextLong();
@@ -49,6 +58,15 @@ public class ArrayIndexedLongListTest extends AbstractIndexedLongListTest {
         IndexedLongList ilst = new ArrayIndexedLongList();
         ilst.setDefaultValue(defVal);
         featureTestSet(rand, vals, ilst, defVal);
+    }
+
+    public void testSetO() throws Exception {
+        Random rand=new Random(baseseed);
+        long defVal = 0;//rand.nextLong();
+        long[] vals=genLongList(rand, 1000000, 0.9, defVal);
+        IndexedLongList ilst = new ArrayIndexedLongList();
+        ilst.setDefaultValue(defVal);
+        featureTestSetO(rand, vals, ilst, defVal);
     }
 
     public void testDel() throws Exception {

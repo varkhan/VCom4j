@@ -24,6 +24,15 @@ public class BlockIndexedIntListTest extends AbstractIndexedIntListTest {
         featureTestAdd(rand, vals, ilst, defVal);
     }
 
+    public void testAddO() throws Exception {
+        Random rand=new Random(baseseed);
+        int defVal = rand.nextInt();
+        int[] vals=genIntegerList(rand, 1000000, 0.9, defVal);
+        IndexedIntList ilst = new BlockIndexedIntList();
+        ilst.setDefaultValue(defVal);
+        featureTestAddO(rand, vals, ilst, defVal);
+    }
+
     public void testHas() throws Exception {
         Random rand=new Random(baseseed);
         int defVal = rand.nextInt();
@@ -49,6 +58,15 @@ public class BlockIndexedIntListTest extends AbstractIndexedIntListTest {
         IndexedIntList ilst = new BlockIndexedIntList();
         ilst.setDefaultValue(defVal);
         featureTestSet(rand, vals, ilst, defVal);
+    }
+
+    public void testSetO() throws Exception {
+        Random rand=new Random(baseseed);
+        int defVal = rand.nextInt();
+        int[] vals=genIntegerList(rand, 1000000, 0.9, defVal);
+        IndexedIntList ilst = new BlockIndexedIntList();
+        ilst.setDefaultValue(defVal);
+        featureTestSetO(rand, vals, ilst, defVal);
     }
 
     public void testDel() throws Exception {
