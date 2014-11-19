@@ -3,6 +3,8 @@ package net.varkhan.base.containers.list;
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Index;
 import net.varkhan.base.containers.Indexable;
+import net.varkhan.base.containers.IndexedVisitable;
+import net.varkhan.base.containers.Visitable;
 import net.varkhan.base.containers.type.IndexedDoubleVisitable;
 import net.varkhan.base.containers.type.DoubleIterable;
 import net.varkhan.base.containers.type.DoubleVisitable;
@@ -163,8 +165,8 @@ public abstract class AbstractIndexedDoubleListTest extends TestCase {
             long idx = ilst.set(i, vals[i]);
             if(maxidx<idx) maxidx=idx;
         }
-        assertFalse("!has(free())",ilst.has(ilst.free()));
-        assertTrue("free()<=head()",ilst.free()<=maxidx);
+        assertFalse("!has(free())", ilst.has(ilst.free()));
+        assertTrue("free()<=head()", ilst.free()<=maxidx);
         System.out.println("free() OK");
     }
 
@@ -176,12 +178,12 @@ public abstract class AbstractIndexedDoubleListTest extends TestCase {
             if(maxidx<idx) maxidx=idx;
         }
         maxidx++;
-        assertEquals("getDefault()",defVal,ilst.getDefaultValue());
+        assertEquals("getDefault()", defVal, ilst.getDefaultValue());
         assertEquals("get(!)",defVal,ilst.getDouble(maxidx));
         if(set) {
-            ilst.set(maxidx,defVal);
-            assertEquals("get(!)",defVal,ilst.getDouble(maxidx));
-            assertFalse("has(def)",ilst.has(maxidx));
+            ilst.set(maxidx, defVal);
+            assertEquals("get(!)", defVal, ilst.getDouble(maxidx));
+            assertFalse("has(def)", ilst.has(maxidx));
         }
         ilst.setDefaultValue(defVal+1);
         assertEquals("getDefault()",defVal+1,ilst.getDefaultValue());
@@ -251,6 +253,13 @@ public abstract class AbstractIndexedDoubleListTest extends TestCase {
             }
         };
         assertEquals("size()==visit()", ilst.size(), ilst.visit(vv, ref));
+        Visitable.Visitor<Double,java.util.Set<Double>> v= new Visitable.Visitor<Double,java.util.Set<Double>>() {
+            @Override
+            public long invoke(Double obj, java.util.Set<Double> ts) {
+                return ts.contains(obj)?1:-1;
+            }
+        };
+        assertEquals("size()==visit()", ilst.size(), ilst.visit(v, ref));
         System.out.println("visit(Visitor) OK");
     }
 
@@ -268,6 +277,13 @@ public abstract class AbstractIndexedDoubleListTest extends TestCase {
             }
         };
         assertEquals("size()==visit()",ilst.size(),ilst.visit(vv, ref));
+        IndexedVisitable.IndexedVisitor<Double,java.util.Map<Long,Double>> v= new IndexedVisitable.IndexedVisitor<Double,java.util.Map<Long,Double>>() {
+            @Override
+            public long invoke(long idx, Double obj, java.util.Map<Long,Double> ts) {
+                return obj.equals(ts.get(idx))?1:-1;
+            }
+        };
+        assertEquals("size()==visit()",ilst.size(),ilst.visit(v, ref));
         System.out.println("visit(Visitor) OK");
     }
 

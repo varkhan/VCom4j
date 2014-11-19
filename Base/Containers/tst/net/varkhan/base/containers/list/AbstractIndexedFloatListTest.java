@@ -3,6 +3,8 @@ package net.varkhan.base.containers.list;
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Index;
 import net.varkhan.base.containers.Indexable;
+import net.varkhan.base.containers.IndexedVisitable;
+import net.varkhan.base.containers.Visitable;
 import net.varkhan.base.containers.type.IndexedFloatVisitable;
 import net.varkhan.base.containers.type.FloatIterable;
 import net.varkhan.base.containers.type.FloatVisitable;
@@ -251,6 +253,13 @@ public abstract class AbstractIndexedFloatListTest extends TestCase {
             }
         };
         assertEquals("size()==visit()", ilst.size(), ilst.visit(vv, ref));
+        Visitable.Visitor<Float,java.util.Set<Float>> v= new Visitable.Visitor<Float,java.util.Set<Float>>() {
+            @Override
+            public long invoke(Float obj, java.util.Set<Float> ts) {
+                return ts.contains(obj)?1:-1;
+            }
+        };
+        assertEquals("size()==visit()", ilst.size(), ilst.visit(v, ref));
         System.out.println("visit(Visitor) OK");
     }
 
@@ -268,6 +277,13 @@ public abstract class AbstractIndexedFloatListTest extends TestCase {
             }
         };
         assertEquals("size()==visit()",ilst.size(),ilst.visit(vv, ref));
+        IndexedVisitable.IndexedVisitor<Float,java.util.Map<Long,Float>> v= new IndexedVisitable.IndexedVisitor<Float,java.util.Map<Long,Float>>() {
+            @Override
+            public long invoke(long idx, Float obj, java.util.Map<Long,Float> ts) {
+                return obj.equals(ts.get(idx))?1:-1;
+            }
+        };
+        assertEquals("size()==visit()",ilst.size(),ilst.visit(v, ref));
         System.out.println("visit(Visitor) OK");
     }
 

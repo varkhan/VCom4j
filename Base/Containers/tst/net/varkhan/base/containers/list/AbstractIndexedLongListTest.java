@@ -3,6 +3,8 @@ package net.varkhan.base.containers.list;
 import junit.framework.TestCase;
 import net.varkhan.base.containers.Index;
 import net.varkhan.base.containers.Indexable;
+import net.varkhan.base.containers.IndexedVisitable;
+import net.varkhan.base.containers.Visitable;
 import net.varkhan.base.containers.type.IndexedLongVisitable;
 import net.varkhan.base.containers.type.LongIterable;
 import net.varkhan.base.containers.type.LongVisitable;
@@ -251,6 +253,13 @@ public abstract class AbstractIndexedLongListTest extends TestCase {
             }
         };
         assertEquals("size()==visit()", ilst.size(), ilst.visit(vv, ref));
+        Visitable.Visitor<Long,java.util.Set<Long>> v= new Visitable.Visitor<Long,java.util.Set<Long>>() {
+            @Override
+            public long invoke(Long obj, java.util.Set<Long> ts) {
+                return ts.contains(obj)?1:-1;
+            }
+        };
+        assertEquals("size()==visit()", ilst.size(), ilst.visit(v, ref));
         System.out.println("visit(Visitor) OK");
     }
 
@@ -268,6 +277,13 @@ public abstract class AbstractIndexedLongListTest extends TestCase {
             }
         };
         assertEquals("size()==visit()",ilst.size(),ilst.visit(vv, ref));
+        IndexedVisitable.IndexedVisitor<Long,java.util.Map<Long,Long>> v= new IndexedVisitable.IndexedVisitor<Long,java.util.Map<Long,Long>>() {
+            @Override
+            public long invoke(long idx, Long obj, java.util.Map<Long,Long> ts) {
+                return obj.equals(ts.get(idx))?1:-1;
+            }
+        };
+        assertEquals("size()==visit()",ilst.size(),ilst.visit(v, ref));
         System.out.println("visit(Visitor) OK");
     }
 
