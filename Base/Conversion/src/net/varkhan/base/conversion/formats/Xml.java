@@ -969,6 +969,35 @@ public class Xml {
         public Map<CharSequence, Object> attr() { return attr; }
         public String text() { return text; }
         public byte[] data() { return data; }
+        public String toString() {
+            StringBuilder buf=new StringBuilder();
+            switch(type) {
+                case TEXT:
+                    try { writeText(buf,text); } catch(IOException e) { /* ignore */ }
+                    break;
+                case ELEM:
+                    switch(phase) {
+                        case Inline:
+                            try { writeElmt(buf,name,null,attr); } catch(IOException e) { /* ignore */ }
+                            break;
+                        case Open:
+                            try { writeElmtOpen(buf,name,attr); } catch(IOException e) { /* ignore */ }
+                            break;
+                        case Close:
+                            try { writeElmtClose(buf,name); } catch(IOException e) { /* ignore */ }
+                            break;
+                    }
+                    break;
+                case COMM:
+                    try { writeComm(buf,text); } catch(IOException e) { /* ignore */ }
+                    break;
+                case CDATA:
+                    buf.append("CDATA[["+"]]");
+//                    try { writeCData(buf,text); } catch(IOException e) { /* ignore */ }
+                    break;
+            }
+            return buf.toString();
+        }
     }
 
     public static abstract class Node implements Iterable<Node> {
