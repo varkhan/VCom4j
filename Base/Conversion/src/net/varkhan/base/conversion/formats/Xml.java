@@ -1,7 +1,7 @@
 package net.varkhan.base.conversion.formats;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 
 
@@ -636,7 +636,89 @@ public class Xml {
         return p.read(null);
     }
 
+    /**
+     * Read the XML prologue form an input stream.
+     * <p/>
+     * This method does not rely on a Reader because this is where the XML
+     * encoding is specified, which is needed to create the right Reader.
+     * <p/>
+     * It reads character by character, thus at the end of a successful invocation,
+     * the stream will be left pointing at the beginning of the document, or
+     * !DOCTYPE declaration if present.
+     *
+     * @param in an input stream
+     * @return a parameter map
+     * @throws IOException
+     */
+    public static Map<String,String> readPrologue(InputStream in) throws IOException {
+        // We need this method not to rely on a parser because this is where we detect file encoding,
+        // which is needed to create the right Reader
+        // '<?xml' version="1.0" encoding="UTF-8"? SDDecl? S? '?>'
+        Map<String,String> atr = new HashMap<String,String>();
+        int st = in.read();
+        if(st!='<') throw new FormatException("Invalid prologue",0,0,"");
+        st = in.read();
+        if(st!='?') throw new FormatException("Invalid prologue",0,0,"");
+        st = in.read();
+        if(st!='x') throw new FormatException("Invalid prologue",0,0,"");
+        st = in.read();
+        if(st!='m') throw new FormatException("Invalid prologue",0,0,"");
+        st = in.read();
+        if(st!='l') throw new FormatException("Invalid prologue",0,0,"");
+        st = in.read();
+        while(st>=0) {
+            // Skip whitespace
+            while(st>=0 && isWhiteSpace(st)) { st = in.read(); }
+            // End of seq/tag? done
+            if(st<0) throw new FormatException("Unterminated prologue",0,0,"");
+            if(st=='?') {
+                st = in.read();
+                if(st<0) throw new FormatException("Unterminated prologue",0,0,"");
+                if(st!='>') throw new FormatException("Unterminated prologue",0,0,"");
+                break;
+            }
+            // First character of name -> find end
+            StringBuilder name = new StringBuilder();
+            while(st>=0 && !isWhiteSpace(st) && st!='=' && st!='>' && st!='?') {
+                name.append((char) st);
+                st = in.read();
+            }
+            if(!isValidPrologue(name)) throw new FormatException("Invalid prologue declaration",0,0,name.toString());
+            while(st>=0 && isWhiteSpace(st)) { st = in.read(); }
+            // Empty attribute: next attribute with no intervening =, or EOL reached
+            if(st!='=') throw new FormatException("Invalid prologue declaration",0,0,name.toString());
+            st = in.read();
+            while(st>=0 && isWhiteSpace(st)) { st = in.read(); }
+            StringBuilder buf = new StringBuilder();
+            if(st=='\"' || st=='\'') {
+                int d = st;
+                st = in.read();
+                while(st!=d) {
+                    if(st<0) throw new FormatException("Unterminated prologue",0,0,"");
+                    // Escape sequences
+                    if(st=='\\') {
+                        st = in.read();
+                        if(st<0) throw new FormatException("Unterminated prologue",0,0,"");
+                    }
+                    buf.append((char) st);
+                    st = in.read();
+                }
+                st = in.read();
+            }
+            else {
+                while(st>=0 && !isWhiteSpace(st) && st!='=' && st!='>' && st!='/') {
+                    buf.append((char) st);
+                    st = in.read();
+                }
+            }
+            atr.put(name.toString(), buf.toString());
+        }
+        return atr;
+    }
 
+    protected static boolean isValidPrologue(CharSequence name) {
+        return "version".contentEquals(name)||"encoding".contentEquals(name)||"standalone".contentEquals(name);
+    }
 
     /**********************************************************************************
      **  XML syntax checks
