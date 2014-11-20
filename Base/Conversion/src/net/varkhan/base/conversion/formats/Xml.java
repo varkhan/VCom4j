@@ -423,13 +423,13 @@ public class Xml {
     /**
      * State-aware wrapper for a reader and current XML tag
      */
-    protected static class Parser {
+    public static class Parser implements Closeable {
         private final Reader in;
         private int st = ' ';
         private int ln = 0;
         private int cn = 0;
 
-        public Parser(Reader in) {
+        protected Parser(Reader in) {
             this.in=in;
         }
 
@@ -534,16 +534,70 @@ public class Xml {
             return st;
         }
 
+        public Event readEvent() throws IOException, FormatException {
+            skipWhitespace();
+            if(st=='<') {
+                next();
+                if(st=='!') {
+                    next();
+                    if(st=='-') {
+                        next();
+                        if(st!='-') throw exception("Malformed element opening");
+                        StringBuilder buf = new StringBuilder();
+                        readText(buf);
+                        if(!buf.toString().endsWith("--")) throw exception("Malformed comment block");
+                        buf.setLength(buf.length()-2);
+                        return new Event(Event.Phase.Inline, Node.Type.COMM, null, null, buf.toString(), null);
+                    }
+                    else {
+                        while(st>=0 && st!='>') {
+                            next();
+                        }
+                        return null;
+                    }
+                }
+                else if(st=='/') {
+                    skipWhitespace();
+                    StringBuilder name = new StringBuilder();
+                    readName(name);
+                    if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters");
+                    skipWhitespace();
+                    if(st!='>') throw exception("Malformed element closing");
+                    return new Event(Event.Phase.Close, Node.Type.ELEM, name.toString(), null, null, null);
+                }
+                skipWhitespace();
+                // Name extraction loop
+                StringBuilder name = new StringBuilder();
+                readName(name);
+                if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters");
+                Map<CharSequence,Object> attrs = new LinkedHashMap<CharSequence,Object>();
+                readElemAttr(attrs);
+                if(st<0) throw exception("Malformed element opening");
+                if(st=='/') {
+                    next();
+                    if(st!='>') throw exception("Malformed element closing");
+                    return new Event(Event.Phase.Inline, Node.Type.ELEM, name.toString(), attrs, null, null);
+                }
+                return new Event(Event.Phase.Open, Node.Type.ELEM, name.toString(), attrs, null, null);
+            }
+            else {
+                StringBuilder buf = new StringBuilder();
+                readText(buf);
+                return new Event(Event.Phase.Inline, Node.Type.TEXT, null, null, buf.toString(), null);
+            }
+        }
+
         protected boolean readElemNodes(String name, List<Node> nodes) throws IOException, FormatException {
             skipWhitespace();
             while(st>=0) {
-                Node n = read(name);
+                Node n = readNode(name);
                 if(n==null) return true;
+                nodes.add(n);
             }
             return false;
         }
 
-        protected Node read(String root) throws IOException, FormatException {
+        public Node readNode(String root) throws IOException, FormatException {
             skipWhitespace();
             if(st=='<') {
                 next();
@@ -591,7 +645,7 @@ public class Xml {
                     return new Elem(name.toString(), attrs);
                 }
                 List<Node> nodes = new ArrayList<Node>();
-                readElemNodes(name.toString(), nodes);
+                if(!readElemNodes(name.toString(), nodes)) throw exception("Unclosed element <"+name.toString()+">");
                 return new Elem(name.toString(), attrs,nodes);
             }
             else {
@@ -628,13 +682,37 @@ public class Xml {
             return new FormatException(msg + " at ln:"+ln+",cn:"+cn+" near '"+(char)st+"': "+ctx, ln, cn, ctx.toString(), exc);
         }
 
+        @Override
+        public void close() throws IOException {
+            in.close();
+        }
     }
 
 
     public static Node read(Reader in) throws IOException, FormatException {
         Parser p = new Parser(in);
-        return p.read(null);
+        return p.readNode(null);
     }
+
+    public static Node read(InputStream in) throws IOException, FormatException {
+        Map<String,String> par = readPrologue(in);
+        String cn = par.get("encoding");
+        Charset cs = cn==null?Charset.defaultCharset():Charset.forName(cn);
+        Parser p = new Parser(new InputStreamReader(in, cs));
+        return p.readNode(null);
+    }
+
+    public static Parser parse(Reader in) throws IOException, FormatException {
+        return new Parser(in);
+    }
+
+    public static Parser parse(InputStream in) throws IOException, FormatException {
+        Map<String,String> par = readPrologue(in);
+        String cn = par.get("encoding");
+        Charset cs = cn==null?Charset.defaultCharset():Charset.forName(cn);
+        return new Parser(new InputStreamReader(in, cs));
+    }
+
 
     /**
      * Read the XML prologue form an input stream.
@@ -866,6 +944,32 @@ public class Xml {
     /**********************************************************************************
      **  XML document object model
      **/
+
+    public static class Event {
+        public static enum Phase { Inline, Open, Close }
+        protected final Event.Phase phase;
+        protected final Node.Type type;
+        protected final String name;
+        protected final String text;
+        protected final byte[] data;
+        protected final Map<CharSequence,Object> attr;
+
+        public Event(Phase phase, Node.Type type, String name, Map<CharSequence,Object> attr, String text, byte[] data) {
+            this.phase=phase;
+            this.type=type;
+            this.text=text;
+            this.name=name;
+            this.data=data;
+            this.attr=attr;
+        }
+
+        public Event.Phase phase() { return phase; }
+        public Node.Type type() { return type; }
+        public String name() { return name; }
+        public Map<CharSequence, Object> attr() { return attr; }
+        public String text() { return text; }
+        public byte[] data() { return data; }
+    }
 
     public static abstract class Node implements Iterable<Node> {
         public static enum Type {
