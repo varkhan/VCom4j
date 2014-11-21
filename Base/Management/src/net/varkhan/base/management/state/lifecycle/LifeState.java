@@ -16,7 +16,7 @@ public enum LifeState implements State<LifeLevel,LifeState> {
     STOPPED {
         @Override
         public LifeState[] transition(LifeLevel level) {
-            return new LifeState[] { STARTING };
+            return new LifeState[] { STARTING, RUNNING };
         }
     },
     STARTING {
@@ -28,13 +28,13 @@ public enum LifeState implements State<LifeLevel,LifeState> {
     RUNNING {
         @Override
         public LifeState[] transition(LifeLevel level) {
-            return new LifeState[] { STOPPING, SUSPENDED };
+            return new LifeState[] { STOPPING, STOPPED, SUSPENDED };
         }
     },
     SUSPENDED {
         @Override
         public LifeState[] transition(LifeLevel level) {
-            return new LifeState[] { RUNNING };
+            return new LifeState[] { RUNNING, STOPPING, STOPPED };
         }
     },
     STOPPING {
@@ -47,7 +47,7 @@ public enum LifeState implements State<LifeLevel,LifeState> {
 
     @Override
     public LifeState aggregate(LifeState state, LifeLevel level) {
-        return this;
+        return state;
     }
 
 }
