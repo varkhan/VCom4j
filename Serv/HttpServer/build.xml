@@ -5,6 +5,7 @@
     <property name="module.name" value="${ant.project.name}"/>
     <property name="module.vers" value="0.1.0"/>
     <property name="module.desc" value="Lightweight HTTP server"/>
+    <property name="test.emma.include" value="+net.varkhan.serv.*,-*Test*"/>
     <include file="${project.base.dir}/project.xml"/>
     <include file="${project.tool.dir}/compiler.xml"/>
     <import file="${project.tool.dir}/module.xml"/>
