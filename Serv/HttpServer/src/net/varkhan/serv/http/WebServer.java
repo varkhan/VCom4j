@@ -68,8 +68,9 @@ public abstract class WebServer extends BaseServer {
                 if(server==null) return LifeState.STOPPED;
                 if(server.isStarting()) return LifeState.STARTING;
                 if(server.isStarted()) return LifeState.RUNNING;
-                if(server.isStopping()) return LifeState.STOPPING;
-                if(server.isStopped()) return LifeState.STOPPED;
+                if(server.isStopping() || "STOPPING".equalsIgnoreCase(server.getState())) return LifeState.STOPPING;
+                if(server.isStopped() || "STOPPED".equalsIgnoreCase(server.getState())) return LifeState.STOPPED;
+                if(!server.isRunning()) return LifeState.STOPPED;
                 return LifeState.RUNNING;
             }
 
@@ -80,6 +81,8 @@ public abstract class WebServer extends BaseServer {
                 if(server.isStarted()) return name+" is started";
                 if(server.isStopping()) return name+" is stopping";
                 if(server.isStopped()) return name+" is stopped";
+                if(!server.isRunning()) return name+" is not running";
+                if(server.isFailed()) return name+" is failed";
                 return name+" is in an unknown state";
             }
 
@@ -91,10 +94,24 @@ public abstract class WebServer extends BaseServer {
     }
 
     public void start() throws Exception {
-        log.info("Starting "+this.getClass().getSimpleName());
+        log.info(this.getClass().getSimpleName()+" starting");
         synchronized(this) {
             configure();
             server.start();
+            health.start();
+            status.start();
+            status.update();
+        }
+        log.info(this.getClass().getSimpleName()+" started");
+    }
+
+    public void stop() throws Exception {
+        log.info(this.getClass().getSimpleName()+" stopping");
+        synchronized(this) {
+            server.stop();
+            status.update();
+            health.stop();
+            status.stop();
         }
     }
 
