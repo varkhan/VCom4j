@@ -535,7 +535,10 @@ public class Xml {
         }
 
         public Event readEvent() throws IOException, FormatException {
+            // End of stream?
+            if(st<0) return null;
             skipWhitespace();
+            // Element open/close?
             if(st=='<') {
                 next();
                 if(st=='!') {
@@ -550,10 +553,7 @@ public class Xml {
                         return new Event(Event.Phase.Inline, Node.Type.COMM, null, null, buf.toString(), null);
                     }
                     else {
-                        while(st>=0 && st!='>') {
-                            next();
-                        }
-                        return null;
+                        throw exception("Element names must contain only alphanumeric characters");
                     }
                 }
                 else if(st=='/') {
@@ -580,6 +580,9 @@ public class Xml {
                 }
                 return new Event(Event.Phase.Open, Node.Type.ELEM, name.toString(), attrs, null, null);
             }
+            // End of stream?
+            else if(st<0) return null;
+            // Free text
             else {
                 StringBuilder buf = new StringBuilder();
                 readText(buf);
@@ -613,10 +616,7 @@ public class Xml {
                         return new Comm(buf.toString());
                     }
                     else {
-                        while(st>=0 && st!='>') {
-                            next();
-                        }
-                        return null;
+                        throw exception("Element names must contain only alphanumeric characters");
                     }
                 }
                 else if(st=='/') {
@@ -794,10 +794,6 @@ public class Xml {
         return atr;
     }
 
-    protected static boolean isValidPrologue(CharSequence name) {
-        return "version".contentEquals(name)||"encoding".contentEquals(name)||"standalone".contentEquals(name);
-    }
-
     /**********************************************************************************
      **  XML syntax checks
      **/
@@ -839,6 +835,10 @@ public class Xml {
         if('A'<=c&&c<='Z') return true;
         if('a'<=c&&c<='z') return true;
         return false;
+    }
+
+    public static boolean isValidPrologue(CharSequence name) {
+        return "version".contentEquals(name)||"encoding".contentEquals(name)||"standalone".contentEquals(name);
     }
 
     /**
