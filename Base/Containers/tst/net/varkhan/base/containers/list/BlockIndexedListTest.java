@@ -142,4 +142,11 @@ public class BlockIndexedListTest extends AbstractIndexedListTest {
         featureTestClone(rand, vals, ilst);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        IndexedList<Integer> ilst = new BlockIndexedList<Integer>();
+        featureTestString(rand, vals, ilst);
+    }
+
 }

@@ -489,5 +489,21 @@ public abstract class AbstractIndexedDoubleListTest extends TestCase {
         }
     }
 
+    public void featureTestString(Random rand, double[] vals, IndexedDoubleList ilst, double defVal) throws Exception {
+        ilst.clear();
+        assertEquals("[].toString()","[ ("+defVal+") ]",ilst.toString());
+        StringBuilder b = new StringBuilder("[");
+        boolean f=true;
+        for(int i=0;i<vals.length && i<100;i++) {
+            if(vals[i]!=defVal) {
+                long idx= ilst.add(vals[i]);
+                if(f) f=false;
+                else b.append(",");
+                b.append(" ").append(idx).append("@").append(vals[i]);
+                assertEquals("toString() ["+i+"]",b.toString()+" ("+defVal+") ]",ilst.toString());
+            }
+        }
+    }
+
 
 }

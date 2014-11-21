@@ -203,5 +203,13 @@ public class BlockIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestClone(rand, vals, ilst, defVal);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = rand.nextFloat();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new BlockIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestString(rand, vals, ilst, defVal);
+    }
 
 }

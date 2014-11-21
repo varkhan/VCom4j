@@ -922,7 +922,7 @@ public class BlockIndexedIntList extends AbstractBlockIndexedList implements Ind
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('[').append(' ');
+        buf.append('[');
         boolean first = true;
         long i=0;
         while(i<head) {
@@ -935,11 +935,11 @@ public class BlockIndexedIntList extends AbstractBlockIndexedList implements Ind
             if(val!=defVal) {
                 if(first) first=false;
                 else buf.append(',');
-                buf.append(i).append('@').append(val).append(' ');
+                buf.append(' ').append(i).append('@').append(val);
             }
             i++;
         }
-        buf.append('(').append(defVal).append(')').append(' ');
+        buf.append(' ').append('(').append(defVal).append(')').append(' ');
         buf.append(']');
         return buf.toString();
     }

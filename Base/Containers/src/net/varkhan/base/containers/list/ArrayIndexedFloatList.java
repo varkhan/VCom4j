@@ -810,18 +810,17 @@ public class ArrayIndexedFloatList implements IndexedFloatList, Externalizable, 
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('[').append(' ');
+        buf.append('[');
         boolean first = true;
         for(int i=0;i<head;i++) {
             float obj=list[i];
             if(obj!=defVal) {
                 if(first) first=false;
                 else buf.append(',');
-                buf.append(i).append('@').append(obj).append(' ');
+                buf.append(' ').append(i).append('@').append(obj);
             }
-            i++;
         }
-        buf.append('(').append(defVal).append(')').append(' ');
+        buf.append(' ').append('(').append(defVal).append(')').append(' ');
         buf.append(']');
         return buf.toString();
     }

@@ -203,4 +203,13 @@ public class ArrayIndexedLongListTest extends AbstractIndexedLongListTest {
         featureTestClone(rand, vals, ilst, defVal);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        long defVal = 0;//rand.nextLong();
+        long[] vals=genLongList(rand, 1000000, 0.9, defVal);
+        IndexedLongList ilst = new ArrayIndexedLongList();
+        ilst.setDefaultValue(defVal);
+        featureTestString(rand, vals, ilst, defVal);
+    }
+
 }

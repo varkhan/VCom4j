@@ -291,4 +291,21 @@ public abstract class AbstractListTest extends TestCase {
         }
     }
 
+    public <T> void featureTestString(Random rand, T[] vals, List<T> lst) throws Exception {
+        lst.clear();
+        assertEquals("[].toString()","[ ]",lst.toString());
+        StringBuilder b = new StringBuilder("[");
+        boolean f=true;
+        for(int i=0;i<vals.length && i<100;i++) {
+            if(vals[i]!=null) {
+                lst.add(vals[i]);
+                if(f) f=false;
+                else b.append(",");
+                b.append(" ").append(vals[i]);
+                assertEquals("toString() ["+i+"]",b.toString()+" ]",lst.toString());
+            }
+        }
+    }
+
+
 }

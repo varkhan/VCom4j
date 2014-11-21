@@ -905,7 +905,7 @@ public class SparseIndexedFloatList extends AbstractSparseIndexedList implements
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('[').append(' ');
+        buf.append('[');
         boolean first = true;
         long i=0;
         while(i<head) {
@@ -919,11 +919,11 @@ public class SparseIndexedFloatList extends AbstractSparseIndexedList implements
             if(pos>0) {
                 if(first) first=false;
                 else buf.append(',');
-                buf.append(i).append('@').append(list[blockpos][pos-1]).append(' ');
+                buf.append(' ').append(i).append('@').append(list[blockpos][pos-1]);
             }
             i++;
         }
-        buf.append('(').append(defVal).append(')').append(' ');
+        buf.append(' ').append('(').append(defVal).append(')').append(' ');
         buf.append(']');
         return buf.toString();
     }

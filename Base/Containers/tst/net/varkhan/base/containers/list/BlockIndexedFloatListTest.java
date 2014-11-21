@@ -203,4 +203,13 @@ public class BlockIndexedFloatListTest extends AbstractIndexedFloatListTest {
         featureTestClone(rand, vals, ilst, defVal);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal = rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        IndexedFloatList ilst = new BlockIndexedFloatList();
+        ilst.setDefaultValue(defVal);
+        featureTestString(rand, vals, ilst, defVal);
+    }
+
 }

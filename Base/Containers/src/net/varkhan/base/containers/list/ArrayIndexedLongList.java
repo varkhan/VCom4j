@@ -811,13 +811,18 @@ public class ArrayIndexedLongList implements IndexedLongList, Externalizable, Cl
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append("[(null)");
+        buf.append('[');
+        boolean first = true;
         for(int i=0;i<head;i++) {
             long obj=list[i];
-            if(obj!=defVal) buf.append(" ").append(i).append(":").append(obj);
-            i++;
+            if(obj!=defVal) {
+                if(first) first=false;
+                else buf.append(',');
+                buf.append(' ').append(i).append('@').append(obj);
+            }
         }
-        buf.append("]");
+        buf.append(' ').append('(').append(defVal).append(')').append(' ');
+        buf.append(']');
         return buf.toString();
     }
 

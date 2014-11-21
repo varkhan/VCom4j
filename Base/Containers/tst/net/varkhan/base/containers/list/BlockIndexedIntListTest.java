@@ -203,4 +203,13 @@ public class BlockIndexedIntListTest extends AbstractIndexedIntListTest {
         featureTestClone(rand, vals, ilst, defVal);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        int defVal = rand.nextInt();
+        int[] vals=genIntegerList(rand, 1000000, 0.9, defVal);
+        IndexedIntList ilst = new BlockIndexedIntList();
+        ilst.setDefaultValue(defVal);
+        featureTestString(rand, vals, ilst, defVal);
+    }
+
 }

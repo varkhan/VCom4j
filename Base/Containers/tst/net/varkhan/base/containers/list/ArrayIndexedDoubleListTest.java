@@ -203,4 +203,13 @@ public class ArrayIndexedDoubleListTest extends AbstractIndexedDoubleListTest {
         featureTestClone(rand, vals, ilst, defVal);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        double defVal = 0;//rand.nextDouble();
+        double[] vals=genDoubleList(rand, 1000000, 0.9, defVal);
+        IndexedDoubleList ilst = new ArrayIndexedDoubleList();
+        ilst.setDefaultValue(defVal);
+        featureTestString(rand, vals, ilst, defVal);
+    }
+
 }

@@ -451,7 +451,7 @@ public abstract class AbstractIndexedIntListTest extends TestCase {
         }
     }
 
-    public void featureTestEquals(Random rand, int[] vals, IndexedIntList ilst, IndexedIntList eql, float defVal) throws Exception {
+    public void featureTestEquals(Random rand, int[] vals, IndexedIntList ilst, IndexedIntList eql, int defVal) throws Exception {
         for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         assertFalse("lst.equals(eql)", ilst.equals(eql));
         for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) eql.set(i, vals[i]);
@@ -468,7 +468,7 @@ public abstract class AbstractIndexedIntListTest extends TestCase {
         System.out.println("equals OK");
     }
 
-    public <L extends IndexedIntList & Cloneable> void featureTestClone(Random rand, int[] vals, L ilst, float defVal) throws Exception {
+    public <L extends IndexedIntList & Cloneable> void featureTestClone(Random rand, int[] vals, L ilst, int defVal) throws Exception {
         for(int i=0;i<vals.length;i++) if(vals[i]!=defVal) ilst.set(i, vals[i]);
         IndexedIntList cln = clone(ilst);
         assertEquals("size(lst)==lst", ilst.size(),cln.size());
@@ -485,6 +485,22 @@ public abstract class AbstractIndexedIntListTest extends TestCase {
         }
         catch(Exception e) {
             return null;
+        }
+    }
+
+    public void featureTestString(Random rand, int[] vals, IndexedIntList ilst, int defVal) throws Exception {
+        ilst.clear();
+        assertEquals("[].toString()","[ ("+defVal+") ]",ilst.toString());
+        StringBuilder b = new StringBuilder("[");
+        boolean f=true;
+        for(int i=0;i<vals.length && i<100;i++) {
+            if(vals[i]!=defVal) {
+                long idx= ilst.add(vals[i]);
+                if(f) f=false;
+                else b.append(",");
+                b.append(" ").append(idx).append("@").append(vals[i]);
+                assertEquals("toString() ["+i+"]",b.toString()+" ("+defVal+") ]",ilst.toString());
+            }
         }
     }
 

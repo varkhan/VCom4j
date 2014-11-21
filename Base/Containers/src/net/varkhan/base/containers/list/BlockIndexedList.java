@@ -787,7 +787,7 @@ public class BlockIndexedList<Type> extends AbstractBlockIndexedList implements 
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('[').append(' ');
+        buf.append('[');
         boolean first = true;
         long i=0;
         while(i<head) {
@@ -801,11 +801,11 @@ public class BlockIndexedList<Type> extends AbstractBlockIndexedList implements 
             if(obj!=defVal||(defVal!=null&&!defVal.equals(obj))) {
                 if(first) first=false;
                 else buf.append(',');
-                buf.append(i).append('@').append(obj).append(' ');
+                buf.append(' ').append(i).append('@').append(obj);
             }
             i++;
         }
-        buf.append('(').append(defVal).append(')').append(' ');
+        buf.append(' ').append('(').append(defVal).append(')').append(' ');
         buf.append(']');
         return buf.toString();
     }

@@ -109,4 +109,11 @@ public class ArrayListTest extends AbstractListTest {
         featureTestClone(rand, vals, ilst);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        Integer[] vals=genIntegerList(rand, 1000000, 0.9);
+        List<Integer> ilst = new ArrayList<Integer>();
+        featureTestString(rand, vals, ilst);
+    }
+
 }

@@ -581,17 +581,16 @@ public class ArrayList<Type> implements List<Type>, Externalizable, Cloneable {
      */
     public String toString() {
         StringBuilder buf=new StringBuilder();
-        buf.append('[').append(' ');
+        buf.append('[');
         boolean first = true;
         for(int i=0;i<size;i++) {
             @SuppressWarnings("unchecked")
             Type obj=(Type) list[i];
             if(first) first=false;
             else buf.append(',');
-            buf.append(obj).append(' ');
-            i++;
+            buf.append(' ').append(obj);
         }
-        buf.append(']');
+        buf.append(' ').append(']');
         return buf.toString();
     }
 

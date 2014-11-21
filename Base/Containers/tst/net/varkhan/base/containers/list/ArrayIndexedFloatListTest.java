@@ -203,4 +203,13 @@ public class ArrayIndexedFloatListTest extends AbstractIndexedFloatListTest {
         featureTestClone(rand, vals, ilst, defVal);
     }
 
+    public void testString() throws Exception {
+        Random rand=new Random(baseseed);
+        float defVal = 0;//rand.nextFloat();
+        float[] vals=genFloatList(rand, 1000000, 0.9, defVal);
+        IndexedFloatList ilst = new ArrayIndexedFloatList();
+        ilst.setDefaultValue(defVal);
+        featureTestString(rand, vals, ilst, defVal);
+    }
+
 }

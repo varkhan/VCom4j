@@ -400,4 +400,20 @@ public abstract class AbstractIndexedListTest extends TestCase {
         }
     }
 
+    public <T> void featureTestString(Random rand, T[] vals, IndexedList<T> ilst) throws Exception {
+        ilst.clear();
+        assertEquals("[].toString()","[ (null) ]",ilst.toString());
+        StringBuilder b = new StringBuilder("[");
+        boolean f=true;
+        for(int i=0;i<vals.length && i<100;i++) {
+            if(vals[i]!=null) {
+                long idx= ilst.add(vals[i]);
+                if(f) f=false;
+                else b.append(",");
+                b.append(" ").append(idx).append("@").append(vals[i]);
+                assertEquals("toString() ["+i+"]",b.toString()+" (null) ]",ilst.toString());
+            }
+        }
+    }
+
 }
