@@ -337,6 +337,25 @@ public class Xml {
         return out;
     }
 
+    /**
+     * Writes an XML meta-tag to an {@link Appendable}.
+     *
+     * @param out the output Appendable
+     * @param tag the meta name
+     * @param txt the text of the meta tag
+     * @param <A> the Appendable type
+     *
+     * @return the output Appendable (to facilitate chaining)
+     *
+     * @throws java.io.IOException if the output Appendable generated an exception
+     */
+    public static <A extends Appendable> A writeMeta(A out, CharSequence tag, CharSequence txt) throws IOException {
+        out.append("<!").append(tag);
+        if(txt!=null) { out.append(' '); writeText(out, txt); }
+        out.append(">");
+        return out;
+    }
+
     public static final CharSequence[] XML_ENTITIES_CHARS=new CharSequence[] { "&", "<", ">", "\"" };
     public static final CharSequence[] XML_ENTITIES_NAMES=new CharSequence[] { "&amp;", "&lt;", "&gt;", "&quot;" };
 
@@ -408,7 +427,7 @@ public class Xml {
             case COMM:
                 writeComm(out,node.text());
                 break;
-            case CDATA:
+            case DATA:
 //                writeCData(out,node.data());
                 break;
         }
@@ -547,29 +566,55 @@ public class Xml {
                         next();
                         if(st!='-') throw exception("Malformed element opening");
                         StringBuilder buf = new StringBuilder();
-                        readText(buf);
-                        if(!buf.toString().endsWith("--")) throw exception("Malformed comment block");
+                        while(st>=0 && (buf.length()<2 || buf.charAt(buf.length()-1) !='-' || buf.charAt(buf.length()-2) !='-')) {
+                            while(st!='>'&&st>=0) {
+                                buf.append((char) st);
+                                next();
+                            }
+                        }
+                        if(st<0) throw exception("Malformed comment block",buf);
                         buf.setLength(buf.length()-2);
                         return new Event(Event.Phase.Inline, Node.Type.COMM, null, null, buf.toString(), null);
                     }
                     else {
-                        throw exception("Element names must contain only alphanumeric characters");
+                        StringBuilder name = new StringBuilder();
+                        readName(name);
+                        if(!isValidElmtName(name)) throw exception("Declaration names must contain only alphanumeric characters",name);
+                        StringBuilder buf = new StringBuilder();
+                        while(st>=0 && st!='<' && st!='>') {
+                            buf.append((char) st);
+                            next();
+                        }
+                        return new Event(Event.Phase.Inline, Node.Type.META, name.toString(), null, buf.toString(), null);
                     }
                 }
                 else if(st=='/') {
                     skipWhitespace();
                     StringBuilder name = new StringBuilder();
                     readName(name);
-                    if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters");
+                    if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters",name);
                     skipWhitespace();
                     if(st!='>') throw exception("Malformed element closing");
                     return new Event(Event.Phase.Close, Node.Type.ELEM, name.toString(), null, null, null);
+                }
+                else if(st=='?') {
+                    StringBuilder name = new StringBuilder();
+                    readName(name);
+                    if(!"xml".equalsIgnoreCase(name.toString())) throw exception("Invalid processing instruction target \""+name+"\"",name);
+                    StringBuilder buf = new StringBuilder();
+                    while(st>=0 && st!='<' && st!='>' && (buf.length()<2 || buf.charAt(buf.length()-1) !='?')) {
+                        buf.append((char) st);
+                        next();
+                    }
+                    if(st<0) throw exception("Malformed processing instruction",buf);
+                    buf.setLength(buf.length()-1);
+                    return new Event(Event.Phase.Inline, Node.Type.META, "?xml", null, buf.toString(), null);
                 }
                 skipWhitespace();
                 // Name extraction loop
                 StringBuilder name = new StringBuilder();
                 readName(name);
-                if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters");
+                if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters",name);
                 Map<CharSequence,Object> attrs = new LinkedHashMap<CharSequence,Object>();
                 readElemAttr(attrs);
                 if(st<0) throw exception("Malformed element opening");
@@ -616,7 +661,15 @@ public class Xml {
                         return new Comm(buf.toString());
                     }
                     else {
-                        throw exception("Element names must contain only alphanumeric characters");
+                        StringBuilder name = new StringBuilder();
+                        readName(name);
+                        if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters");
+                        StringBuilder buf = new StringBuilder();
+                        while(st>=0 && st!='<' && st!='>') {
+                            buf.append((char) st);
+                            next();
+                        }
+                        return new Meta(name.toString(), buf.toString());
                     }
                 }
                 else if(st=='/') {
@@ -630,6 +683,19 @@ public class Xml {
                         if(root.equals(name.toString())) return null;
                     }
                     throw exception("Mismatched closing element",name);
+                }
+                else if(st=='?') {
+                    StringBuilder name = new StringBuilder();
+                    readName(name);
+                    if(!"xml".equalsIgnoreCase(name.toString())) throw exception("Invalid processing instruction target \""+name+"\"",name);
+                    StringBuilder buf = new StringBuilder();
+                    while(st>=0 && st!='<' && st!='>' && (buf.length()<2 || buf.charAt(buf.length()-1) !='?')) {
+                        buf.append((char) st);
+                        next();
+                    }
+                    if(st<0) throw exception("Malformed processing instruction",buf);
+                    buf.setLength(buf.length()-1);
+                    return new Meta("?xml", buf.toString());
                 }
                 skipWhitespace();
                 // Name extraction loop
@@ -973,7 +1039,7 @@ public class Xml {
             StringBuilder buf=new StringBuilder();
             switch(type) {
                 case TEXT:
-                    try { writeText(buf,text); } catch(IOException e) { /* ignore */ }
+                    try { writeText(buf, text); } catch(IOException e) { /* ignore */ }
                     break;
                 case ELEM:
                     switch(phase) {
@@ -981,18 +1047,21 @@ public class Xml {
                             try { writeElmt(buf,name,null,attr); } catch(IOException e) { /* ignore */ }
                             break;
                         case Open:
-                            try { writeElmtOpen(buf,name,attr); } catch(IOException e) { /* ignore */ }
+                            try { writeElmtOpen(buf, name, attr); } catch(IOException e) { /* ignore */ }
                             break;
                         case Close:
-                            try { writeElmtClose(buf,name); } catch(IOException e) { /* ignore */ }
+                            try { writeElmtClose(buf, name); } catch(IOException e) { /* ignore */ }
                             break;
                     }
                     break;
                 case COMM:
-                    try { writeComm(buf,text); } catch(IOException e) { /* ignore */ }
+                    try { writeComm(buf, text); } catch(IOException e) { /* ignore */ }
                     break;
-                case CDATA:
-                    buf.append("CDATA[["+"]]");
+                case META:
+                    try { writeMeta(buf, name, text); } catch(IOException e) { /* ignore */ }
+                    break;
+                case DATA:
+                    buf.append("<![CDATA["+"]]>");
 //                    try { writeCData(buf,text); } catch(IOException e) { /* ignore */ }
                     break;
             }
@@ -1002,7 +1071,7 @@ public class Xml {
 
     public static abstract class Node implements Iterable<Node> {
         public static enum Type {
-            TEXT, ELEM, COMM, CDATA
+            TEXT, ELEM, COMM, META, DATA
         }
         protected final Type type;
         protected Node(Type type) { this.type=type; }
@@ -1059,4 +1128,17 @@ public class Xml {
             return nodes==null?super.iterator():nodes.iterator();
         }
     }
+
+    public static class Meta extends Node {
+        protected final String name;
+        protected final String text;
+        protected final List<Meta> nodes;
+        public Meta(String name, String text) {
+            super(Type.META);
+            this.name=name;
+            this.text=text;
+            this.nodes=null;
+        }
+    }
+
 }
