@@ -9,9 +9,12 @@
         <artifact name="VCom4j-Serv-HttpServer" ext="pom" type="pom"/>
     </publications>
     <dependencies>
+        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="[0.8.*,)"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Conversion" rev="[0.8.*,)"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Management" rev="[0.8.*,)"/>
+        <dependency org="net.varkhan" name="VCom4j-Core-Presentation" rev="[0.6.*,)"/>
         <dependency org="org.eclipse.jetty" name="jetty-server" rev="7.0.0.M1" conf="*"/>
         <dependency org="org.eclipse.jetty" name="jetty-servlet" rev="7.0.0.M1" conf="*"/>
         <dependency org="org.eclipse.jetty" name="jetty-security" rev="7.0.0.M1" conf="*"/>
-        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="0.8.+"/>
     </dependencies>
 </ivy-module>

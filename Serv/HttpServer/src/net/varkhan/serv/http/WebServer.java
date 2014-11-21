@@ -101,6 +101,7 @@ public abstract class WebServer extends BaseServer {
             health.start();
             status.start();
             status.update();
+            health.update();
         }
         log.info(this.getClass().getSimpleName()+" started");
     }
@@ -109,9 +110,10 @@ public abstract class WebServer extends BaseServer {
         log.info(this.getClass().getSimpleName()+" stopping");
         synchronized(this) {
             server.stop();
-            status.update();
             health.stop();
             status.stop();
+            status.update();
+            health.update();
         }
     }
 

@@ -14,14 +14,14 @@ public class HttpServerTest extends TestCase {
         // Not a whole lot of things use the 15000-16000 port range, so we should be safe
         sv.port = 15000 + new Random().nextInt(1000);
         sv.start();
-        Thread.sleep(100);
+        Thread.sleep(1000);
         assertEquals("running", HealthState.HEALTHY, sv.health().state());
         assertEquals("running", LifeState.RUNNING, sv.status().state());
         sv.stop();
         sv.join();
-        Thread.sleep(100);
+        Thread.sleep(1000);
         assertEquals("stopped", HealthState.FAILED, sv.health().state());
-        assertEquals("running", LifeState.STOPPED, sv.status().state());
+        assertEquals("stopped", LifeState.STOPPED, sv.status().state());
     }
 
 }
