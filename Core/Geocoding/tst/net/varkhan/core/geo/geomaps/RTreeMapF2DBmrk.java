@@ -1,6 +1,8 @@
 package net.varkhan.core.geo.geomaps;
 
-import net.varkhan.core.geo.geometry.plane.*;
+import net.varkhan.core.geo.geometry.d2.Rect2D;
+import net.varkhan.core.geo.geometry.d2.Shape2D;
+import net.varkhan.core.geo.geometry.d2.rec.*;
 
 import java.util.Random;
 

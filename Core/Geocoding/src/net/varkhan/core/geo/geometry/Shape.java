@@ -1,7 +1,7 @@
 package net.varkhan.core.geo.geometry;
 
 /**
- * <b></b>.
+ * <b>A general shape</b>.
  * <p/>
  *
  * @author varkhan

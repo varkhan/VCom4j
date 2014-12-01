@@ -1,6 +1,6 @@
 package net.varkhan.core.geo.geoinfo;
 
-import net.varkhan.core.geo.geometry.plane.Shape2D;
+import net.varkhan.core.geo.geometry.d2.Shape2D;
 
 
 /**

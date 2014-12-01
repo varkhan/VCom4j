@@ -1,7 +1,7 @@
 package net.varkhan.core.geo.geometry;
 
 /**
- * <b></b>.
+ * <b>A single point</b>.
  * <p/>
  *
  * @author varkhan

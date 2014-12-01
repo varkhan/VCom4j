@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 
 /**
- * <b></b>.
+ * <b>An union of shapes</b>.
  * <p/>
  *
  * @author varkhan

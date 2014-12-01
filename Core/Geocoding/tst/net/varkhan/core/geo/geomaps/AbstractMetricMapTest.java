@@ -2,10 +2,9 @@ package net.varkhan.core.geo.geomaps;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
-import net.varkhan.core.geo.geometry.plane.PointD2D;
-import net.varkhan.core.geo.geometry.plane.PointF2D;
-import net.varkhan.core.geo.geometry.plane.Rect2D;
-import net.varkhan.core.geo.geometry.plane.Shape2D;
+import net.varkhan.core.geo.geometry.d2.rec.PointD2D;
+import net.varkhan.core.geo.geometry.d2.Rect2D;
+import net.varkhan.core.geo.geometry.d2.Shape2D;
 
 import java.util.*;
 

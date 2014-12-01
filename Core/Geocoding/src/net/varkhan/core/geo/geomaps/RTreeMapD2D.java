@@ -5,8 +5,8 @@ import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
 import net.varkhan.base.containers.map.EmptyMap;
 import net.varkhan.base.containers.map.Map;
-import net.varkhan.core.geo.geometry.plane.RectD2D;
-import net.varkhan.core.geo.geometry.plane.Shape2D;
+import net.varkhan.core.geo.geometry.d2.rec.RectD2D;
+import net.varkhan.core.geo.geometry.d2.Shape2D;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;

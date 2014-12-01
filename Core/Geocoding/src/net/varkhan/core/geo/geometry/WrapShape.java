@@ -1,7 +1,7 @@
 package net.varkhan.core.geo.geometry;
 
 /**
- * <b></b>.
+ * <b>Wraps (delegates) shape semantics to an underlying shape object</b>.
  * <p/>
  *
  * @author varkhan
