@@ -2,6 +2,7 @@ package net.varkhan.base.conversion.formats;
 
 import junit.framework.TestCase;
 
+import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -99,6 +100,66 @@ public class XmlTest extends TestCase {
         StringBuilder buf = new StringBuilder();
         Xml.writeText(buf,new String[]{"bar","baz"});
         assertEquals("text","bar\nbaz\n",buf.toString());
+    }
+
+    public void testReadElemInline() throws Exception {
+        StringReader r = new StringReader("  \n<foo a=\"b\"/>\t\n");
+        Xml.Parser p = new Xml.Parser(r);
+        Xml.Event e = p.readEvent();
+        assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<foo>","foo",e.name());
+        assertEquals("a=\"b\"","b",e.attr().get("a"));
+    }
+
+    public void testReadElemOpenClose() throws Exception {
+        StringReader r = new StringReader("  \n<foo a=\"b\">\t\nbar</foo>");
+        Xml.Parser p = new Xml.Parser(r);
+        Xml.Event e = p.readEvent();
+        assertEquals("open",Xml.Event.Phase.Open,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<foo>","foo",e.name());
+        e = p.readEvent();
+        assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
+        assertEquals("text",Xml.Node.Type.TEXT,e.type());
+        assertEquals("\"bar\"","bar",e.text());
+        e = p.readEvent();
+        assertEquals("close",Xml.Event.Phase.Close,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<foo>","foo",e.name());
+    }
+
+    public void testReadElemOpenCloseInner() throws Exception {
+        StringReader r = new StringReader("  \n<foo a=\"b\">\t\n<bar c=\"d\"/>baz<bat e=\"f\">bal</bat></foo>");
+        Xml.Parser p = new Xml.Parser(r);
+        Xml.Event e = p.readEvent();
+        assertEquals("open",Xml.Event.Phase.Open,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<foo>","foo",e.name());
+        e = p.readEvent();
+        assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<bar>","bar",e.name());
+        e = p.readEvent();
+        assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
+        assertEquals("text",Xml.Node.Type.TEXT,e.type());
+        assertEquals("\"baz\"","baz",e.text());
+        e = p.readEvent();
+        assertEquals("open",Xml.Event.Phase.Open,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<bat>","bat",e.name());
+        e = p.readEvent();
+        assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
+        assertEquals("text",Xml.Node.Type.TEXT,e.type());
+        assertEquals("\"bal\"","bal",e.text());
+        e = p.readEvent();
+        assertEquals("close",Xml.Event.Phase.Close,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<bat>","bat",e.name());
+        e = p.readEvent();
+        assertEquals("close",Xml.Event.Phase.Close,e.phase());
+        assertEquals("elem",Xml.Node.Type.ELEM,e.type());
+        assertEquals("<foo>","foo",e.name());
     }
 
     private static Map<CharSequence,Object> asMap(Object... kv) {

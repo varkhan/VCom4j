@@ -465,6 +465,7 @@ public class Xml {
          */
         public int next() throws IOException {
             st = in.read();
+//            System.err.println("XML "+ln+":"+cn+"'"+((char)st)+"'");
             if(st=='\n') { ln++; cn=0; }
             else if(st>=0) cn ++;
             return st;
@@ -540,6 +541,7 @@ public class Xml {
                     if(atr!=null) atr.put(name.toString(), null);
                     continue;
                 }
+                next();
                 skipWhitespace();
                 StringBuilder buf = new StringBuilder();
                 if(st=='\"' || st=='\'') {
@@ -585,19 +587,23 @@ public class Xml {
                             buf.append((char) st);
                             next();
                         }
+                        next();
                         return new Event(Event.Phase.Inline, Node.Type.META, name.toString(), null, buf.toString(), null);
                     }
                 }
                 else if(st=='/') {
+                    next();
                     skipWhitespace();
                     StringBuilder name = new StringBuilder();
                     readName(name);
                     if(!isValidElmtName(name)) throw exception("Element names must contain only alphanumeric characters",name);
                     skipWhitespace();
                     if(st!='>') throw exception("Malformed element closing");
+                    next();
                     return new Event(Event.Phase.Close, Node.Type.ELEM, name.toString(), null, null, null);
                 }
                 else if(st=='?') {
+                    next();
                     StringBuilder name = new StringBuilder();
                     readName(name);
                     if(!"xml".equalsIgnoreCase(name.toString())) throw exception("Invalid processing instruction target \""+name+"\"",name);
@@ -621,8 +627,11 @@ public class Xml {
                 if(st=='/') {
                     next();
                     if(st!='>') throw exception("Malformed element closing");
+                    next();
                     return new Event(Event.Phase.Inline, Node.Type.ELEM, name.toString(), attrs, null, null);
                 }
+                if(st!='>') throw exception("Malformed element closing");
+                next();
                 return new Event(Event.Phase.Open, Node.Type.ELEM, name.toString(), attrs, null, null);
             }
             // End of stream?
