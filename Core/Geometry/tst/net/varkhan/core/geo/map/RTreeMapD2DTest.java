@@ -15,7 +15,7 @@ import java.util.Random;
  * @date 11/9/12
  * @time 8:18 PM
  */
-public class RTreeMapD2DTest extends AbstractMetricMapTest {
+public class RTreeMapD2DTest extends AbstractMetricMap2DTest {
     private double xmin = 0;
     private double xmax = 100;
     private double ymin = 0;

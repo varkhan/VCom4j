@@ -17,7 +17,7 @@ import java.util.*;
  * @date 11/9/12
  * @time 8:19 PM
  */
-public abstract class AbstractMetricMapTest extends TestCase {
+public abstract class AbstractMetricMap2DTest extends TestCase {
 
     protected Shape2D getPoint(double x, double y) { return new PointD2D(x, y);}
 
