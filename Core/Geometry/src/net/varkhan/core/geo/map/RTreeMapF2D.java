@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
  * @date 11/9/12
  * @time 1:33 PM
  */
-public class RTreeMapF2D<K extends Shape2D,V> implements MetricMap<K,V> {
+public class RTreeMapF2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
 
     protected final int maxNodeSize;
     protected Node<K,V> root = null;
@@ -55,33 +55,8 @@ public class RTreeMapF2D<K extends Shape2D,V> implements MetricMap<K,V> {
         return size==0;
     }
 
-    @Override
-    public boolean has(K key) {
-        return has(key.xctr(), key.yctr(), 0);
-    }
-
-    @Override
-    public boolean has(K key, double rad) {
-        return has(key.xctr(),key.yctr(),rad);
-    }
-
     public boolean has(double x, double y, double r) {
         return root!=null && root.has((float)x, (float)y, (float)(r*r));
-    }
-
-    @Override
-    public V get(K key) {
-        return get(key.xctr(),key.yctr(),0);
-    }
-
-    @Override
-    public V get(K key, double rad) {
-        return get(key.xctr(),key.yctr(),rad);
-    }
-
-    @Override
-    public V get(double x, double y) {
-        return get(x,y,0);
     }
 
     @Override
@@ -91,21 +66,11 @@ public class RTreeMapF2D<K extends Shape2D,V> implements MetricMap<K,V> {
         return f==null?null:f.val;
     }
 
-    @Override
-    public Map<K,V> getAll(K key, double rad) {
-        return getAll(key.xctr(),key.yctr(),rad);
-    }
-
     public Map<K,V> getAll(double x, double y, double r) {
         if(root==null) return new EmptyMap<K,V>();
         Map<K,V> map = new ArrayOpenHashMap<K,V>();
         root.getAll(map, (float)x, (float)y, (float)(r*r));
         return map;
-    }
-
-    @Override
-    public boolean add(Entry<K,V> item) {
-        return add(item.getKey(),item.getValue());
     }
 
     @Override

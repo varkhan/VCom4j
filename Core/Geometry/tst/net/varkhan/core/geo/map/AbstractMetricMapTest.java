@@ -45,13 +45,13 @@ public abstract class AbstractMetricMapTest extends TestCase {
             double y = c.yctr();
             System.err.println(t+"\t=>\t"+findAll(locs, x, y));
             assertTrue(t, findAllKeys(locs, x, y).contains(t));
-            assertEquals("findClosest() @[" + x + "," + y + "]", findClosest(locs, x, y), geomap.get(x, y, Double.MAX_VALUE));
+            assertEquals("findClosest() @[" + x + "," + y + "]", findClosest(locs, x, y), geomap.get(new double[] {x, y}, Double.MAX_VALUE));
         }
         for(int i=0; i<size; i++) {
             double x = xmin+(xmax-xmin)*rand.nextDouble();
             double y = ymin+(ymax-ymin)*rand.nextDouble();
             final String closest = findClosest(locs, x, y);
-            final String all = geomap.get(x, y, Double.MAX_VALUE);
+            final String all = geomap.get(new double[] {x, y}, Double.MAX_VALUE);
             assertEquals("findClosest() #"+i+"-["+x+","+y+"]", closest, all);
         }
     }
@@ -80,13 +80,13 @@ public abstract class AbstractMetricMapTest extends TestCase {
             double y = c.yctr();
             assertTrue(t, findAllKeys(locs, x, y).contains(t));
             System.err.println(t);
-            assertEquals("findClosest() @[" + x + "," + y + "]", findAll(locs, x, y), geomap.getAll(x, y, prec));
+            assertEquals("findClosest() @[" + x + "," + y + "]", findAll(locs, x, y), geomap.getAll(new double[] {x, y}, prec));
         }
         for(int i=0; i<size; i++) {
             double x = xmin+(xmax-xmin)*rand.nextDouble();
             double y = ymin+(ymax-ymin)*rand.nextDouble();
             final net.varkhan.base.containers.map.Map<Shape2D,String> closest = findAll(locs, x, y);
-            final net.varkhan.base.containers.map.Map<Shape2D,String> all = geomap.getAll(x, y, 0);
+            final net.varkhan.base.containers.map.Map<Shape2D,String> all = geomap.getAll(new double[] {x, y}, 0);
             assertEquals("findClosest() #"+i+"-["+x+","+y+"]", closest, all);
         }
     }
@@ -118,7 +118,7 @@ public abstract class AbstractMetricMapTest extends TestCase {
         for(double[] p: points) {
             double x = p[0];
             double y = p[1];
-            final String all = geomap.get(x, y, Double.MAX_VALUE);
+            final String all = geomap.get(new double[] {x, y}, Double.MAX_VALUE);
             final int i = (int) p[2];
             assertNotNull(/*""+i+" ("+x+","+y+")",*/all);
         }

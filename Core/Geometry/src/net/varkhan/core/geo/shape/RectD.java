@@ -94,7 +94,7 @@ public class RectD extends AbstractShape implements Rect {
     }
 
     @Override
-    public double dmin2(double[] c) {
+    public double dmin2(double... c) {
         double r2 = 0.0;
         for(int d=0; d<dim; d++) {
             double v=c[d];
@@ -109,7 +109,7 @@ public class RectD extends AbstractShape implements Rect {
     }
 
     @Override
-    public double dmax2(double[] c) {
+    public double dmax2(double... c) {
         double r2 = 0.0;
         for(int d=0; d<dim; d++) {
             double v=c[d];

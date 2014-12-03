@@ -5,8 +5,9 @@ import net.varkhan.base.containers.Iterator;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
 import net.varkhan.base.containers.map.EmptyMap;
 import net.varkhan.base.containers.map.Map;
-import net.varkhan.core.geo.shape.d2.rec.RectD2D;
-import net.varkhan.core.geo.shape.d2.Shape2D;
+import net.varkhan.core.geo.shape.Point;
+import net.varkhan.core.geo.shape.RectD;
+import net.varkhan.core.geo.shape.Shape;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -22,17 +23,17 @@ import java.util.NoSuchElementException;
  * @date 11/9/12
  * @time 1:33 PM
  */
-public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
+public class RTreeMapD<K extends Shape,V> implements MetricMap<K,V> {
 
     protected final int maxNodeSize;
     protected Node<K,V> root = null;
     protected long size = 0;
 
-    public RTreeMapD2D(int maxNodeSize) {
+    public RTreeMapD(int maxNodeSize) {
         this.maxNodeSize = maxNodeSize;
     }
 
-    public RTreeMapD2D() {
+    public RTreeMapD() {
         this(12);
     }
 
@@ -55,22 +56,76 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
         return size==0;
     }
 
-    public boolean has(double x, double y, double r) {
-        return root!=null && root.has(x, y, r*r);
+    @Override
+    public boolean has(K key) {
+        return has(key.cctr(), 0);
     }
 
     @Override
-    public V get(double x, double y, double r) {
+    public boolean has(K key, double rad) {
+        return has(key.cctr(),rad);
+    }
+
+    public boolean has(Point p, double r) {
+        return root!=null && root.has(p.cctr(), r*r);
+    }
+
+    public boolean has(double[] c, double r) {
+        return root!=null && root.has(c, r*r);
+    }
+
+    @Override
+    public V get(K key) {
+        return get(key.cctr(),0);
+    }
+
+    @Override
+    public V get(K key, double rad) {
+        return get(key.cctr(),rad);
+    }
+
+    @Override
+    public V get(Point p) {
+        return get(p.cctr(),0);
+    }
+
+    @Override
+    public V get(Point p, double r) {
+        return get(p.cctr(),r);
+    }
+
+    @Override
+    public V get(double[] c) {
+        return get(c,0);
+    }
+
+    @Override
+    public V get(double[] c, double r) {
         if(root==null) return null;
-        final Node<K,V> f = root.get(x, y, r*r);
+        final Node<K,V> f = root.get(c, r*r);
         return f==null?null:f.val;
     }
 
-    public Map<K,V> getAll(double x, double y, double r) {
+    @Override
+    public Map<K,V> getAll(K key, double rad) {
+        return getAll(key.cctr(),rad);
+    }
+
+    @Override
+    public Map<K,V> getAll(Point p, double r) {
+        return getAll(p.cctr(),r);
+    }
+
+    public Map<K,V> getAll(double[] c, double r) {
         if(root==null) return new EmptyMap<K,V>();
         Map<K,V> map = new ArrayOpenHashMap<K,V>();
-        root.getAll(map, x, y, r*r);
+        root.getAll(map, c, r*r);
         return map;
+    }
+
+    @Override
+    public boolean add(Entry<K,V> item) {
+        return add(item.getKey(),item.getValue());
     }
 
     @Override
@@ -103,7 +158,7 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
      **  R-Tree traverasl and iterators
      **/
 
-    protected static class Iter<K extends Shape2D,V> implements Iterator<Node<K,V>> {
+    protected static class Iter<K extends Shape,V> implements Iterator<Node<K,V>> {
         protected final Deque<Node<K,V>> next = new ArrayDeque<Node<K,V>>();
         protected volatile Node<K,V> curr = null;
 
@@ -145,12 +200,12 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
         return new Container<K>() {
             @Override
             public long size() {
-                return RTreeMapD2D.this.size();
+                return RTreeMapD.this.size();
             }
 
             @Override
             public boolean isEmpty() {
-                return RTreeMapD2D.this.isEmpty();
+                return RTreeMapD.this.isEmpty();
             }
 
             @Override
@@ -165,7 +220,7 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
 
             @Override
             public <Par> long visit(final Visitor<K,Par> vis, final Par par) {
-                return RTreeMapD2D.this.visit(new Visitor<Entry<K,V>,Par>() {
+                return RTreeMapD.this.visit(new Visitor<Entry<K,V>,Par>() {
                     public long invoke(Entry<K,V> obj, Par par) {
                         return vis.invoke(obj.getKey(), par);
                     }
@@ -179,12 +234,12 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
         return new Container<V>() {
             @Override
             public long size() {
-                return RTreeMapD2D.this.size();
+                return RTreeMapD.this.size();
             }
 
             @Override
             public boolean isEmpty() {
-                return RTreeMapD2D.this.isEmpty();
+                return RTreeMapD.this.isEmpty();
             }
 
             @Override
@@ -199,7 +254,7 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
 
             @Override
             public <Par> long visit(final Visitor<V,Par> vis, final Par par) {
-                return RTreeMapD2D.this.visit(new Visitor<Entry<K,V>,Par>() {
+                return RTreeMapD.this.visit(new Visitor<Entry<K,V>,Par>() {
                     public long invoke(Entry<K,V> obj, Par par) {
                         return vis.invoke(obj.getValue(), par);
                     }
@@ -226,7 +281,7 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
     @Override
     public <Par> long visit(Visitor<Entry<K,V>,Par> vis, K key, double rad, Par par) {
         if(root==null) return 0;
-        return root.visit(vis,key.xctr(),key.yctr(),rad*rad,par);
+        return root.visit(vis,key.cctr(),rad*rad,par);
     }
 
     @Override
@@ -249,7 +304,7 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
      **  R-Node implementation
      **/
 
-    protected static class Node<K extends Shape2D,V> extends RectD2D implements Entry<K,V> {
+    protected static class Node<K extends Shape,V> extends RectD implements Entry<K,V> {
         protected K key= null;
         protected V val = null;
         protected int maxNodes;
@@ -293,67 +348,58 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
             return old;
         }
 
-        public boolean contains(double x, double y) {
-            if(key!=null) return key.contains(x, y);
-            return super.contains(x, y);
+        public boolean contains(double... c) {
+            if(key!=null) return key.contains(c);
+            return super.contains(c);
         }
 
         @Override
-        public double dmin(double x, double y) {
-            if(key!=null) return key.dmin(x, y);
-            return super.dmin(x, y);
+        public double dmin(double... c) {
+            if(key!=null) return key.dmin(c);
+            return super.dmin(c);
         }
 
         @Override
-        public double dmin2(double x, double y) {
-            if(key!=null) return key.dmin2(x, y);
-            return super.dmin2(x, y);
+        public double dmin2(double... c) {
+            if(key!=null) return key.dmin2(c);
+            return super.dmin2(c);
         }
 
         @Override
-        public double dmax(double x, double y) {
-            if(key!=null) return key.dmax(x, y);
-            return super.dmax(x, y);
+        public double dmax(double... c) {
+            if(key!=null) return key.dmax(c);
+            return super.dmax(c);
         }
 
         @Override
-        public double dmax2(double x, double y) {
-            if(key!=null) return key.dmax2(x, y);
-            return super.dmax2(x, y);
-        }
-
-        public boolean contains(double... coords) {
-            final double x = coords[0];
-            final double y = coords[1];
-            if(key!=null) return key.contains(x, y);
-            return super.contains(coords);
+        public double dmax2(double... c) {
+            if(key!=null) return key.dmax2(c);
+            return super.dmax2(c);
         }
 
         /**************************
          **  Sub-node addition and balancing
          **/
 
-        private double ext(double gxmin, double gxmax, double gymin, double gymax) {
-            double xmin = this.xmin;
-            double xmax = this.xmax;
-            double ymin = this.ymin;
-            double ymax = this.ymax;
-            double d1 = (xmax-xmin)*(ymax-ymin);
-            if(xmin>gxmin) xmin=gxmin;
-            if(xmax<gxmax) xmax=gxmax;
-            if(ymin>gymin) ymin=gymin;
-            if(ymax<gymax) ymax=gymax;
-            double d2 = (xmax-xmin)*(ymax-ymin);
+        private double ext(double[] gmin, double[] gmax) {
+            double d1 = 1.0;
+            double d2 = 1.0;
+            for(int d=0; d<dim; d++) {
+                d1 *= cmax[d]-cmin[d];
+                double min = cmin[d];
+                double max = cmax[d];
+                if(min>gmin[d]) min=gmin[d];
+                if(max<gmax[d]) max=gmax[d];
+                d2 *= max-min;
+            }
             return d2-d1;
         }
 
 
         @SuppressWarnings("unchecked")
         public boolean add(K key, V val) {
-            final double gxmin = key.xmin();
-            final double gxmax = key.xmax();
-            final double gymin = key.ymin();
-            final double gymax = key.ymax();
+            final double[] gmin = key.cmin();
+            final double[] gmax = key.cmax();
             if(nodes==null) {
                 if(this.key!=null) {
                     if(this.key.equals(key)) {
@@ -372,11 +418,12 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
             else {
                 double din = Double.MAX_VALUE;
                 Node<K,V> nin = null;
+                double dls = 0;
                 for(Node<K,V> n: nodes) {
-                    double d = n.ext(gxmin,gxmax,gymin,gymax);
+                    double d = dls = n.ext(gmin,gmax);
                     if(d<=din) { din=d; nin=n; }
                 }
-                if(nin==null) throw new RuntimeException("No matching segment found within "+din+" of [ "+gxmin+":"+gymin+" x "+gxmax+":"+gymax+" ]\n\tfor "+key+"\n\tfrom "+Arrays.toString(nodes));
+                if(nin==null) throw new RuntimeException("No matching segment found within "+din+" of "+new RectD(cmin,cmax).toString()+"\n\tfor "+key+"\n\tfrom "+Arrays.toString(nodes));
                 // Should we add to an existing node?
                 if(din==0 || nodes.length>=maxNodes) {
                     if(!nin.add(key,val)) return false;
@@ -388,10 +435,10 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
                     nodes = copy;
                 }
             }
-            if(xmin>gxmin) xmin=gxmin;
-            if(xmax<gxmax) xmax=gxmax;
-            if(ymin>gymin) ymin=gymin;
-            if(ymax<gymax) ymax=gymax;
+            for(int d=0; d<dim; d++) {
+                if(cmin[d]>gmin[d]) cmin[d]=gmin[d];
+                if(cmax[d]<gmax[d]) cmax[d]=gmax[d];
+            }
             return true;
         }
 
@@ -400,28 +447,28 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
          **  Sub-node search
          **/
 
-        public boolean has(double x, double y, double r2) {
-            if(dmin2(x, y)>r2) return false;
+        public boolean has(double[] c, double r2) {
+            if(dmin2(c)>r2) return false;
             if(key!=null) {
-                double d = key.dmin2(x, y);
+                double d = key.dmin2(c);
                 if(d<=r2) return true;
             }
             if(nodes!=null) {
                 for(Node<K,V> n: nodes) {
 //                    double d = n.dmin2(x, y);
 //                    if(d>r2) continue;
-                    if(n.has(x,y,r2)) return true;
+                    if(n.has(c,r2)) return true;
                 }
             }
             return false;
         }
 
-        public Node<K,V> get(double x, double y, double r2) {
-            if(dmin2(x, y)>r2) return null;
+        public Node<K,V> get(double[] c, double r2) {
+            if(dmin2(c)>r2) return null;
             double dm = r2;
             Node<K,V> f = null;
             if(key!=null) {
-                double d = key.dmin2(x, y);
+                double d = key.dmin2(c);
                 if(d<=dm) {
                     dm = d;
                     f = this;
@@ -431,9 +478,9 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
                 for(Node<K,V> n: nodes) {
 //                    double d = n.dmin2(x, y);
 //                    if(d>dm) continue;
-                    Node<K,V> v = n.get(x, y, dm);
+                    Node<K,V> v = n.get(c, dm);
                     if(v!=null) {
-                        double d = v.dmin2(x, y);
+                        double d = v.dmin2(c);
                         if(d<=dm) {
                             dm = d;
                             f = v;
@@ -444,11 +491,11 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
             return f;
         }
 
-        public void getAll(Map<K,V> map, double x, double y, double r2) {
-            if(dmin2(x, y)>r2) return;
-            if(key!=null && key.dmin2(x, y)<=r2) map.add(key, val);
+        public void getAll(Map<K,V> map, double[] c, double r2) {
+            if(dmin2(c)>r2) return;
+            if(key!=null && key.dmin2(c)<=r2) map.add(key, val);
             if(nodes!=null) {
-                for(Node<K,V> n: nodes) n.getAll(map, x, y, r2);
+                for(Node<K,V> n: nodes) n.getAll(map, c, r2);
             }
         }
 
@@ -498,24 +545,26 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
             return false;
         }
 
-        protected boolean overlap(K k, Node<K,V> n) {return n.contains(k.xctr(),k.yctr());}
+        protected boolean overlap(K k, Node<K,V> n) {return n.contains(k.cctr());}
 
         public void box() {
-            xmin = +Double.MAX_VALUE;
-            xmax = -Double.MAX_VALUE;
-            ymin = +Double.MAX_VALUE;
-            ymax = -Double.MAX_VALUE;
             if(key!=null) {
-                if(xmin>key.xmin()) xmin=key.xmin();
-                if(xmax<key.xmax()) xmax=key.xmax();
-                if(ymin>key.ymin()) xmin=key.ymin();
-                if(ymax<key.ymax()) xmin=key.ymax();
+                for(int d=0; d<dim; d++) {
+                    cmin[d] = key.cmin(d);
+                    cmax[d] = key.cmax(d);
+                }
+            }
+            else {
+                for(int d=0; d<dim; d++) {
+                    cmin[d] = +Double.MAX_VALUE;
+                    cmax[d] = -Double.MAX_VALUE;
+                }
             }
             for(Node<K,V> n: nodes) {
-                if(xmin>n.xmin) xmin=n.xmin;
-                if(xmax<n.xmax) xmax=n.xmax;
-                if(ymin>n.ymin) xmin=n.ymin;
-                if(ymax<n.ymax) xmin=n.ymax;
+                for(int d=0; d<dim; d++) {
+                    if(cmin[d]>n.cmin[d]) cmin[d]=n.cmin[d];
+                    if(cmax[d]<n.cmax[d]) cmax[d]=n.cmax[d];
+                }
             }
         }
 
@@ -539,10 +588,10 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
             return s;
         }
 
-        public <Par> long visit(Visitor<Entry<K,V>,Par> vis, double x, double y, double r2, Par par) {
-            if(dmin2(x, y)>r2) return 0;
+        public <Par> long visit(Visitor<Entry<K,V>,Par> vis, double[] c, double r2, Par par) {
+            if(dmin2(c)>r2) return 0;
             long s = 0;
-            if(key!=null && key.dmin2(x, y)<=r2) {
+            if(key!=null && key.dmin2(c)<=r2) {
                 long r=vis.invoke(this,par);
                 if(r<0) return s;
                 s += r;
@@ -565,7 +614,13 @@ public class RTreeMapD2D<K extends Shape2D,V> extends AbstractMetricMap2D<K,V> {
         }
 
         protected void toString(String pre, StringBuilder buf) {
-            buf.append('\n').append(pre).append("= [").append(xmin).append(':').append(xmax).append("] [").append(ymin).append(':').append(xmax).append(']');
+            buf.append('\n').append(pre).append("= ");
+            boolean f=true;
+            for(int d=0; d<dim; d++) {
+                if(f) f=false;
+                else buf.append(" x ");
+                buf.append('[').append(cmin[d]).append(':').append(cmax[d]).append(']');
+            }
             if(key!=null) {
                 buf.append('\n').append(pre).append("  { ").append(key).append(" => ").append(val).append(" }");
             }
