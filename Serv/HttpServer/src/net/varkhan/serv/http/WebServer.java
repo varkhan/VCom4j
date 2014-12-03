@@ -53,8 +53,8 @@ public abstract class WebServer extends BaseServer {
             public String reason() {
                 if(server==null) return name+" is not defined";
                 if(!server.isRunning()) return name+" is not running";
-                if(server.isFailed()) return name+" is not failed";
-                return name+" is transitioning";
+                if(server.isFailed()) return name+" is failed";
+                return name+" is running";
 
             }
 
