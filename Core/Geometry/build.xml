@@ -3,7 +3,7 @@
     <dirname property="module.base.dir" file="${ant.file.VCom4j-Core-Geometry}"/>
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
-    <property name="module.vers" value="0.6.0"/>
+    <property name="module.vers" value="0.1.0"/>
     <property name="module.desc" value="Geometric data-structures and algorithms"/>
     <property name="test.emma.include" value="+net.varkhan.core.geo.*,-*Test*"/>
     <include file="${project.base.dir}/project.xml"/>
