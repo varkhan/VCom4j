@@ -20,6 +20,8 @@ public abstract class AbstractShape implements Shape {
     }; }
 
     public double rad() { return Math.sqrt(rad2()); }
+    public double msr() { return msr(dim()); }
+
     public boolean contains(double... point) { return dmin2(point)==0; }
     public double dmin(double... point) { return Math.sqrt(dmin2(point)); }
     public double dmax(double... point) { return Math.sqrt(dmax2(point)); }

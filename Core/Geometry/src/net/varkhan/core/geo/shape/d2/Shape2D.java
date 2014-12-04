@@ -20,7 +20,8 @@ public interface Shape2D {
     public Point2D ctr();
     public double rad();
     public double rad2();
-    public double msr();
+    public double length();
+    public double area();
 
     public boolean contains(double x, double y);
     public double dmin(double x, double y);

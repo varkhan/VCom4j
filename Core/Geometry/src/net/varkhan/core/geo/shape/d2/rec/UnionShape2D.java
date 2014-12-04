@@ -73,7 +73,7 @@ public class UnionShape2D extends AbstractShape2D implements Iterable<Shape2D> {
         double m=0;
         for(Shape2D s: shapes) {
             double sx = s.xctr();
-            double sm = s.msr();
+            double sm = s.area();
             x += sm*sx;
             m += sm;
         }
@@ -87,7 +87,7 @@ public class UnionShape2D extends AbstractShape2D implements Iterable<Shape2D> {
         double m=0;
         for(Shape2D s: shapes) {
             double sy = s.yctr();
-            double sm = s.msr();
+            double sm = s.area();
             y += sm*sy;
             m += sm;
         }
@@ -134,10 +134,19 @@ public class UnionShape2D extends AbstractShape2D implements Iterable<Shape2D> {
     }
 
     @Override
-    public double msr() {
+    public double length() {
         double m=0;
         for(Shape2D s: shapes) {
-            m += s.msr();
+            m += s.length();
+        }
+        return m;
+    }
+
+    @Override
+    public double area() {
+        double m=0;
+        for(Shape2D s: shapes) {
+            m += s.area();
         }
         return m;
     }

@@ -70,7 +70,18 @@ public class RectD3D extends AbstractShape3D implements Rect3D {
     }
 
     @Override
-    public double msr() {
+    public double length() { return Double.POSITIVE_INFINITY; }
+
+    @Override
+    public double area() {
+        double deltax = xmax-xmin;
+        double deltay = ymax-ymin;
+        double deltaz = zmax-zmin;
+        return 2*(deltax*deltay+deltax*deltaz+deltay*deltaz);
+    }
+
+    @Override
+    public double volume() {
         double deltax = xmax-xmin;
         double deltay = ymax-ymin;
         double deltaz = zmax-zmin;

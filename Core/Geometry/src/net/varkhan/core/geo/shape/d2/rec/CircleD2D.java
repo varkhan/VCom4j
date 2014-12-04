@@ -44,7 +44,8 @@ public class CircleD2D extends AbstractShape2D implements Shape2D {
 
     public double rad() { return r; }
     public double rad2() { return r*r; }
-    public double msr() { return Math.PI*r*r; }
+    public double length() { return 2*Math.PI*r; }
+    public double area() { return Math.PI*r*r; }
 
     public boolean contains(double x, double y) {
         return dctr2(x, y)<r*r;

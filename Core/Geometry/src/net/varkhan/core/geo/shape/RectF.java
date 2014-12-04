@@ -106,6 +106,38 @@ public class RectF extends AbstractShape implements Rect {
     }
 
     @Override
+    public double msr(int dd) {
+        if(dd<=0) return Double.POSITIVE_INFINITY;
+        if(dd>this.dim) return 0;
+        double m = 1.0;
+        // *Effective* dimension (i.e. number of non-trivial sides)
+        int de=0;
+        for(int d=0; d<this.dim; d++) {
+            double v = cmax[d]-cmin[d];
+            if(v!=0) de++;
+            else m*=v;
+        }
+        if(dd>de) return 0;
+        // hyper-volume
+        if(dd==de) return m;
+        // hyper-surface O(dim^2)
+        if(dd==de-1) {
+            m=0;
+            for(int i=0; i<this.dim; i++) {
+                double mm = 1.0;
+                for(int d=0; d<this.dim; d++) {
+                    double v = cmax[d]-cmin[d];
+                    if(i!=d) m*=v;
+                }
+                m += mm;
+            }
+            return 2*m;
+        }
+        // hyper-length and below
+        return Double.POSITIVE_INFINITY;
+    }
+
+    @Override
     public double dmin2(double... c) {
         double r2 = 0.0;
         for(int d=0; d<dim; d++) {

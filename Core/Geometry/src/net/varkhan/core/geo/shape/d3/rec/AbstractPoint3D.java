@@ -34,7 +34,9 @@ public abstract class AbstractPoint3D extends AbstractShape3D implements Point3D
     public Point3D ctr() { return this; }
     public double rad() { return 0; }
     public double rad2() { return 0; }
-    public double msr() { return 0; }
+    public double length() { return 0; }
+    public double area() { return 0; }
+    public double volume() { return 0; }
 
     public boolean contains(double x, double y, double z) { return x==xctr() && y==yctr() && z==zctr(); }
     public double dmin(double x, double y, double z) { return Math.sqrt(dmin2(x, y, z)); }

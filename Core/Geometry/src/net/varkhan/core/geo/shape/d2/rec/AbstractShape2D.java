@@ -47,6 +47,18 @@ public abstract class AbstractShape2D extends AbstractShape implements Shape2D {
         public double yctr() { return AbstractShape2D.this.yctr(); }
     }; }
 
+    @Override
+    public double msr() { return area(); }
+
+    @Override
+    public double msr(int d) {
+        switch(d) {
+            case 0: return Double.POSITIVE_INFINITY;
+            case 1: return length();
+            case 2: return area();
+        }
+        return 0;
+    }
 
     @Override
     public double dmin2(double... point) {

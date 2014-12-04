@@ -21,6 +21,7 @@ public abstract class AbstractPoint extends AbstractShape implements Point {
     public double rad() { return 0; }
     public double rad2() { return 0; }
     public double msr() { return 0; }
+    public double msr(int d) { return d<=0 ? Double.POSITIVE_INFINITY : 0; }
 
     public double dmax2(double... point) { return dmin2(point); }
     public double dmin2(double... point) {

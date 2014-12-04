@@ -58,7 +58,14 @@ public class RectD2D extends AbstractShape2D implements Rect2D {
     }
 
     @Override
-    public double msr() {
+    public double length() {
+        double deltax = xmax-xmin;
+        double deltay = ymax-ymin;
+        return 2*(deltax+deltay);
+    }
+
+    @Override
+    public double area() {
         double deltax = xmax-xmin;
         double deltay = ymax-ymin;
         return deltax*deltay;

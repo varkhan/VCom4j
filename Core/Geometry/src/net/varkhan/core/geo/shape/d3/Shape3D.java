@@ -23,7 +23,9 @@ public interface Shape3D {
     public Point3D ctr();
     public double rad();
     public double rad2();
-    public double msr();
+    public double length();
+    public double area();
+    public double volume();
 
     public boolean contains(double x, double y, double z);
     public double dmin(double x, double y, double z);

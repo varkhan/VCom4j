@@ -49,6 +49,9 @@ public class WrapShape extends AbstractShape {
     public double msr() {return shape.msr();}
 
     @Override
+    public double msr(int d) {return shape.msr(d);}
+
+    @Override
     public boolean contains(double... point) {return shape.contains(point);}
 
     @Override

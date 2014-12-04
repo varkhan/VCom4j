@@ -51,6 +51,20 @@ public abstract class AbstractShape3D extends AbstractShape implements Shape3D {
         public double zctr() { return AbstractShape3D.this.zctr(); }
     }; }
 
+    @Override
+    public double msr() { return volume(); }
+
+    @Override
+    public double msr(int d) {
+        switch(d) {
+            case 0: return Double.POSITIVE_INFINITY;
+            case 1: return length();
+            case 2: return area();
+            case 3: return volume();
+        }
+        return 0;
+    }
+
 
     @Override
     public double dmin2(double... point) {

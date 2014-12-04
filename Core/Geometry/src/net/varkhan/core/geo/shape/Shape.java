@@ -34,6 +34,8 @@ public interface Shape {
     public double rad2();
     /** The shape's measure in its natural dimensional space (1-dimensional length, 2-dimensional area, 3-dimensional volume, etc...) */
     public double msr();
+    /** The shape's measure in a given dimensional space */
+    public double msr(int d);
 
     public boolean contains(double... point);
     public double dmin(double... point);

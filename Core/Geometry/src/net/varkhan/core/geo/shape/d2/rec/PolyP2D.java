@@ -104,7 +104,20 @@ public class PolyP2D extends AbstractShape2D implements Iterable<Point2D>  {
     }
 
     @Override
-    public double msr() {
+    public double length() {
+        if(pts.length<=1) return 0;
+        Point2D p0 = pts[0];
+        double l = 0;
+        for(int i=1; i<pts.length; i++) {
+            Point2D p1 = pts[i];
+            l += length(p0,p1);
+            p0 = p1;
+        }
+        return l;
+    }
+
+    @Override
+    public double area() {
         if(pts.length<=2) return 0;
         Point2D p0 = pts[0];
         Point2D p1 = pts[1];
@@ -216,6 +229,16 @@ public class PolyP2D extends AbstractShape2D implements Iterable<Point2D>  {
             if(d<di) d=di;
         }
         return d;
+    }
+
+    public static double length(Point2D p0, Point2D p1) {
+        double x0 = p0.xctr();
+        double y0 = p0.yctr();
+        double x1 = p1.xctr();
+        double y1 = p1.yctr();
+        double dx = x1-x0;
+        double dy = y1-y0;
+        return Math.sqrt(dx*dx+dy*dy);
     }
 
     public static double area(Point2D p0, Point2D p1, Point2D p2) {

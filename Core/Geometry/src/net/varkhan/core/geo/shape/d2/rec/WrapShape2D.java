@@ -47,7 +47,10 @@ public class WrapShape2D extends AbstractShape2D {
     public double rad2() {return shape.rad2();}
 
     @Override
-    public double msr() {return shape.msr();}
+    public double length() {return shape.length();}
+
+    @Override
+    public double area() {return shape.area();}
 
     @Override
     public boolean contains(double x, double y) {return shape.contains(x, y);}

@@ -118,11 +118,12 @@ public class UnionShape extends AbstractShape implements Iterable<Shape> {
         return cdr2;
     }
 
+    /** The <em>envelope</em> shape's measure in a given dimensional space (this an upper bound of the true shape measure) */
     @Override
-    public double msr() {
+    public double msr(int d) {
         double m=0;
         for(Shape s: shapes) {
-            m += s.msr();
+            m += s.msr(d);
         }
         return m;
     }

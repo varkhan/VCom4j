@@ -31,7 +31,8 @@ public abstract class AbstractPoint2D extends AbstractShape2D implements Point2D
     public Point2D ctr() { return this; }
     public double rad() { return 0; }
     public double rad2() { return 0; }
-    public double msr() { return 0; }
+    public double length() { return 0; }
+    public double area() { return 0; }
 
     public boolean contains(double x, double y) { return x==xctr() && y==yctr(); }
     public double dmin(double x, double y) { return Math.sqrt(dmin2(x, y)); }
