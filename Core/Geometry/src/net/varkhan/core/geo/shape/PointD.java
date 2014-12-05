@@ -63,21 +63,18 @@ public class PointD extends AbstractPoint {
         if(this==o) return true;
         if(!(o instanceof PointD)) return false;
         Point that=(Point) o;
-        double[] thatCoords=that.cctr();
-        if(coords==null||thatCoords==null) return false;
         int dim = coords.length;
-        if(thatCoords.length!=dim) return false;
-        for (int i=0;i<dim;i++)
-            if(coords[i]!=thatCoords[i]) return false;
+        if(dim!=that.dim()) return false;
+        for (int i=0;i<dim;i++) if(coords[i]!=that.cctr(i)) return false;
         return true;
     }
 
     @Override
     public int hashCode() {
         int h = 0;
-        for(double c: coords) {
-            long bits = Double.doubleToRawLongBits(c);
-            h = 31 * h + (int)(bits ^ (bits >>> 32));
+        for(int i=0;i<coords.length;i++) {
+            long bits=Double.doubleToRawLongBits(coords[i]);
+            h=31*h+(int) (bits^(bits>>>32));
         }
         return h;
     }

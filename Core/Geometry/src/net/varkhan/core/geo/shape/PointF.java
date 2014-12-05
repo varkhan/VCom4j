@@ -76,22 +76,16 @@ public class PointF extends AbstractPoint implements Point {
         if(this==o) return true;
         if(!(o instanceof PointD)) return false;
         Point that=(Point) o;
-        double[] thatCoords=that.cctr();
-        if(coords==null||thatCoords==null) return false;
         int dim = coords.length;
-        if(thatCoords.length!=dim) return false;
-        for (int i=0;i<dim;i++)
-            if(coords[i]!=thatCoords[i]) return false;
+        if(dim!=that.dim()) return false;
+        for (int i=0;i<dim;i++) if(coords[i]!=that.cctr(i)) return false;
         return true;
     }
 
     @Override
     public int hashCode() {
         int h = 0;
-        for(float c: coords) {
-            int bits = Float.floatToRawIntBits(c);
-            h = 31 * h + bits;
-        }
+        for(int i=0;i<coords.length;i++) h=31*h+Float.floatToRawIntBits(coords[i]);
         return h;
     }
 
