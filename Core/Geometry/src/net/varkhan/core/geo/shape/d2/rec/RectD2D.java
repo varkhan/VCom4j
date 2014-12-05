@@ -31,6 +31,10 @@ public class RectD2D extends AbstractShape2D implements Rect2D {
         this(shape.xmin(),shape.xmax(),shape.ymin(),shape.ymax());
     }
 
+    public RectD2D(Point2D pmin, Point2D pmax) {
+        this(pmin.xctr(),pmax.xctr(),pmin.yctr(),pmax.yctr());
+    }
+
     public RectD2D(Point2D point, double xdel, double ydel) {
         this(point.xctr()-xdel,point.xctr()+xdel,point.yctr()-ydel,point.yctr()+ydel);
     }

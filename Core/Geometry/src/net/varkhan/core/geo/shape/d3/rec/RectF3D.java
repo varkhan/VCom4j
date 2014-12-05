@@ -35,6 +35,10 @@ public class RectF3D extends AbstractShape3D implements Rect3D {
         this((float)shape.xmin(),(float)shape.xmax(),(float)shape.ymin(),(float)shape.ymax(),(float)shape.zmin(),(float)shape.zmax());
     }
 
+    public RectF3D(Point3D pmin, Point3D pmax) {
+        this((float)pmin.xctr(),(float)pmax.xctr(),(float)pmin.yctr(),(float)pmax.yctr(),(float)pmin.zctr(),(float)pmax.zctr());
+    }
+
     public RectF3D(Point3D point, float xdel, float ydel, float zdel) {
         this((float)point.xctr()-xdel,(float)point.xctr()+xdel,(float)point.yctr()-ydel,(float)point.yctr()+ydel,(float)point.zctr()-zdel,(float)point.zctr()+zdel);
     }

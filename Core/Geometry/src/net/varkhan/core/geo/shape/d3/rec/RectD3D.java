@@ -1,5 +1,6 @@
 package net.varkhan.core.geo.shape.d3.rec;
 
+import net.varkhan.core.geo.shape.d2.Point2D;
 import net.varkhan.core.geo.shape.d3.Point3D;
 import net.varkhan.core.geo.shape.d3.Rect3D;
 import net.varkhan.core.geo.shape.d3.Shape3D;
@@ -33,6 +34,10 @@ public class RectD3D extends AbstractShape3D implements Rect3D {
 
     public RectD3D(Shape3D shape) {
         this(shape.xmin(),shape.xmax(),shape.ymin(),shape.ymax(),shape.zmin(),shape.zmax());
+    }
+
+    public RectD3D(Point3D pmin, Point3D pmax) {
+        this(pmin.xctr(),pmax.xctr(),pmin.yctr(),pmax.yctr(),pmin.zctr(),pmax.zctr());
     }
 
     public RectD3D(Point3D point, double xdel, double ydel, double zdel) {

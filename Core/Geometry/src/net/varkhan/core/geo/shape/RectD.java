@@ -26,7 +26,7 @@ public class RectD extends AbstractShape implements Rect {
         this(shape.cmin(), shape.cmax());
     }
 
-    public RectD(Point point, double[] cdel) {
+    public RectD(Point point, double... cdel) {
         this.dim=point.dim();
         if(cdel.length!=this.dim) throw new IllegalArgumentException("Center coordinate and variation vectors must have the same dimension");
         this.cmin=new double[this.dim];

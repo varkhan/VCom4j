@@ -32,7 +32,7 @@ public class RectF extends AbstractShape implements Rect {
         }
     }
 
-    public RectF(Point point, double[] cdel) {
+    public RectF(Point point, double... cdel) {
         this.dim=point.dim();
         if(cdel.length!=this.dim) throw new IllegalArgumentException("Center coordinate and variation vectors must have the same dimension");
         this.cmin=new float[this.dim];
