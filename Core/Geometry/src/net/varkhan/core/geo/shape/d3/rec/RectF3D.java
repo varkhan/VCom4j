@@ -70,7 +70,8 @@ public class RectF3D extends AbstractShape3D implements Rect3D {
     public double rad2() {
         double deltax = xmax-xmin;
         double deltay = ymax-ymin;
-        return 0.25*(deltax*deltax+deltay*deltay);
+        double deltaz = zmax-zmin;
+        return 0.25*(deltax*deltax+deltay*deltay+deltaz*deltaz);
     }
 
     @Override
