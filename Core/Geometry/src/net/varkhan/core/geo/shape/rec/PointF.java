@@ -1,4 +1,6 @@
-package net.varkhan.core.geo.shape;
+package net.varkhan.core.geo.shape.rec;
+
+import net.varkhan.core.geo.shape.Point;
 
 
 /**
@@ -9,16 +11,30 @@ package net.varkhan.core.geo.shape;
  * @date 9/3/12
  * @time 1:36 PM
  */
-public class PointD extends AbstractPoint {
-    protected double[] coords;
+public class PointF extends AbstractPoint implements Point {
+    protected float[] coords;
 
-    public PointD(double... coords) { this.coords=coords.clone(); }
-    public PointD(Point point) { this.coords=point.cctr(); }
+    public PointF(double... coords) {
+        final int dim = coords.length;
+        this.coords = new float[dim];
+        for(int i=0; i<dim; i++) this.coords[i] = (float)coords[i];
+    }
+
+    public PointF(float... coords) {
+        this.coords = coords.clone();
+    }
+
+    public PointF(Point point) { this(point.cctr()); }
 
     public int dim() { return coords.length; }
     public double cctr(int d) { return d<coords.length?coords[d]:0; }
 
-    public double[] cctr() { return coords.clone(); }
+    public double[] cctr() {
+        final int dim = coords.length;
+        final double[] doubles = new double[dim];
+        for(int i=0; i<dim; i++) doubles[i] = coords[i];
+        return doubles;
+    }
 
     public boolean contains(double... point) {
         int i=0;
@@ -71,20 +87,13 @@ public class PointD extends AbstractPoint {
 
     @Override
     public int hashCode() {
-        int h = 0;
-        for(int i=0;i<coords.length;i++) {
-            long bits=Double.doubleToRawLongBits(coords[i]);
-            h=31*h+(int) (bits^(bits>>>32));
-        }
-        return h;
+        return hashCode(coords);
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('(').append(' ');
-        for(double c: coords) { buf.append(c).append(' '); }
-        buf.append(')');
+        toString(buf, coords);
         return buf.toString();
     }
 

@@ -77,8 +77,28 @@ public abstract class AbstractPoint3D extends AbstractShape3D implements Point3D
     }
 
     public String toString() {
-        StringBuilder buf = new StringBuilder("Point");
-        buf.append('(').append(xctr()).append(',').append(yctr()).append(',').append(zctr()).append(')');
+        StringBuilder buf = new StringBuilder();
+        toString(buf,xctr(),yctr(),zctr());
         return buf.toString();
     }
+
+    public static int hashCode(double x, double y, double z) {
+        long xb=Double.doubleToRawLongBits(x);
+        long yb=Double.doubleToRawLongBits(y);
+        long zb=Double.doubleToRawLongBits(z);
+        return (int) (xb^(xb>>>32))+31*(int) (yb^(yb>>>32))+61*(int) (zb^(zb>>>32));
+    }
+
+    public static void toString(StringBuilder buf, double x, double y, double z) {
+        buf.append('(').append(' ').append(x).append(' ').append(y).append(' ').append(z).append(' ').append(')');
+    }
+
+    public static int hashCode(float x, float y, float z) {
+        return Float.floatToIntBits(x)+31*Float.floatToIntBits(y)+61*Float.floatToIntBits(z);
+    }
+
+    public static void toString(StringBuilder buf, float x, float y, float z) {
+        buf.append('(').append(' ').append(x).append(' ').append(y).append(' ').append(z).append(' ').append(')');
+    }
+
 }

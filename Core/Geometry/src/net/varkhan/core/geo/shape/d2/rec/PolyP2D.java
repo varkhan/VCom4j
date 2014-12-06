@@ -147,6 +147,15 @@ public class PolyP2D extends AbstractShape2D implements Iterable<Point2D>  {
     }
 
     @Override
+    public int hashCode() {
+        int h=0;
+        for(Point2D p: pts) {
+            h = 31*h + p.hashCode();
+        }
+        return h;
+    }
+
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append('[').append(' ');

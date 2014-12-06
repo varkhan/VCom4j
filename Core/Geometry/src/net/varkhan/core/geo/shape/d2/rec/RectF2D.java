@@ -122,8 +122,7 @@ public class RectF2D extends AbstractShape2D implements Rect2D {
 
     @Override
     public int hashCode() {
-        return Float.floatToIntBits(xmin) + 31*Float.floatToIntBits(xmax)
-               + 61*Float.floatToIntBits(ymin) + 89*Float.floatToIntBits(ymax);
+        return AbstractPoint2D.hashCode(xmin, ymin) + 31* AbstractPoint2D.hashCode(xmax, ymax);
     }
 
     @Override

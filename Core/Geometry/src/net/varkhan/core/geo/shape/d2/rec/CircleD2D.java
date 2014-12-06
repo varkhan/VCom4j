@@ -91,15 +91,14 @@ public class CircleD2D extends AbstractShape2D implements Shape2D {
 
     @Override
     public int hashCode() {
-        return Float.floatToIntBits((float) x) + 31*Float.floatToIntBits((float)y)
-               + 61*Float.floatToIntBits((float)r);
+        return Float.floatToIntBits((float)r) + 31*AbstractPoint2D.hashCode(x, y);
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append('(').append(' ');
-        buf.append('(').append(x).append(' ').append(y).append(')');
+        AbstractPoint2D.toString(buf, x, y);
         buf.append(" @ ").append(r);
         buf.append(' ').append(')');
         return buf.toString();

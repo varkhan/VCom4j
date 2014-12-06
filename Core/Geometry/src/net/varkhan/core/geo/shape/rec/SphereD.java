@@ -1,4 +1,8 @@
-package net.varkhan.core.geo.shape;
+package net.varkhan.core.geo.shape.rec;
+
+
+import net.varkhan.core.geo.shape.Point;
+import net.varkhan.core.geo.shape.Shape;
 
 
 /**
@@ -161,22 +165,15 @@ public class SphereD extends AbstractShape implements Shape {
 
     @Override
     public int hashCode() {
-        int h = 0;
-        for(int i=0;i<coords.length;i++) {
-            long bits=Double.doubleToRawLongBits(coords[i]);
-            h=31*h+(int) (bits^(bits>>>32));
-        }
         long bits=Double.doubleToRawLongBits(radius);
-        return 31*h+(int) (bits^(bits>>>32));
+        return 31*AbstractPoint.hashCode(coords)+(int) (bits^(bits>>>32));
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append('(').append(' ');
-        buf.append('(').append(' ');
-        for(double c: coords) { buf.append(c).append(' '); }
-        buf.append(')');
+        AbstractPoint.toString(buf, coords);
         buf.append(" @ ").append(radius);
         buf.append(' ').append(')');
         return buf.toString();

@@ -42,13 +42,13 @@ public class PointD3D extends AbstractPoint3D {
 
     @Override
     public int hashCode() {
-        return Float.floatToIntBits((float)x)+31*Float.floatToIntBits((float)y)+61*Float.floatToIntBits((float)z);
+        return hashCode(x, y, z);
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('(').append(' ').append(x).append(' ').append(y).append(' ').append(z).append(' ').append(')');
+        toString(buf, x, y, z);
         return buf.toString();
     }
 

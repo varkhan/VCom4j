@@ -1,5 +1,7 @@
 package net.varkhan.core.geo.shape;
 
+import net.varkhan.core.geo.shape.rec.AbstractShape;
+
 import java.util.Iterator;
 
 

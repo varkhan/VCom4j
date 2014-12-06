@@ -1,4 +1,9 @@
-package net.varkhan.core.geo.shape;
+package net.varkhan.core.geo.shape.rec;
+
+
+import net.varkhan.core.geo.shape.Point;
+import net.varkhan.core.geo.shape.Rect;
+import net.varkhan.core.geo.shape.Shape;
 
 
 /**
@@ -9,56 +14,68 @@ package net.varkhan.core.geo.shape;
  * @date 9/3/12
  * @time 3:31 PM
  */
-public class RectD extends AbstractShape implements Rect {
+public class RectF extends AbstractShape implements Rect {
 
     protected final int dim;
-    protected double[] cmin;
-    protected double[] cmax;
+    protected float[] cmin;
+    protected float[] cmax;
 
-    public RectD(double[] cmin, double[] cmax) {
+    public RectF(float[] cmin, float[] cmax) {
         if(cmin.length!=cmax.length) throw new IllegalArgumentException("Min and max coordinate vectors must have the same dimension");
         this.dim=cmin.length;
         this.cmin=cmin.clone();
         this.cmax=cmax.clone();
     }
 
-    public RectD(Shape shape) {
-        this(shape.cmin(), shape.cmax());
-    }
-
-    public RectD(Point point, double... cdel) {
-        this.dim=point.dim();
-        if(cdel.length!=this.dim) throw new IllegalArgumentException("Center coordinate and variation vectors must have the same dimension");
-        this.cmin=new double[this.dim];
-        this.cmax=new double[this.dim];
+    public RectF(Shape shape) {
+        this.dim=shape.dim();
+        this.cmin=new float[this.dim];
+        this.cmax=new float[this.dim];
         for(int d=0; d<dim; d++) {
-            this.cmin[d] = point.cctr(d) - cdel[d];
-            this.cmax[d] = point.cctr(d) + cdel[d];
+            this.cmin[d] = (float)shape.cmin(d);
+            this.cmax[d] = (float)shape.cmax(d);
         }
     }
 
-    public RectD(Point pmin, Point pmax) {
+    public RectF(Point point, double... cdel) {
+        this.dim=point.dim();
+        if(cdel.length!=this.dim) throw new IllegalArgumentException("Center coordinate and variation vectors must have the same dimension");
+        this.cmin=new float[this.dim];
+        this.cmax=new float[this.dim];
+        for(int d=0; d<dim; d++) {
+            this.cmin[d] = (float)(point.cctr(d) - cdel[d]);
+            this.cmax[d] = (float)(point.cctr(d) + cdel[d]);
+        }
+    }
+
+    public RectF(Point pmin, Point pmax) {
         if(pmin.dim()!=pmax.dim()) throw new IllegalArgumentException("Min and max points must have the same dimension");
         this.dim=pmin.dim();
-        this.cmin=new double[this.dim];
-        this.cmax=new double[this.dim];
+        this.cmin=new float[this.dim];
+        this.cmax=new float[this.dim];
         for(int d=0; d<dim; d++) {
-            this.cmin[d] = pmin.cctr(d);
-            this.cmax[d] = pmax.cctr(d);
+            this.cmin[d] = (float)pmin.cctr(d);
+            this.cmax[d] = (float)pmax.cctr(d);
         }
     }
 
     @Override
     public int dim() { return dim; }
-    public double[] cmin() { return cmin.clone(); }
-    public double[] cmax() { return cmax.clone(); }
+    public double[] cmin() {
+        return clone(cmin, dim);
+    }
+
+    public double[] cmax() {
+        return clone(cmax, dim);
+    }
+
     public double cmin(int d) { return d<dim() ? cmin[d] : 0; }
     public double cmax(int d) { return d<dim() ? cmax[d] : 0; }
 
     @Override
     public Point ctr() { return new AbstractPoint() {
-        public double cctr(int d) { return RectD.this.cctr(d); }
-        public double[] cctr() { return RectD.this.cctr(); }
+        public double cctr(int d) { return RectF.this.cctr(d); }
+        public double[] cctr() { return RectF.this.cctr(); }
     }; }
 
     @Override
@@ -86,9 +103,9 @@ public class RectD extends AbstractShape implements Rect {
     @Override
     public double msr() {
         double m = 1.0;
-        for(int d=0; d<this.dim; d++) {
+        for(int d=0; d<dim; d++) {
             double v = cmax[d]-cmin[d];
-            m*=v;
+            m *= v;
         }
         return m;
     }
@@ -176,16 +193,7 @@ public class RectD extends AbstractShape implements Rect {
 
     @Override
     public int hashCode() {
-        int h = 0;
-        for(double c: cmin) {
-            long bits = Double.doubleToRawLongBits(c);
-            h = 31 * h + (int)(bits ^ (bits >>> 32));
-        }
-        for(double c: cmax) {
-            long bits = Double.doubleToRawLongBits(c);
-            h = 61 * h + (int)(bits ^ (bits >>> 32));
-        }
-        return h;
+        return AbstractPoint.hashCode(cmin) + 31* AbstractPoint.hashCode(cmax);
     }
 
     @Override
@@ -200,6 +208,22 @@ public class RectD extends AbstractShape implements Rect {
         }
         buf.append(' ').append(')');
         return buf.toString();
+    }
+
+    protected static float[] clone(double[] cc, int dd) {
+        float[] c = new float[dd];
+        for(int d=0; d<dd; d++) {
+            c[d] = (float)cc[d];
+        }
+        return c;
+    }
+
+    protected static double[] clone(float[] cc, int dd) {
+        double[] c = new double[dd];
+        for(int d=0; d<dd; d++) {
+            c[d] = cc[d];
+        }
+        return c;
     }
 
 }

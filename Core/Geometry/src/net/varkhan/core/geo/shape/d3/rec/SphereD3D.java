@@ -101,15 +101,14 @@ public class SphereD3D extends AbstractShape3D implements Shape3D {
 
     @Override
     public int hashCode() {
-        return Float.floatToIntBits((float) x) + 31*Float.floatToIntBits((float)y)
-               + 61*Float.floatToIntBits((float)z) + 89*Float.floatToIntBits((float)r);
+        return Float.floatToIntBits((float)r) + 31 * AbstractPoint3D.hashCode(x, y, z);
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append('(').append(' ');
-        buf.append('(').append(x).append(' ').append(y).append(' ').append(z).append(')');
+        AbstractPoint3D.toString(buf, x, y, z);
         buf.append(" @ ").append(r);
         buf.append(' ').append(')');
         return buf.toString();

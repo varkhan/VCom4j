@@ -1,5 +1,8 @@
 package net.varkhan.core.geo.shape;
 
+import net.varkhan.core.geo.shape.rec.AbstractShape;
+
+
 /**
  * <b>Wraps (delegates) shape semantics to an underlying shape object</b>.
  * <p/>

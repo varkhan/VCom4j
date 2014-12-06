@@ -68,7 +68,26 @@ public abstract class AbstractPoint2D extends AbstractShape2D implements Point2D
 
     public String toString() {
         StringBuilder buf = new StringBuilder("Point");
-        buf.append('(').append(xctr()).append(',').append(yctr()).append(')');
+        toString(buf,xctr(),yctr());
         return buf.toString();
     }
+
+    public static int hashCode(double x, double y) {
+        long xb=Double.doubleToRawLongBits(x);
+        long yb=Double.doubleToRawLongBits(y);
+        return (int) (xb^(xb>>>32))+31*(int) (yb^(yb>>>32));
+    }
+
+    public static void toString(StringBuilder buf, double x, double y) {
+        buf.append('(').append(' ').append(x).append(' ').append(y).append(' ').append(')');
+    }
+
+    public static int hashCode(float x, float y) {
+        return Float.floatToIntBits(x)+31*Float.floatToIntBits(y);
+    }
+
+    public static void toString(StringBuilder buf, float x, float y) {
+        buf.append('(').append(' ').append(x).append(' ').append(y).append(' ').append(')');
+    }
+
 }

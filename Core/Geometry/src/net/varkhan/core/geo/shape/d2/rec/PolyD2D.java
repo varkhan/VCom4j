@@ -2,6 +2,7 @@ package net.varkhan.core.geo.shape.d2.rec;
 
 import net.varkhan.core.geo.shape.d2.Point2D;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 
@@ -154,6 +155,29 @@ public class PolyD2D extends AbstractShape2D implements Iterable<Point2D> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(this==o) return true;
+        if(!(o instanceof PolyD2D)) return false;
+
+        PolyD2D that=(PolyD2D) o;
+
+        if(num!=that.num) return false;
+        if(!Arrays.equals(xpts, that.xpts)) return false;
+        if(!Arrays.equals(ypts, that.ypts)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int h=0;
+        for(int i=0; i<num; i++) {
+            h = 31*h + AbstractPoint2D.hashCode(xpts[i], ypts[i]);
+        }
+        return h;
+    }
+
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append('[').append(' ');
@@ -161,7 +185,7 @@ public class PolyD2D extends AbstractShape2D implements Iterable<Point2D> {
         for(int i=0; i<num; i++) {
             if(first) first = false;
             else buf.append(" - ");
-            buf.append('(').append(' ').append(xpts[i]).append(' ').append(ypts[i]).append(' ').append(')');
+            AbstractPoint2D.toString(buf, xpts[i], ypts[i]);
         }
         buf.append(' ').append(']');
         return buf.toString();

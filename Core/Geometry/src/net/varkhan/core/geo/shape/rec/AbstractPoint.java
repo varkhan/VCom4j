@@ -1,4 +1,7 @@
-package net.varkhan.core.geo.shape;
+package net.varkhan.core.geo.shape.rec;
+
+import net.varkhan.core.geo.shape.Point;
+
 
 /**
  * <b></b>.
@@ -44,6 +47,40 @@ public abstract class AbstractPoint extends AbstractShape implements Point {
             i++;
         }
         return dist2;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        toString(buf, cctr());
+        return buf.toString();
+    }
+
+    public static int hashCode(double... coords) {
+        int h = 0;
+        for(int i=0;i<coords.length;i++) {
+            long bits=Double.doubleToRawLongBits(coords[i]);
+            h=31*h+(int) (bits^(bits>>>32));
+        }
+        return h;
+    }
+
+    public static void toString(StringBuilder buf, double... coords) {
+        buf.append('(').append(' ');
+        for(double c: coords) { buf.append(c).append(' '); }
+        buf.append(')');
+    }
+
+    public static int hashCode(float... coords) {
+        int h = 0;
+        for(int i=0;i<coords.length;i++) h=31*h+Float.floatToRawIntBits(coords[i]);
+        return h;
+    }
+
+    public static void toString(StringBuilder buf, float... coords) {
+        buf.append('(').append(' ');
+        for(float c: coords) { buf.append(c).append(' '); }
+        buf.append(')');
     }
 
 }

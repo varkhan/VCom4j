@@ -1,6 +1,6 @@
 package net.varkhan.core.geo.shape.d3.rec;
 
-import net.varkhan.core.geo.shape.AbstractShape;
+import net.varkhan.core.geo.shape.rec.AbstractShape;
 import net.varkhan.core.geo.shape.d3.Point3D;
 import net.varkhan.core.geo.shape.d3.Shape3D;
 

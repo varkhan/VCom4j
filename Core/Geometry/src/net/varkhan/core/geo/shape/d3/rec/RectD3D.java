@@ -144,9 +144,7 @@ public class RectD3D extends AbstractShape3D implements Rect3D {
 
     @Override
     public int hashCode() {
-        return Float.floatToIntBits((float)xmin) + 31*Float.floatToIntBits((float)xmax)
-               + 61*Float.floatToIntBits((float)ymin) + 89*Float.floatToIntBits((float)ymax)
-               + 127*Float.floatToIntBits((float)zmin) + 151*Float.floatToIntBits((float)zmax);
+        return AbstractPoint3D.hashCode(xmin, ymin, zmin) + 31* AbstractPoint3D.hashCode(xmax, ymax, zmax);
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.varkhan.base.containers.map.ArrayOpenHashMap;
 import net.varkhan.base.containers.map.EmptyMap;
 import net.varkhan.base.containers.map.Map;
 import net.varkhan.core.geo.shape.Point;
-import net.varkhan.core.geo.shape.RectD;
+import net.varkhan.core.geo.shape.rec.RectD;
 import net.varkhan.core.geo.shape.Shape;
 
 import java.util.ArrayDeque;

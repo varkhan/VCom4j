@@ -1,4 +1,8 @@
-package net.varkhan.core.geo.shape;
+package net.varkhan.core.geo.shape.rec;
+
+import net.varkhan.core.geo.shape.Point;
+import net.varkhan.core.geo.shape.Shape;
+
 
 /**
  * <b></b>.

@@ -43,13 +43,13 @@ public class PointF2D extends AbstractPoint2D {
 
     @Override
     public int hashCode() {
-        return Float.floatToIntBits(x)+31*Float.floatToIntBits(y);
+        return hashCode(x, y);
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append('(').append(' ').append(x).append(' ').append(y).append(' ').append(')');
+        toString(buf, x, y);
         return buf.toString();
     }
 
