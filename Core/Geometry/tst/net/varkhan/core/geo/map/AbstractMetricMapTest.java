@@ -2,7 +2,7 @@ package net.varkhan.core.geo.map;
 
 import junit.framework.TestCase;
 import net.varkhan.base.containers.map.ArrayOpenHashMap;
-import net.varkhan.core.geo.shape.PointD;
+import net.varkhan.core.geo.shape.rec.PointD;
 import net.varkhan.core.geo.shape.Rect;
 import net.varkhan.core.geo.shape.Shape;
 

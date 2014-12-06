@@ -1,6 +1,8 @@
 package net.varkhan.core.geo.shape;
 
 import junit.framework.TestCase;
+import net.varkhan.core.geo.shape.rec.PointF;
+import net.varkhan.core.geo.shape.rec.RectF;
 
 
 public class RectFTest extends TestCase {

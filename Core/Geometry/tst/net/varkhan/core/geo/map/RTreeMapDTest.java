@@ -1,7 +1,7 @@
 package net.varkhan.core.geo.map;
 
 import net.varkhan.core.geo.shape.Rect;
-import net.varkhan.core.geo.shape.RectD;
+import net.varkhan.core.geo.shape.rec.RectD;
 import net.varkhan.core.geo.shape.Shape;
 
 import java.util.Random;

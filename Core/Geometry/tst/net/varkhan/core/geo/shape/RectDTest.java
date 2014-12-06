@@ -1,6 +1,8 @@
 package net.varkhan.core.geo.shape;
 
 import junit.framework.TestCase;
+import net.varkhan.core.geo.shape.rec.PointD;
+import net.varkhan.core.geo.shape.rec.RectD;
 
 
 public class RectDTest extends TestCase {
