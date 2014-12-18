@@ -17,12 +17,32 @@ import java.nio.charset.Charset;
  */
 public class AsciiDecoderTest extends TestCase {
     public void testDecode() throws Exception {
-        AsciiDecoder<Object> dec = new AsciiDecoder<Object>(true);
-        assertEquals("Foo bar baz",dec.decode("Foo bar baz".getBytes(Charset.forName("US-ASCII")),null));
+        verifyDecode("Foo bar baz", "Foo bar baz", true);
         byte[] buf ="Foo bar $$$".getBytes(Charset.forName("ASCII"));
         buf[buf.length-1] = (byte)0xFE;
-        assertEquals("Foo bar $$~",dec.decode(buf,0,buf.length,null));
-        assertEquals("Foo bar $$~",dec.decode(new ByteArrayInputStream(buf),null));
-        assertEquals("Foo bar $$~",dec.decode(ByteBuffer.wrap(buf),null));
+        verifyDecode("Foo bar $$~", buf, true);
+        try {
+            verifyDecode("Foo bar $$~", buf, false);
+            fail("No squash on >07F");
+        }
+        catch(Exception e) {
+            // success
+        }
+    }
+
+    public void verifyDecode(String expected, byte[] buf, boolean squash) {
+        AsciiDecoder<Object> dec = new AsciiDecoder<Object>(squash);
+        assertEquals(expected,dec.decode(buf,0,buf.length,null));
+        assertEquals(expected,dec.decode(new ByteArrayInputStream(buf),null));
+        assertEquals(expected,dec.decode(ByteBuffer.wrap(buf),null));
+    }
+
+    public void verifyDecode(String expected, String decode, boolean squash) throws java.io.IOException {
+        AsciiDecoder<Object> dec = new AsciiDecoder<Object>(squash);
+        assertEquals("decode(\""+decode+"\".getBytes())",expected,dec.decode(decode.getBytes(Charset.forName("US-ASCII")),null));
+        byte[] buf = decode.getBytes(Charset.forName("ASCII"));
+        assertEquals("decode(\""+decode+".getBytes(),0,<>\")",expected,dec.decode(buf,0,buf.length,null));
+        assertEquals("decode(new ByteArrayInputStream(\""+decode+"\"))",expected,dec.decode(new ByteArrayInputStream(buf),null));
+        assertEquals("decode(new ByteBuffer(\""+decode+"\"))",expected,dec.decode(ByteBuffer.wrap(buf), null));
     }
 }
