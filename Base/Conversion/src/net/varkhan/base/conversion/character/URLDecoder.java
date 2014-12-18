@@ -128,6 +128,7 @@ public class URLDecoder<C> extends AbstractDecoder<String,C> implements Decoder<
                     out.append((char) c);
                 }
                 else out.append((char) r);
+                r=stm.read();
             }
             catch(IOException e){
                 throw new DecodingException(e);
@@ -191,33 +192,33 @@ public class URLDecoder<C> extends AbstractDecoder<String,C> implements Decoder<
             if (b == '+') out.append(' ');
             else if (b == '%') {
                 // Read 2 hex characters for code
-                int c = toHex(buf.charAt(++i)) << 4 | toHex(buf.charAt(++i));
+                int c = toHex(buf.charAt(++i))<< 4 | toHex(buf.charAt(++i));
                 if (c < 0x80) {
                     // no need to mask byte
                 } else if (c < 0xE0) {
                     c = (31 & c) << 6;
                     b = buf.charAt(++i);
                     if (b != '%') throw new EncodingException("Invalid encoding, expecting % escape for 2nd byte, got '"+(char)c+"' instead ");
-                    c |= (63 & (toHex(buf.charAt(++i)) << 4 | toHex(buf.charAt(++i))));
+                    c|=(63 & (toHex(buf.charAt(++i))<< 4 | toHex(buf.charAt(++i))));
                 } else if (c < 0xF0) {
                     c = (15 & c) << 12;
                     b = buf.charAt(++i);
                     if (b != '%') throw new EncodingException("Invalid encoding, expecting % escape for 2nd byte, got '"+(char)c+"' instead ");
-                    c |= (63 & (toHex(buf.charAt(++i)) << 4 | toHex(buf.charAt(++i)))) << 6;
+                    c|=(63 & (toHex(buf.charAt(++i))<< 4 | toHex(buf.charAt(++i)))) << 6;
                     b = buf.charAt(++i);
                     if (b != '%') throw new EncodingException("Invalid encoding, expecting % escape for 3rd byte, got '"+(char)c+"' instead ");
-                    c |= (63 & (toHex(buf.charAt(++i)) << 4 | toHex(buf.charAt(++i))));
+                    c|=(63 & (toHex(buf.charAt(++i))<< 4 | toHex(buf.charAt(++i))));
                 } else {
                     c = (7 & c) << 18;
                     b = buf.charAt(++i);
                     if (b != '%') throw new EncodingException("Invalid encoding, expecting % escape for 2nd byte, got '"+(char)c+"' instead ");
-                    c |= (63 & (toHex(buf.charAt(++i)) << 4 | toHex(buf.charAt(++i)))) << 12;
+                    c|=(63 & (toHex(buf.charAt(++i))<< 4 | toHex(buf.charAt(++i)))) << 12;
                     b = buf.charAt(++i);
                     if (b != '%') throw new EncodingException("Invalid encoding, expecting % escape for 3rd byte, got '"+(char)c+"' instead ");
-                    c |= (63 & (toHex(buf.charAt(++i)) << 4 | toHex(buf.charAt(++i)))) << 6;
+                    c|=(63 & (toHex(buf.charAt(++i))<< 4 | toHex(buf.charAt(++i)))) << 6;
                     b = buf.charAt(++i);
                     if (b != '%') throw new EncodingException("Invalid encoding, expecting % escape for 4th byte, got '"+(char)c+"' instead ");
-                    c |= (63 & (toHex(buf.charAt(++i)) << 4 | toHex(buf.charAt(++i))));
+                    c|=(63 & (toHex(buf.charAt(++i))<< 4 | toHex(buf.charAt(++i))));
                 }
                 out.append((char) c);
             } else out.append((char) b);
