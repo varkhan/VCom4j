@@ -39,7 +39,7 @@ public class XmlTest extends TestCase {
         assertEquals("value bare","<foo>bar</foo>",buf.toString());
         buf.setLength(0);
         Xml.writeElmt(buf,"foo","bar",new Object[]{"a","b\"x\'y&z<w>","c","","d",null});
-        assertEquals("value attr","<foo a=\"b&quot;x'y&amp;z&lt;w&gt;\" c>bar</foo>",buf.toString());
+        assertEquals("value attr","<foo a=\"b&quot;x&apos;y&amp;z&lt;w&gt;\" c>bar</foo>",buf.toString());
     }
 
     public void testWriteElmtOpen() throws Exception {

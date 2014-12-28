@@ -356,8 +356,8 @@ public class Xml {
         return out;
     }
 
-    public static final char[] XML_ENTITIES_CHARS=new char[] { '&', '<', '>', '\"' };
-    public static final String[] XML_ENTITIES_NAMES=new String[] { "&amp;", "&lt;", "&gt;", "&quot;" };
+    public static final char[] XML_ENTITIES_CHARS=new char[] { '&', '<', '>', '\"', '\'' };
+    public static final String[] XML_ENTITIES_NAMES=new String[] { "&amp;", "&lt;", "&gt;", "&quot;", "&apos;" };
 
     /**
      * Writes text to an {@link Appendable}, escaping character entities.
