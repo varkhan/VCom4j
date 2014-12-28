@@ -37,6 +37,9 @@ public class XmlTest extends TestCase {
         buf.setLength(0);
         Xml.writeElmt(buf,"foo","bar");
         assertEquals("value bare","<foo>bar</foo>",buf.toString());
+        buf.setLength(0);
+        Xml.writeElmt(buf,"foo","bar",new Object[]{"a","b\"x\'y&z<w>","c","","d",null});
+        assertEquals("value attr","<foo a=\"b&quot;x'y&amp;z&lt;w&gt;\" c>bar</foo>",buf.toString());
     }
 
     public void testWriteElmtOpen() throws Exception {
@@ -98,22 +101,23 @@ public class XmlTest extends TestCase {
 
     public void testWriteTextA() throws Exception {
         StringBuilder buf = new StringBuilder();
-        Xml.writeText(buf,new String[]{"bar","baz"});
-        assertEquals("text","bar\nbaz\n",buf.toString());
+        Xml.writeText(buf,new String[]{"bar","baz","ba\"<>"});
+        assertEquals("text","bar\nbaz\nba&quot;&lt;&gt;\n",buf.toString());
     }
 
     public void testReadElemInline() throws Exception {
-        StringReader r = new StringReader("  \n<foo a=\"b\"/>\t\n");
+        StringReader r = new StringReader("  \n<foo a=\"b\" c=\"&quot;\"/>\t\n");
         Xml.Parser p = new Xml.Parser(r);
         Xml.Event e = p.readEvent();
         assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
         assertEquals("elem",Xml.Node.Type.ELEM,e.type());
         assertEquals("<foo>","foo",e.name());
         assertEquals("a=\"b\"","b",e.attr().get("a"));
+        assertEquals("c=\"\\\"\"","\"",e.attr().get("c"));
     }
 
     public void testReadElemOpenClose() throws Exception {
-        StringReader r = new StringReader("  \n<foo a=\"b\">\t\nbar</foo>");
+        StringReader r = new StringReader("  \n<foo a=\"b\">\t\nbar&quot;x&lt;y&gt;&#x20;</foo>");
         Xml.Parser p = new Xml.Parser(r);
         Xml.Event e = p.readEvent();
         assertEquals("open",Xml.Event.Phase.Open,e.phase());
@@ -122,7 +126,7 @@ public class XmlTest extends TestCase {
         e = p.readEvent();
         assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
         assertEquals("text",Xml.Node.Type.TEXT,e.type());
-        assertEquals("\"bar\"","bar",e.text());
+        assertEquals("\"bar\\\"x<y> \"","bar\"x<y> ",e.text());
         e = p.readEvent();
         assertEquals("close",Xml.Event.Phase.Close,e.phase());
         assertEquals("elem",Xml.Node.Type.ELEM,e.type());

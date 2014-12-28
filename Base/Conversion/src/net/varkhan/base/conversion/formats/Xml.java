@@ -356,8 +356,8 @@ public class Xml {
         return out;
     }
 
-    public static final CharSequence[] XML_ENTITIES_CHARS=new CharSequence[] { "&", "<", ">", "\"" };
-    public static final CharSequence[] XML_ENTITIES_NAMES=new CharSequence[] { "&amp;", "&lt;", "&gt;", "&quot;" };
+    public static final char[] XML_ENTITIES_CHARS=new char[] { '&', '<', '>', '\"' };
+    public static final String[] XML_ENTITIES_NAMES=new String[] { "&amp;", "&lt;", "&gt;", "&quot;" };
 
     /**
      * Writes text to an {@link Appendable}, escaping character entities.
@@ -487,7 +487,7 @@ public class Xml {
          * @throws IOException if an I/O error occurred while reading from the stream
          */
         public int readName(Appendable buf) throws IOException {
-            while(st>=0 && !isWhiteSpace(st) && st!='=' && st!='>' && st!='/') {
+            while(st>=0 && !isWhiteSpace(st) && st!='=' && st!='>' && st!='/' && st!='&') {
                 buf.append((char) st);
                 next();
             }
@@ -498,14 +498,28 @@ public class Xml {
             // Acquire and skip delimiter char
             int d = st;
             next();
+            StringBuilder cc = null; //new StringBuilder();
             while(st!=d) {
                 if(st<0) throw exception("Unterminated delimited string sequence");
                 // Escape sequences
-                if(st=='\\') {
+                /** ":&quot; ':&apos; <:&lt; >:&gt; &:&amp; */
+                if(st=='&') {
+                    if(cc==null) cc = new StringBuilder();
+                    else cc.setLength(0);
+                    cc.append('&');
                     next();
                     if(st<0) throw exception("Unterminated escape sequence");
+                    while(st!=';') {
+                        cc.append((char)st);
+                        next();
+                        if(st<0) throw exception("Unterminated escape sequence");
+                    }
+                    cc.append(';');
+                    int c=decodeEntity(cc.toString());
+                    if(c>=0) buf.append((char)c);
+                    else throw exception("Illegal escape sequence '"+cc.toString()+"'");
                 }
-                buf.append((char) st);
+                else buf.append((char) st);
                 next();
             }
             return st;
@@ -517,11 +531,41 @@ public class Xml {
          * @throws IOException if an I/O error occurred while reading from the stream
          */
         public int readText(Appendable buf) throws IOException {
+            StringBuilder cc = null; //new StringBuilder();
             while(st!='<' && st>=0) {
-                buf.append((char) st);
+                if(st=='&') {
+                    if(cc==null) cc = new StringBuilder();
+                    else cc.setLength(0);
+                    cc.append('&');
+                    next();
+                    if(st<0) throw exception("Unterminated escape sequence");
+                    while(st!=';') {
+                        cc.append((char)st);
+                        next();
+                        if(st<0) throw exception("Unterminated escape sequence");
+                    }
+                    cc.append(';');
+                    int c=decodeEntity(cc.toString());
+                    if(c>=0) buf.append((char)c);
+                    else throw exception("Illegal escape sequence '"+cc.toString()+"'");
+                }
+                else buf.append((char) st);
                 next();
             }
             return st;
+        }
+
+        public int decodeEntity(String ent) {
+            for(int i=0;i<XML_ENTITIES_NAMES.length;i++) {
+                String e=XML_ENTITIES_NAMES[i];
+                if(e.equals(ent)) return XML_ENTITIES_CHARS[i];
+            }
+            if(ent.length()>3 && ent.charAt(1)=='#') {
+                if(ent.length()>=6 && ent.charAt(2)=='x') {
+                    return Integer.parseInt(ent.substring(3,ent.length()-1),16);
+                }
+            }
+            return -1;
         }
 
         protected int readElemAttr(Map<CharSequence,Object> atr) throws IOException, IllegalArgumentException {
@@ -869,6 +913,7 @@ public class Xml {
         return atr;
     }
 
+
     /**********************************************************************************
      **  XML syntax checks
      **/
@@ -1011,6 +1056,26 @@ public class Xml {
             }
             // No match => add current char, restart match
             buf.append(str.charAt(i++));
+        }
+        return buf;
+    }
+
+    protected static <A extends Appendable> A repl(A buf, CharSequence str, char[] pat, CharSequence[] rep) throws IOException {
+        final int np=pat.length;
+        final int ls=str.length();
+        // Pattern finding loop
+        find:
+        for(int i=0;i<ls;i++) {
+            char c = str.charAt(i);
+            for(int k=0;k<np;k++) {
+                if(pat[k]==c) {
+                    // Match => add replacement, skip pattern
+                    if(rep!=null) buf.append(rep[k]);
+                    continue find;
+                }
+            }
+            // No match => add current char, restart match
+            buf.append(c);
         }
         return buf;
     }
