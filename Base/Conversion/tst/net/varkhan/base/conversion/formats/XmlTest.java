@@ -117,7 +117,7 @@ public class XmlTest extends TestCase {
     }
 
     public void testReadElemOpenClose() throws Exception {
-        StringReader r = new StringReader("  \n<foo a=\"b\">\t\nbar&quot;x&lt;y&gt;&#x20;</foo>");
+        StringReader r = new StringReader("  \n<foo a=\"b\">\t\nbar&quot;x&lt;y&#32;&gt;&#x20;</foo>");
         Xml.Parser p = new Xml.Parser(r);
         Xml.Event e = p.readEvent();
         assertEquals("open",Xml.Event.Phase.Open,e.phase());
@@ -126,7 +126,7 @@ public class XmlTest extends TestCase {
         e = p.readEvent();
         assertEquals("inline",Xml.Event.Phase.Inline,e.phase());
         assertEquals("text",Xml.Node.Type.TEXT,e.type());
-        assertEquals("\"bar\\\"x<y> \"","bar\"x<y> ",e.text());
+        assertEquals("\"bar\\\"x<y> \"","bar\"x<y > ",e.text());
         e = p.readEvent();
         assertEquals("close",Xml.Event.Phase.Close,e.phase());
         assertEquals("elem",Xml.Node.Type.ELEM,e.type());

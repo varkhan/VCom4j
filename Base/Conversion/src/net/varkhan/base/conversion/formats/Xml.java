@@ -560,11 +560,15 @@ public class Xml {
                 String e=XML_ENTITIES_NAMES[i];
                 if(e.equals(ent)) return XML_ENTITIES_CHARS[i];
             }
-            if(ent.length()>3 && ent.charAt(1)=='#') {
+            if(ent.length()>3 && ent.charAt(1)=='#') try {
                 if(ent.length()>=6 && ent.charAt(2)=='x') {
                     return Integer.parseInt(ent.substring(3,ent.length()-1),16);
                 }
+                else if(ent.length()>=5) {
+                    return Integer.parseInt(ent.substring(2,ent.length()-1),10);
+                }
             }
+            catch(NumberFormatException e) { return -1; }
             return -1;
         }
 
