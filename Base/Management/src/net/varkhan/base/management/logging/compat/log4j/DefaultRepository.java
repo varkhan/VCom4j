@@ -1,7 +1,7 @@
 package net.varkhan.base.management.logging.compat.log4j;
 
 import net.varkhan.base.management.config.MapConfiguration;
-import net.varkhan.base.management.config.PrefixConfiguration;
+import net.varkhan.base.management.config.PrefixKeyConfiguration;
 import net.varkhan.base.management.config.SettableConfiguration;
 import net.varkhan.base.management.logging.*;
 import net.varkhan.base.management.metric.MilliTime;
@@ -28,7 +28,7 @@ public class DefaultRepository implements LoggerRepository {
     public          LogConfigProps            logconf =new LogConfigProps(Level.levelStrings(), null, config);
     private final   LogResolver<Throwable>    resolver=new SimpleLogResolver<Throwable>(
             writers,
-            new LogConfigProps(Level.levelStrings(), new PrefixConfiguration(config)),
+            new LogConfigProps(Level.levelStrings(), new PrefixKeyConfiguration(config)),
             new MilliTime()
     );
     private final   ConcurrentMap<String,Log> loggers =new ConcurrentHashMap<String,Log>();

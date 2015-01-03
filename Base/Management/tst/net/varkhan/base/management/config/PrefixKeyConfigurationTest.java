@@ -5,65 +5,7 @@ import junit.framework.TestCase;
 import java.util.*;
 
 
-public class PrefixConfigurationTest extends TestCase {
-
-    public void testEnumeratePrefixesAsc() throws Exception {
-        List<String> pfx = new ArrayList<String>();
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesAsc('.', "")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList(""),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesAsc('.', "foo")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList("foo",""),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesAsc('.', ".foo")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList(".foo",""),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesAsc('.', "foo.")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList("foo.","foo",""),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesAsc('.', "foo..bar.baz")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList("foo..bar.baz","foo..bar","foo.","foo",""),pfx);
-    }
-
-    public void testEnumeratePrefixesDes() throws Exception {
-        List<String> pfx = new ArrayList<String>();
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesDes('.', "")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList(""),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesDes('.', "foo")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList("","foo"),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesDes('.', ".foo")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList("",".foo"),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesDes('.', "foo.")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList("","foo","foo."),pfx);
-        pfx.clear();
-        for(String p: PrefixConfiguration.enumeratePrefixesDes('.', "foo..bar.baz")) {
-            pfx.add(p);
-        }
-        assertEquals(Arrays.asList("","foo","foo.","foo..bar","foo..bar.baz"),pfx);
-    }
+public class PrefixKeyConfigurationTest extends TestCase {
 
 
     public void testGet() throws Exception {
@@ -77,7 +19,7 @@ public class PrefixConfigurationTest extends TestCase {
         cfg1.add("c2", "kA", "2A");
         cfg1.add("c2", "ky", "y");
         cfg1.add("c2", "", "D");
-        PrefixConfiguration cfg = new PrefixConfiguration(cfg1);
+        PrefixKeyConfiguration cfg = new PrefixKeyConfiguration(cfg1);
         assertEquals("get(k1)", 1, cfg.get("", "k1"));
         assertEquals("get(kA)", "A", cfg.get("", "kA"));
         assertEquals("get(c1,k1)", 11, cfg.get("c1", "k1"));
@@ -115,7 +57,7 @@ public class PrefixConfigurationTest extends TestCase {
         cfg1.add("c2", "k1", 21);
         cfg1.add("c2", "kA", "2A");
         cfg1.add("c2", "ky", "y");
-        PrefixConfiguration cfg = new PrefixConfiguration(cfg1);
+        PrefixKeyConfiguration cfg = new PrefixKeyConfiguration(cfg1);
         // Def
         Configuration.Context cxd = cfg.context(null);
         assertTrue("has(k1)",cxd.has("k1"));
