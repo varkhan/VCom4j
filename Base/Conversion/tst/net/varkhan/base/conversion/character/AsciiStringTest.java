@@ -61,4 +61,23 @@ public class AsciiStringTest extends TestCase {
         assertEquals("subSequence(\"Foo bar $$\u00fe\",10)",0x7e,(int)new AsciiString("Foo bar $$þ".toCharArray(),0,11,true).subSequence(10,11).charAt(0));
     }
 
+    public void testIndexOf() throws Exception {
+        assertEquals("indexOf(\"\",'f',3)",-1,new AsciiString(new byte[0],0,0).indexOf('f',3));
+        assertEquals("indexOf(\"Foo bar baz\",'F',3)",-1,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf('F',3));
+        assertEquals("indexOf(\"Foo bar baz\",'F',0)",0,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf('F',0));
+        assertEquals("indexOf(\"Foo bar baz\",'r',3)",6,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf('r',3));
+        assertEquals("indexOf(\"Foo bar baz\",'z',3)",10,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf('z',3));
+        assertEquals("indexOf(\"Foo bar baz\",'z',11)",-1,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf('z',11));
+        assertEquals("indexOf(\"Foo bar $$\u00fe\",'þ',0)",10,new AsciiString("Foo bar $$þ".toCharArray(),0,11,false).indexOf('þ'));
+        assertEquals("indexOf(\"Foo bar $$\u00fe\",'þ',0)",-1,new AsciiString("Foo bar $$þ".toCharArray(),0,11,true).indexOf('þ'));
+        assertEquals("indexOf(\"\",\"foo\",3)",-1,new AsciiString(new byte[0],0,0).indexOf("foo",3));
+        assertEquals("indexOf(\"Foo bar baz\",\"F\",3)",-1,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf("Foo",3));
+        assertEquals("indexOf(\"Foo bar baz\",\"F\",0)",0,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf("Foo",0));
+        assertEquals("indexOf(\"Foo bar baz\",\"r\",3)",4,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf("bar",3));
+        assertEquals("indexOf(\"Foo bar baz\",\"z\",3)",8,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf("baz",3));
+        assertEquals("indexOf(\"Foo bar baz\",\"z\",11)",-1,new AsciiString("Foo bar baz".toCharArray(),0,11).indexOf("baz",9));
+        assertEquals("indexOf(\"Foo bar $$\u00fe\",\"þ\",0)",10,new AsciiString("Foo bar $$þ".toCharArray(),0,11,false).indexOf("þ"));
+        assertEquals("indexOf(\"Foo bar $$\u00fe\",\"þ\",0)",-1,new AsciiString("Foo bar $$þ".toCharArray(),0,11,true).indexOf("þ"));
+    }
+
 }

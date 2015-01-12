@@ -8,7 +8,7 @@ package net.varkhan.base.conversion.character;
  * @date 1/11/15
  * @time 4:05 PM
  */
-public class AsciiString implements CharSequence {
+public class AsciiString implements CharSequence, java.io.Serializable {
     protected final byte[] data;
 
     public AsciiString() {
@@ -64,7 +64,7 @@ public class AsciiString implements CharSequence {
     }
 
     @Override
-    public CharSequence subSequence(int start, int end) {
+    public AsciiString subSequence(int start, int end) {
         return new AsciiString(data, start, end, 0xFF);
     }
 
@@ -93,5 +93,35 @@ public class AsciiString implements CharSequence {
         for(int i=0; i<data.length; i++) s[i] = (char)(0xFF&data[i]);
         return new String(s);
     }
+
+    public byte[] getBytes() {
+        return data.clone();
+    }
+
+    public int indexOf(int chr) {
+        return indexOf(chr,0);
+    }
+
+    public int indexOf(int chr, int pos) {
+        for(int i=pos; i<data.length; i++) if((0xFF&data[i])==chr) return i;
+        return -1;
+    }
+
+    public int indexOf(CharSequence str) {
+        return indexOf(str, 0);
+    }
+
+    public int indexOf(CharSequence str, int pos) {
+        final int clen = str.length();
+        match: for(int i=pos; i<data.length; i++) {
+            for(int p=0; p<clen; p++) {
+                if(i+p>data.length) return -1;
+                if((char)(0xFF&data[i+p])!=str.charAt(p)) continue match;
+            }
+            return i;
+        }
+        return -1;
+    }
+
 
 }

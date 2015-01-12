@@ -87,7 +87,7 @@ public class UTF8StringTest extends TestCase {
         }
     }
 
-    public void testSubstr() throws Exception {
+    public void testSubSequence() throws Exception {
         String[] ss = { "Foo", "Foo$", "Foo\u00ef", "دبي", "الشرقيه",
                         "aköy", "zığ", "büyük", "Çor", "niğ",
                         " 一", "你好", " 龵", " ホ", " ࿊",
@@ -103,6 +103,34 @@ public class UTF8StringTest extends TestCase {
                          "\n\t"+s+
                          "\n\t"+enc+
                          "\n", enc2, enc.subSequence(1,enc.length()-1));
+        }
+    }
+
+    public void testIndexOf() throws Exception {
+        String[] ss={ "Foo", "Foo$", "Foo\u00ef", "دبي", "الشرقيه",
+                      "aköy", "zığ", "büyük", "Çor", "niğ",
+                      " 一", "你好", " 龵", " ホ", " ࿊",
+                      " ﬅ", " ⣿", " ꜕", "\uE425>"
+        };
+        for(int i=0;i<ss.length;i++) {
+            String s = ss[i];
+            byte[] buf=encode_native(s);
+            UTF8String enc=new UTF8String(buf, 0, buf.length);
+            for(int j=0; j+3<s.length(); j++) {
+                String x = s.substring(j,j+3);
+                assertEquals("indexOf("+x+")",s.indexOf(x),enc.indexOf(x));
+                assertEquals("indexOf("+x+")",s.indexOf(x.charAt(0)),enc.indexOf(x.charAt(0)));
+            }
+            for(int j=0; j+2<s.length(); j++) {
+                String x = s.substring(j,j+2);
+                assertEquals("indexOf("+x+")",s.indexOf(x),enc.indexOf(x));
+                assertEquals("indexOf("+x+")",s.indexOf(x.charAt(0)),enc.indexOf(x.charAt(0)));
+            }
+            for(int j=0; j+1<s.length(); j++) {
+                String x = s.substring(j,j+1);
+                assertEquals("indexOf("+x+")",s.indexOf(x),enc.indexOf(x));
+                assertEquals("indexOf("+x+")",s.indexOf(x.charAt(0)),enc.indexOf(x.charAt(0)));
+            }
         }
     }
 
