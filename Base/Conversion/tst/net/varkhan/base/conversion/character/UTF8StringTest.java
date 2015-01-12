@@ -84,6 +84,10 @@ public class UTF8StringTest extends TestCase {
                        "\n\t"+s+
                        "\n\t"+enc+
                        "\n", enc.equals(new UTF8String(buf, 0, buf.length)));
+            assertTrue("equals() \""+s+"\" "+
+                       "\n\t"+s+
+                       "\n\t"+enc+
+                       "\n", enc.equals(new UTF8String(s,0,s.length())));
         }
     }
 

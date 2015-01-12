@@ -30,6 +30,8 @@ public class AsciiStringTest extends TestCase {
         assertTrue("equals(\"Foo bar $$\u00fe\")", new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, true).equals(new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, true)));
         assertFalse("equals(\"Foo bar $$\u00fe\")", new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, true).equals(new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, false)));
         assertFalse("equals(\"Foo bar $$\u00fe\")", new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, false).equals(new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, true)));
+        assertTrue("equals(\"Foo bar $$\u00fe\")", new AsciiString("Foo bar $$þ", false).equals(new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, false)));
+        assertTrue("equals(\"Foo bar $$\u00fe\")", new AsciiString("Foo bar $$þ", true).equals(new AsciiString("Foo bar $$þ".toCharArray(), 0, 11, true)));
     }
 
     public void testHashCode() throws Exception {
