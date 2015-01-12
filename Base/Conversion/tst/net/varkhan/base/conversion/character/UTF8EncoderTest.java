@@ -43,7 +43,7 @@ public class UTF8EncoderTest extends TestCase {
         for (int i = 0; i < ss.length; i++) {
             String s = ss[i];
             byte[] buf=encode_native(s);
-            assertEquals("decode_jdk().length<>length(): \""+s+"\"", buf.length, enc.length(s, null));
+            assertEquals("encode_native().length<>length(): \""+s+"\"", buf.length, enc.length(s, null));
             assertArrayEquals("encode_native(decode()) \""+s+"\" "+
                               "\n\t"+Arrays.toString(buf)+
                               "\n\t"+Arrays.toString(enc.encode(s, null))+
