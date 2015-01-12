@@ -8,9 +8,13 @@ package net.varkhan.base.conversion.character;
  * @date 1/11/15
  * @time 11:01 PM
  */
-public class Number {
+public class Numbers {
 
-    public static long parseLong(String str, int i, int l) {
+    public static long parseLong(CharSequence str) {
+        return parseLong(str,0,str.length());
+    }
+
+    public static long parseLong(CharSequence str, int i, int l) {
         long val=0;
         boolean neg;
         l+=i;
@@ -40,8 +44,11 @@ public class Number {
         return neg?-val:val;
     }
 
+    public static double parseDouble(CharSequence str) {
+        return parseDouble(str,0,str.length());
+    }
 
-    public static double parseDouble(String str, int i, int l) {
+    public static double parseDouble(CharSequence str, int i, int l) {
         long man=0;
         long fpo=0;
         long exp=0;
