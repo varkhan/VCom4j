@@ -34,6 +34,10 @@ public class AsciiString implements CharSequence, java.io.Serializable {
         this(data, 0, data.length);
     }
 
+    public AsciiString(char[] chars) {
+        this(chars, 0, chars.length);
+    }
+
     public AsciiString(char[] chars, int start, int end) {
         this(chars, start, end, true);
     }
@@ -49,8 +53,19 @@ public class AsciiString implements CharSequence, java.io.Serializable {
         }
     }
 
-    public AsciiString(char[] chars) {
-        this(chars, 0, chars.length);
+    public AsciiString(CharSequence str) {
+        this(str,0,str.length(),0x7F);
+    }
+
+    public AsciiString(CharSequence str, boolean squash) {
+        this(str,0,str.length(), squash?0x7F:0xFF);
+    }
+
+    protected AsciiString(CharSequence str, int start, int end, int mask) {
+        this.data= new byte[end-start];
+        for(int i=start,j=0; i<end; i++, j++) {
+            this.data[j] = (byte)(mask&str.charAt(i));
+        }
     }
 
     @Override

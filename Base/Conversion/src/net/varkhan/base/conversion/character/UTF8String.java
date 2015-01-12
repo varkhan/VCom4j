@@ -33,6 +33,11 @@ public class UTF8String implements CharSequence, java.io.Serializable {
         bytes(chars, start, end, data, 0, data.length);
     }
 
+    public UTF8String(CharSequence str, int start, int end) {
+        data= new byte[(int)bytesLen(str, start, end)];
+        bytes(str, start, end, data, 0, data.length);
+    }
+
     @Override
     public int length() {
         return (int) idxAt(data, 0, data.length);
@@ -378,6 +383,57 @@ public class UTF8String implements CharSequence, java.io.Serializable {
             while(i<clen) {
                 if(p-pos>=len) return p-pos;
                 char c=obj[i++];
+                if(c<0x80) {
+                    dat[p++]=(byte) (0x7F&c);
+                }
+                else if(c<0x800) {
+                    dat[p++]=(byte) (0xC0|(0x1F&(c>>>6)));
+                    if(p-pos>=len) throw new EncodingException();
+                    dat[p++]=(byte) (0x80|(0x3F&c));
+                }
+                else if(c<0x10000) {
+                    dat[p++]=(byte) (0xE0|(0x0F&(c>>>12)));
+                    if(p-pos>=len) throw new EncodingException();
+                    dat[p++]=(byte) (0x80|(0x3F&(c>>>6)));
+                    if(p-pos>=len) throw new EncodingException();
+                    dat[p++]=(byte) (0x80|(0x3F&c));
+                }
+                else {
+                    dat[p++]=(byte) (0xF0|(0x07&(c>>>18)));
+                    if(p-pos>=len) throw new EncodingException();
+                    dat[p++]=(byte) (0x80|(0x3F&(c>>>12)));
+                    if(p-pos>=len) throw new EncodingException();
+                    dat[p++]=(byte) (0x80|(0x3F&(c>>>6)));
+                    if(p-pos>=len) throw new EncodingException();
+                    dat[p++]=(byte) (0x80|(0x3F&c));
+                }
+            }
+            return p-pos;
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+            throw new EncodingException(e);
+        }
+    }
+
+    public static long bytesLen(CharSequence obj, long cpos, long clen) {
+        int len=0;
+        for(int i=(int)cpos;i<clen;i++) {
+            char c=obj.charAt(i);
+            if(c<0x80) len++;
+            else if(c<0x800) len+=2;
+            else if(c<0x10000) len+=3;
+            else clen+=4;
+        }
+        return len;
+    }
+
+    public static long bytes(CharSequence obj, long cpos, long clen, byte[] dat, long pos, long len) {
+        try {
+            int p=(int) pos;
+            int i=(int) cpos;
+            while(i<clen) {
+                if(p-pos>=len) return p-pos;
+                char c=obj.charAt(i++);
                 if(c<0x80) {
                     dat[p++]=(byte) (0x7F&c);
                 }
