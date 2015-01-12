@@ -573,6 +573,8 @@ public class Xml {
         }
 
         protected int readElemAttr(Map<CharSequence,Object> atr) throws IOException, IllegalArgumentException {
+            StringBuilder name = null;
+            StringBuilder value = null;
             // One turn of loop for each attr
             while(st>=0) {
                 // Skip whitespace
@@ -580,7 +582,8 @@ public class Xml {
                 // End of seq/tag? done
                 if(st<0 || st=='>' || st=='/') return st;
                 // First character of name -> find end
-                StringBuilder name = new StringBuilder();
+                if(name==null) name=new StringBuilder();
+                else name.setLength(0);
                 readName(name);
                 if(!isValidAttrName(name)) throw exception("Attribute names must contain only alphanumeric characters");
                 skipWhitespace();
@@ -591,14 +594,15 @@ public class Xml {
                 }
                 next();
                 skipWhitespace();
-                StringBuilder buf = new StringBuilder();
+                if(value==null) value = new StringBuilder();
+                else value.setLength(0);
                 if(st=='\"' || st=='\'') {
-                    readString(buf);
+                    readString(value);
                 }
                 else {
-                    readName(buf);
+                    readName(value);
                 }
-                if(atr!=null) atr.put(name.toString(), buf.toString());
+                if(atr!=null) atr.put(name.toString(), value.toString());
             }
             return st;
         }
