@@ -29,5 +29,5 @@ Publish to your local ivy repo by adding an extra `publish` target to the above 
 
 ## Distribution and licence
 
-This set of libraries is distibuted under LGPL v2.1. Please refer to [`LICENSE.txt`](LICENSE.txt "LGPL v2.1") for detail.
+This set of libraries is distributed under LGPL v2.1. Please refer to [`LICENSE.txt`](LICENSE.txt "LGPL v2.1") for detail.
 
