@@ -11,20 +11,34 @@ VCom4j provides dedicated datastructures, frameworks and constructs to facilitat
 
 ## Project structure
  
-* **Base**    General purpose datastructures and constructs (no cross or external dependencies)
-* **Core**    Extended functions on specific data types or environments (depends on base modules)
+* **Base**   General purpose datastructures and constructs (no cross or external dependencies)
+ * **Containers**   Container-type datastructures (lists, sets, maps, trees, tries, queues)
+ * **Conversion**   Format conversion, (en/de)coding and (de)serialization
+ * **Functors**     Functional primitives and frameworks
+ * **Management**   Configuration, logging and monitoring constructs
+
+* **Core**   Extended functions on specific data types or environments (depends on base modules)
+ * **Concurrent**   Thread-safe datastructures
+ * **Geometry**     Geometry data representation, search and storage
+ * **Presentation** Visual rendering primitives and frameworks
+
 * **Data**   Data-storage and data-processing frameworks (depends on base modules)
+ * **Learning**     Machine-learning primitives and algorithms
+ * **Linguistics**  NLP and character data analysis structures
+ * **VisualDiff**   Change detection and comparison algorithms
+
 * **Serv**   Serving and monitoring frameworks (depends on base and core modules and external libraries)
 
 
 ## Building
 
-Invoking 
+For each _$module_, invoking
 
 `ant -f $module/build.xml clean compile test artifact`
 
-will build source, bytecode and documentation jars in the module `.bld` directory.
-Publish to your local ivy repo by adding an extra `publish` target to the above line.
+will build source, bytecode and documentation jars in the module `$module/.bld` directory.
+
+Adding an extra `publish` target to the above line will publish to the local repo, by default `.ivy/dist` in the project root.
 
 
 ## Distribution and licence
