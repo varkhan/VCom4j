@@ -17,3 +17,17 @@ VCom4j provides dedicated datastructures, frameworks and constructs to facilitat
 * **Serv**   Serving and monitoring frameworks (depends on base and core modules and external libraries)
 
 
+## Building
+
+Invoking 
+
+`ant -f $module/build.xml clean compile test artifact`
+
+will build source, bytecode and documentation jars in the module `.bld` directory.
+Publish to your local ivy repo by adding an extra `publish` target to the above line.
+
+
+## Distribution and licence
+
+This set of libraries is distibuted under LGPL v2.1. Please refer to [`LICENSE.txt`](LICENSE.txt "LGPL v2.1") for detail.
+
