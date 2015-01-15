@@ -19,6 +19,83 @@ import java.util.Random;
  */
 public class ContainersTest extends TestCase {
 
+
+    public void testEmpty() throws Exception {
+        Container<Object> ix = new Containers.Empty<Object>();
+        assertTrue("isEmpty()",ix.isEmpty());
+        assertEquals("size()",0,ix.size());
+        assertEquals("visit()",0,ix.visit(new Visitable.Visitor<Object,Object>() {
+            @Override
+            public long invoke(Object obj, Object o) {
+                return 999;
+            }
+        }, null));
+        Iterator<? extends Object> ii = ix.iterator();
+        assertFalse("indexes().hasNext()", ii.hasNext());
+    }
+
+    public void testSingleton() throws Exception {
+        final Object val = new Object();
+        Container<Object> ix = new Containers.Singleton<Object>(val);
+        assertFalse("isEmpty()", ix.isEmpty());
+        assertEquals("size()",1,ix.size());
+        assertEquals("visit()",999,ix.visit(new Visitable.Visitor<Object,Object>() {
+            @Override
+            public long invoke(Object obj, Object o) {
+                return obj==val?999:888;
+            }
+        }, null));
+        Iterator<? extends Object> ii = ix.iterator();
+        assertTrue("indexes().hasNext()", ii.hasNext());
+        assertEquals("indexes().next()==val",val,ii.next());
+        assertFalse("indexes().hasNext()", ii.hasNext());
+    }
+
+    public void testEnumerate() throws Exception {
+        Object[] val0 = new Object[] {};
+        Container<Object> ix0 = new Containers.Enumerate<Object>(val0);
+        assertTrue("isEmpty()",ix0.isEmpty());
+        assertEquals("size()",0,ix0.size());
+        assertEquals("visit()",0,ix0.visit(new Visitable.Visitor<Object,Object>() {
+            @Override
+            public long invoke(Object obj, Object o) {
+                return 999;
+            }
+        }, null));
+        Iterator<? extends Object> ii0 = ix0.iterator();
+        assertFalse("indexes().hasNext()", ii0.hasNext());
+        final Object[] val1 = new Object[] {4};
+        Container<Object> ix1 = new Containers.Enumerate<Object>(val1);
+        assertFalse("isEmpty()", ix1.isEmpty());
+        assertEquals("size()",1,ix1.size());
+        assertEquals("visit()",999,ix1.visit(new Visitable.Visitor<Object,Object>() {
+            @Override
+            public long invoke(Object obj, Object o) {
+                return obj==val1[0]?999:888;
+            }
+        }, null));
+        Iterator<? extends Object> ii1 = ix1.iterator();
+        assertTrue("indexes().hasNext()", ii1.hasNext());
+        assertEquals("indexes().next()==min",val1[0],ii1.next());
+        assertFalse("indexes().hasNext()", ii1.hasNext());
+        final Object[] val2 = new Object[] {4, 5, 6};
+        Container<Object> ix2 = new Containers.Enumerate<Object>(val2);
+        assertFalse("isEmpty()", ix2.isEmpty());
+        assertEquals("size()",val2.length,ix2.size());
+        assertEquals("visit()",999+888+888,ix2.visit(new Visitable.Visitor<Object,Object>() {
+            @Override
+            public long invoke(Object obj, Object o) {
+                return obj==val2[0]?999:888;
+            }
+        }, null));
+        Iterator<? extends Object> ii2 = ix2.iterator();
+        assertTrue("indexes().hasNext()", ii2.hasNext());
+        assertEquals("indexes().next()==min",val2[0],ii2.next());
+        assertEquals("indexes().next()==..",val2[1],ii2.next());
+        assertEquals("indexes().next()==..",val2[2],ii2.next());
+        assertFalse("indexes().hasNext()", ii2.hasNext());
+    }
+
     public static <T> void assertListEquals(String message, List<T> expected, List<T> actual) {
         if(!Containers.equals(expected,actual)) fail(message+";\n expected: ["+Containers.join(",",expected)+"];\n   actual: ["+Containers.join(",",actual)+"]");
     }

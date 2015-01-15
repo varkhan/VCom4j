@@ -62,13 +62,13 @@ public interface Iterator<Type> extends java.util.Iterator<Type> {
      **/
 
     /**
-     * An empty index iterator (whose {@code hasNext()} and {@code hasPrevious()}
+     * An empty iterator (whose {@code hasNext()} and {@code hasPrevious()}
      * methods always return {@literal false}, and {@code next()} returns {@literal null}.
      */
     public static final Iterator EMPTY=new Empty();
 
     /**
-     * An empty index iterator (whose {@code hasNext()} and {@code hasPrevious()}
+     * An empty iterator (whose {@code hasNext()} and {@code hasPrevious()}
      * methods always return {@literal false}, and {@code next()} returns {@literal null}.
      */
     public static final class Empty<Type> implements Iterator<Type> {
@@ -86,7 +86,7 @@ public interface Iterator<Type> extends java.util.Iterator<Type> {
         private volatile boolean available=true;
 
         /**
-         * Create a singleton index iterator.
+         * Create a singleton iterator.
          *
          * @param e the single element this iterator returns
          */
@@ -114,16 +114,16 @@ public interface Iterator<Type> extends java.util.Iterator<Type> {
         private volatile int pos = 0;
 
         /**
-         * Create a range index iterator.
+         * Create an enumeration iterator.
          *
-         * @param e the array of all the indexes to return
+         * @param e the array of all the elements to return
          */
-        public Enumerate(Type[] e) { elements = e; }
+        public Enumerate(Type... e) { elements = e; }
 
-        public boolean hasNext() { return pos<elements.length; }
+        public boolean hasNext() { return elements!=null&&pos<elements.length; }
 
         public Type next() {
-            if(pos>=elements.length) throw new NoSuchElementException();
+            if(elements==null||pos>=elements.length) throw new NoSuchElementException();
             return elements[pos++];
         }
 

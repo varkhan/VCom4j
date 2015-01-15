@@ -6,6 +6,7 @@ import net.varkhan.base.containers.map.Map;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -20,6 +21,83 @@ import java.util.Comparator;
  * @time 2:49 PM
  */
 public class Containers {
+
+    /**********************************************************************************
+     **  Static predefined containers
+     **/
+
+    /**
+     * An empty container, that contains no element (whose {@code isEmpty()}
+     * method always returns {@literal true}, and whose {@code size()} is always
+     * {@literal 0}).
+     */
+    public static final Container EMPTY=new Empty();
+
+    /**
+     * An empty container, whose {@code isEmpty()} method always returns {@literal true},
+     * and whose {@code size()} is always {@literal 0}.
+     */
+    public static final class Empty<Type> implements Container<Type> {
+        public long size() { return 0; }
+        public boolean isEmpty() { return true; }
+        public Iterator<Type> iterator() { return new Iterator.Empty<Type>(); }
+        public <Par> long visit(Visitor<Type,Par> vis, Par par) { return 0; }
+    }
+
+    /**
+     * A singleton container, that contains a single element.
+     */
+    public static final class Singleton<Type> implements Container<Type> {
+        private final Type element;
+
+        /**
+         * Create a singleton container.
+         *
+         * @param e the single element this container contains
+         */
+        public Singleton(Type e) { element=e; }
+
+        public long size() { return 1; }
+        public boolean isEmpty() { return false; }
+        public Iterator<? extends Type> iterator() { return new Iterator.Singleton<Type>(element); }
+        public <Par> long visit(Visitor<Type,Par> vis, Par par) { return vis.invoke(element,par); }
+    }
+
+    /**
+     * An enumeration container, that contains all elements in an array, in order.
+     */
+    public static final class Enumerate<Type> implements Container<Type> {
+        private final Type[] elements;
+
+        /**
+         * Create an enumeration container.
+         *
+         * @param e the array of all the elements contained
+         */
+        public Enumerate(Type... e) { elements = e; }
+
+        public long size() {
+            return elements==null?0:elements.length;
+        }
+
+        public boolean isEmpty() {
+            return elements==null||elements.length==0;
+        }
+
+        public Iterator<? extends Type> iterator() {
+            return elements==null?new Iterator.Empty<Type>():new Iterator.Enumerate<Type>(elements);
+        }
+
+        public <Par> long visit(Visitor<Type,Par> vis, Par par) {
+            long s =0;
+            if(elements!=null) for(Type e: elements) {
+                long v = vis.invoke(e,par);
+                if(v<0) return -1;
+                s += v;
+            }
+            return s;
+        }
+    }
 
 
     /*********************************************************************************

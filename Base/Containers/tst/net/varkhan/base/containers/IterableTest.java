@@ -20,32 +20,32 @@ public class IterableTest extends TestCase {
     }
 
     public void testSingleton() throws Exception {
-        int index=333;
-        Iterable<Object> ix = new Iterable.Singleton<Object>(index);
+        Object val = new Object();
+        Iterable<Object> ix = new Iterable.Singleton<Object>(val);
         Iterator<? extends Object> ii = ix.iterator();
         assertTrue("indexes().hasNext()", ii.hasNext());
-        assertEquals("indexes().next()==index",index,ii.next());
+        assertEquals("indexes().next()==val",val,ii.next());
         assertFalse("indexes().hasNext()", ii.hasNext());
     }
 
     public void testEnumerate() throws Exception {
-        Object[] idx0 = new Object[] {};
-        Iterable<Object> ix0 = new Iterable.Enumerate<Object>(idx0);
+        Object[] val0 = new Object[] {};
+        Iterable<Object> ix0 = new Iterable.Enumerate<Object>(val0);
         Iterator<? extends Object> ii0 = ix0.iterator();
         assertFalse("indexes().hasNext()", ii0.hasNext());
-        Object[] idx1 = new Object[] {4};
-        Iterable<Object> ix1 = new Iterable.Enumerate<Object>(idx1);
+        Object[] val1 = new Object[] {4};
+        Iterable<Object> ix1 = new Iterable.Enumerate<Object>(val1);
         Iterator<? extends Object> ii1 = ix1.iterator();
         assertTrue("indexes().hasNext()", ii1.hasNext());
-        assertEquals("indexes().next()==min",idx1[0],ii1.next());
+        assertEquals("indexes().next()==min",val1[0],ii1.next());
         assertFalse("indexes().hasNext()", ii1.hasNext());
-        Object[] idx2 = new Object[] {4, 5, 6};
-        Iterable<Object> ix2 = new Iterable.Enumerate<Object>(idx2);
+        Object[] val2 = new Object[] {4, 5, 6};
+        Iterable<Object> ix2 = new Iterable.Enumerate<Object>(val2);
         Iterator<? extends Object> ii2 = ix2.iterator();
         assertTrue("indexes().hasNext()", ii2.hasNext());
-        assertEquals("indexes().next()==min",idx2[0],ii2.next());
-        assertEquals("indexes().next()==..",idx2[1],ii2.next());
-        assertEquals("indexes().next()==..",idx2[2],ii2.next());
+        assertEquals("indexes().next()==min",val2[0],ii2.next());
+        assertEquals("indexes().next()==..",val2[1],ii2.next());
+        assertEquals("indexes().next()==..",val2[2],ii2.next());
         assertFalse("indexes().hasNext()", ii2.hasNext());
     }
 
