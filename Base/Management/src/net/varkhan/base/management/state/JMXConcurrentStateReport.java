@@ -17,32 +17,42 @@ import java.util.Hashtable;
  * @date 10/12/11
  * @time 12:23 PM
  */
-public class JMXStateReport<L extends Level,S extends State<L,S>> implements StateReport<L,S>, DynamicMBean {
-    private static final Log log = LogManager.getLogger(JMXStateReport.class);
+public class JMXConcurrentStateReport<L extends Level,S extends State<L,S>> implements StateReport<L,S>, DynamicMBean {
+    private static final Log log=LogManager.getLogger(JMXConcurrentStateReport.class);
 
-    private final String[] path;
-    private final StateReport<L,S> report;
+    private final String[]         path;
+    private final ConcurrentStateReport<L,S> report;
 
-    public JMXStateReport(StateReport<L,S> report, String... path) {
+    public JMXConcurrentStateReport(ConcurrentStateReport<L,S> report, String... path) {
         this.path=path;
         this.report=report;
-    }
-
-    public void register() {
+        MBeanServer mbs=ManagementFactory.getPlatformMBeanServer();
+        try {
+            mbs.registerMBean(this, getReportMBeanName());
+        }
+        catch(Exception e) {
+            log.warn("Registering MBean for report failed",e);
+        }
         for(StateCheck<L,S> check: report.checks()) {
             try {
-                ManagementFactory.getPlatformMBeanServer().registerMBean(new JMXStateCheck<L,S>(check), getCheckMBeanName(check.name()));
+                mbs.registerMBean(new JMXStateCheck<L,S>(check), getCheckMBeanName(check.name()));
             }
             catch(Exception e) {
                 log.warn("Registering MBean for "+check.name()+" failed",e);
             }
         }
+    }
+
+    public void add(StateCheck<L,S> check) {
+        JMXStateCheck<L,S> jc=new JMXStateCheck<L,S>(check);
+        MBeanServer mbs=ManagementFactory.getPlatformMBeanServer();
         try {
-            ManagementFactory.getPlatformMBeanServer().registerMBean(this,getReportMBeanName());
+            mbs.registerMBean(jc, getCheckMBeanName(check.name()));
         }
         catch(Exception e) {
-            log.warn("Registering MBean for report failed",e);
+            log.warn("Registering MBean for "+check.name()+" failed", e);
         }
+        report.add(jc);
     }
 
     @Override

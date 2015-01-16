@@ -9,15 +9,15 @@ package net.varkhan.base.management.state;
  * @time 10:43 PM
  */
 public abstract class WrapperStateCheck<L extends Level,S extends State<L,S>> implements StateCheck<L,S> {
-    protected final StateCheck<L,S> hc;
+    protected final StateCheck<L,S> check;
 
-    protected WrapperStateCheck(StateCheck<L,S> hc) { this.hc=hc; }
+    protected WrapperStateCheck(StateCheck<L,S> check) { this.check=check; }
 
-    public String name() { return hc.name(); }
+    public String name() { return check.name(); }
 
-    public String desc() { return hc.desc(); }
+    public String desc() { return check.desc(); }
 
-    public L level() { return hc.level(); }
+    public L level() { return check.level(); }
 
     public abstract S state();
 

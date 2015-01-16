@@ -15,7 +15,7 @@ import net.varkhan.base.management.state.lifecycle.LifeState;
  * @date 10/12/11
  * @time 12:22 PM
  */
-public class StateReportTest extends TestCase {
+public class SimpleStateReportTest extends TestCase {
 
     public void testBasicHealthReport() {
         final int time[] = new int[1];

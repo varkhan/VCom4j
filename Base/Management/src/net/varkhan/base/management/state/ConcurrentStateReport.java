@@ -22,7 +22,7 @@ public class ConcurrentStateReport<L extends Level,S extends State<L,S>> impleme
 
     public ConcurrentStateReport(S initial, long period) { this.initial=initial; this.period=period; }
 
-    public void add(StateCheck<L,S> hc) { checks.add(new ConcurrentStateCheck<L,S>(hc)); }
+    public void add(StateCheck<L,S> check) { checks.add(new ConcurrentStateCheck<L,S>(check)); }
 
     public void start() {
         if(updater!=null && updater.isAlive()) return;
@@ -119,7 +119,7 @@ public class ConcurrentStateReport<L extends Level,S extends State<L,S>> impleme
 
         public void update() {
             Update<S> u;
-            try { u = new Update<S>(hc.state(),hc.reason()); }
+            try { u = new Update<S>(check.state(), check.reason()); }
             catch(Throwable t) { u = new Update<S>(null,t.toString()); }
             update.set(u);
         }
