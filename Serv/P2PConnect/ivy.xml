@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+    <info organisation="net.varkhan" module="VCom4j-Serv-P2PConnect" branch="prod" revision="0.1.0" status="release"/>
+    <publications>
+        <artifact name="VCom4j-Serv-P2PConnect" ext="jar" type="src"/>
+        <artifact name="VCom4j-Serv-P2PConnect" ext="jar" type="bin"/>
+        <artifact name="VCom4j-Serv-P2PConnect" ext="jar" type="doc"/>
+        <artifact name="VCom4j-Serv-P2PConnect" ext="ivy" type="ivy"/>
+        <artifact name="VCom4j-Serv-P2PConnect" ext="pom" type="pom"/>
+    </publications>
+    <dependencies>
+        <dependency org="net.varkhan" name="VCom4j-Base-Containers" rev="[0.8.*,)"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Conversion" rev="[0.8.*,)"/>
+        <dependency org="net.varkhan" name="VCom4j-Base-Management" rev="[0.8.*,)"/>
+        <dependency org="log4j" name="log4j" rev="1.2.15">
+            <exclude org="javax.jms" name="jms"/>
+            <exclude org="com.sun.jdmk" name="jmxtools"/>
+            <exclude org="com.sun.jmx" name="jmxri"/>
+        </dependency>
+    </dependencies>
+</ivy-module>

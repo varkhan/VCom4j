@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="VCom4j-Serv-P2PConnect" default="all">
+    <dirname property="module.base.dir" file="${ant.file.VCom4j-Serv-P2PConnect}"/>
+    <property name="project.base.dir" value="${module.base.dir}/../../"/>
+    <property name="module.name" value="${ant.project.name}"/>
+    <property name="module.vers" value="0.1.0"/>
+    <property name="module.desc" value="Lightweight P2P communication framework and protocol"/>
+    <property name="test.emma.include" value="+net.varkhan.serv.*,-*Test*"/>
+    <include file="${project.base.dir}/project.xml"/>
+    <include file="${project.tool.dir}/compiler.xml"/>
+    <import file="${project.tool.dir}/module.xml"/>
+</project>
