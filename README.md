@@ -36,7 +36,7 @@ For each _$module_, invoking
 
 `ant -f $module/build.xml clean compile test artifact`
 
-will build source, bytecode and documentation jars in the module `$module/.bld` directory.
+will build source, bytecode and documentation jars in the local `$module/lib` directory.
 
 Adding an extra `publish` target to the above line will publish to the local repo, by default `.ivy/dist` in the project root.
 
