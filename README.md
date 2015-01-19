@@ -9,7 +9,7 @@
 VCom4j provides dedicated datastructures, frameworks and constructs to facilitate in-memory processing of very large datasets (Gb to Tb per node), that combine an optimized memory footprint, low latency and high throughput.
 
 
-## Project structure
+## Packages
  
 * **Base**   General purpose datastructures and constructs (no cross or external dependencies)
  * **Containers**   Container-type datastructures (lists, sets, maps, trees, tries, queues)
