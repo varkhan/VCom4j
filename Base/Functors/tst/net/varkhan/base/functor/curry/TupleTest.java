@@ -14,33 +14,33 @@ import junit.framework.TestCase;
 public class TupleTest extends TestCase {
 
     public void testLvalue() throws Exception {
-        Tuple<Integer,Tuple<String,Tuple>> t1 = new Tuple.Value<Integer,Tuple<String,Tuple>>(3);
+        Tuple<Integer,Tuple<String,Tuple<?,?>>> t1 = new Tuple.Value<Integer,Tuple<String,Tuple<?,?>>>(3);
         assertEquals("lval",(Object)3,t1.lvalue());
         assertEquals("rval",null,t1._value());
-        Tuple<Integer,Tuple<String,Tuple>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple>>(3,"s");
+        Tuple<Integer,Tuple<String,Tuple<?,?>>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple<?,?>>>(3,"s");
         assertEquals("lval",(Object)3,t2.lvalue());
     }
 
     public void test_value() throws Exception {
-        Tuple<Integer,Tuple<String,Tuple>> t1 = new Tuple.Value<Integer,Tuple<String,Tuple>>(3);
+        Tuple<Integer,Tuple<String,Tuple<?,?>>> t1 = new Tuple.Value<Integer,Tuple<String,Tuple<?,?>>>(3);
         assertEquals("rval",null,t1._value());
-        Tuple<Integer,Tuple<String,Tuple>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple>>(3,"s");
+        Tuple<Integer,Tuple<String,Tuple<?,?>>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple<?,?>>>(3,"s");
         assertEquals("rval","s",t2._value().lvalue());
         assertEquals("rval",null,t2._value()._value());
     }
 
     public void testValues() throws Exception {
-        Tuple<Integer,Tuple<String,Tuple>> t1 = new Tuple.Value<Integer,Tuple<String,Tuple>>(3);
+        Tuple<Integer,Tuple<String,Tuple<?,?>>> t1 = new Tuple.Value<Integer,Tuple<String,Tuple<?,?>>>(3);
         assertEquals("vals",1,t1.values().length);
         assertEquals("vals",3,t1.values()[0]);
-        Tuple<Integer,Tuple<String,Tuple>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple>>(3,"s");
+        Tuple<Integer,Tuple<String,Tuple<?,?>>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple<?,?>>>(3,"s");
         assertEquals("vals",2,t2.values().length);
         assertEquals("vals",3,t2.values()[0]);
         assertEquals("vals","s",t2.values()[1]);
     }
 
     public void testString() throws Exception {
-        Tuple<Integer,Tuple<String,Tuple<Boolean,Tuple>>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple<Boolean,Tuple>>>(3,"s",true);
+        Tuple<Integer,Tuple<String,Tuple<Boolean,Tuple<?,?>>>> t2 = new Tuple.Value<Integer,Tuple<String,Tuple<Boolean,Tuple<?,?>>>>(3,"s",true);
         assertEquals("toString","(3,s,true)",t2.toString());
     }
 

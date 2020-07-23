@@ -87,7 +87,7 @@ public abstract class AbstractCountingSetTest extends TestCase {
         long e = 0;
         for(int i=0;i<keys.length;i++) {
             K k=keys[i];
-            if(exact) assertEquals("count(.)",cmap.containsKey(k)?cmap.get(k):0,cset.count(k));
+            if(exact) assertEquals("count(.)",(long)(cmap.containsKey(k)?cmap.get(k):0L),(long)cset.count(k));
             else {
                 long x = cmap.containsKey(k)?cmap.get(k):0 - cset.count(k);
                 e += x > 0 ? x : -x;

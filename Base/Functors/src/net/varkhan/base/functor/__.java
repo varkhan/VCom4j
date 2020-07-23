@@ -32,7 +32,7 @@ package net.varkhan.base.functor;
  * @date 12/1/13
  * @time 12:35 PM
  */
-public interface _<L,T extends _> {
+public interface __<L,T extends __<?,?>> {
 
     /**
      * The first (left) value of the sequence.

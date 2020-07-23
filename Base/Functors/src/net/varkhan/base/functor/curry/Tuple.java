@@ -1,6 +1,6 @@
 package net.varkhan.base.functor.curry;
 
-import net.varkhan.base.functor._;
+import net.varkhan.base.functor.__;
 
 
 /**
@@ -11,22 +11,22 @@ import net.varkhan.base.functor._;
  * @date 12/1/13
  * @time 12:33 PM
  */
-public interface Tuple<L, _T extends _> extends _<L,_T> {
+public interface Tuple<L, _T extends __<?,?>> extends __<L,_T> {
 
     public L lvalue();
     public _T _value();
 
     public Object[] values();
 
-    public static class Value<L,_T extends _> implements Tuple<L,_T> {
+    public static class Value<L,_T extends __<?,?>> implements Tuple<L,_T> {
         protected final Object[] values;
-        public Value(_<L,? extends _T> t) { this.values = t.values(); }
+        public Value(__<L,? extends _T> t) { this.values = t.values(); }
         public Value(L l, Object... values) { this.values = uncurry(l, values); }
         protected Value(Object[] values) { this.values = values; }
         @SuppressWarnings("unchecked")
         public L lvalue() { return (L) values[0]; }
         @SuppressWarnings("unchecked")
-        public _T _value() { return (values==null||values.length<=1)?null:(_T) new Value(rcurry(values)); }
+        public _T _value() { return (values==null||values.length<=1)?null:(_T) new Value<>(rcurry(values)); }
         public Object[] values() { return values; }
         protected static <L> Object[] uncurry(L l, Object[] values) {
             if(values==null||values.length==0) return new Object[]{l};
@@ -40,7 +40,6 @@ public interface Tuple<L, _T extends _> extends _<L,_T> {
             if(values==null||values.length==0) return null;
             return (L) values[0];
         }
-        @SuppressWarnings("unchecked")
         protected static Object[] rcurry(Object[] values) {
             if(values==null||values.length<=1) return new Object[0];
             Object[] v = new Object[values.length-1];
@@ -51,8 +50,8 @@ public interface Tuple<L, _T extends _> extends _<L,_T> {
         @Override
         public boolean equals(Object o) {
             if(this==o) return true;
-            if(!(o instanceof Tuple)) return false;
-            Tuple that=(Tuple) o;
+            if(!(o instanceof Tuple<?,?>)) return false;
+            Tuple<?,?> that=(Tuple<?,?>) o;
             final int l = values.length;
             Object[] thisV = this.values();
             Object[] thatV = that.values();

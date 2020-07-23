@@ -101,4 +101,29 @@ public class ConstantTest extends TestCase {
         return buf;
     }
 
+//    public static class Domain<E extends Domain<E,C>, C extends Constant<E,E,C,?>> extends Constant<E,E,E,C> {
+//
+//        private Domain() {
+//            super("_");
+//        }
+//
+//        @SuppressWarnings("unchecked")
+//        public Domain(String name) {
+//            super((E) root,name);
+//        }
+//
+//        public class Administration<E extends Administration<E,C>, C extends Constant<Domain<?,E>,E,C,?>>
+//
+//    }
+//
+//    private static final Domain<?,?> root = new Domain();
+//    public static final Domain<?,?> Administration = new Domain("Administration");
+//    static {
+//        new Domain("Geography");
+//        new Domain("Infrastructure");
+//        new Domain("Buildings");
+//    }
+//
+//    public static Domain<?,?> v(String name) { return (Domain<?, ?>) root.valueOf(name); }
+
 }
