@@ -51,14 +51,29 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
 
     public static class Vector<L,_T extends __<?,?>> implements Tuple<L,_T> {
         protected final Object[] values;
+
         public Vector(__<L,? extends _T> t) { this.values = t.values(); }
         public Vector(L l, Object... values) { this.values = uncurry(l, values); }
         protected Vector(Object[] values) { this.values = values; }
+
+        @Override public int size() { return values.length; }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <U> U value(int i) {
+            if(i>=values.length) throw new IndexOutOfBoundsException("Member index "+i+" is larger than this tuple size");
+            return (U) values[i];
+        }
+
+        @Override public boolean isLast() { return values.length<=1; }
+
         @SuppressWarnings("unchecked")
         public L value() { return (L) values[0]; }
         @SuppressWarnings("unchecked")
         public _T next() { return (values==null||values.length<=1)?null:(_T) new Vector<>(rcurry(values)); }
         public Object[] values() { return values; }
+
+
         protected static <L> Object[] uncurry(L l, Object[] values) {
             if(values==null||values.length==0) return new Object[]{l};
             Object[] v = new Object[1+values.length];
@@ -66,11 +81,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
             System.arraycopy(values,0,v,1,values.length);
             return v;
         }
-        @SuppressWarnings("unchecked")
-        protected static <L> L lcurry(Object[] values) {
-            if(values==null||values.length==0) return null;
-            return (L) values[0];
-        }
+
         protected static Object[] rcurry(Object[] values) {
             if(values==null||values.length<=1) return new Object[0];
             Object[] v = new Object[values.length-1];
@@ -154,7 +165,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
                 p++;
                 t = t.next();
             }
-            if(t==null) throw new IllegalArgumentException("Member index "+i+" is larger than this tuple size");
+            if(t==null) throw new IndexOutOfBoundsException("Member index "+i+" is larger than this tuple size");
             return (U) t.value();
         }
 
