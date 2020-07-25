@@ -288,7 +288,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
         }
 
         @Override public Void next() { return null; }
-        @Override public boolean isLast() { return false; }
+        @Override public boolean isLast() { return true; }
 
         public static <A,R> Function<Tuple<A,Void>,R> wrapA(Function<A,R> fn) {
             return t -> fn.apply(t.value());
