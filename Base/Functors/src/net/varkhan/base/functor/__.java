@@ -49,17 +49,17 @@ public interface __<V,T extends __<?,?>> {
     public int size();
 
     /**
-     * Whether this typed sequence has no elements in its remaining (tail) section.
+     * Whether this typed sequence has remaining (tail) elements.
      *
-     * @return {@literal true} iff {@link #next()} would return {@literal null}
+     * @return {@literal true} iff {@link #next()} would return a non-null value
      */
-    public boolean isLast();
+    public boolean hasNext();
 
     /**
      * The remaining (tail) section of the typed sequence.
      *
      * @return a typed sequence representing all but the first element in this sequence,
-     * or {@literal null} if no elements exist (i,e, this sequence has a single element)
+     * or {@literal null} if no more elements exist (i,e, this sequence has a single element)
      */
     public T next();
 

@@ -20,12 +20,12 @@ public class TupleTest extends TestCase {
         assertEquals("size",2,t2.size());
     }
 
-    public void testVectorIsLast() throws Exception {
+    public void testVectorHasNext() throws Exception {
         Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Vector<Integer,Tuple<String,Tuple<?,?>>>(3);
-        assertTrue("islast", t1.isLast());
+        assertFalse("hasnext", t1.hasNext());
         Tuple<Integer,? extends Tuple<String,? extends Tuple<?,?>>> t2 = new Tuple.Vector<Integer,Tuple<String,Tuple<?,?>>>(3,"s");
-        assertFalse("islast", t2.isLast());
-        assertTrue("islast", t2.next().isLast());
+        assertTrue("hasnext", t2.hasNext());
+        assertFalse("hasnext", t2.next().hasNext());
     }
 
     public void testVectorValue() throws Exception {
@@ -70,12 +70,12 @@ public class TupleTest extends TestCase {
         assertEquals("size",2,t2.size());
     }
 
-    public void testChainIsLast() throws Exception {
+    public void testChainHasNext() throws Exception {
         Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Chain<Integer,Tuple<String,Tuple<?,?>>>(3, null);
-        assertTrue("islast", t1.isLast());
+        assertFalse("hasnext", t1.hasNext());
         Tuple<Integer,? extends Tuple<String,? extends Tuple<?,?>>> t2 = new Tuple.Chain<Integer,Tuple<String,Tuple<?,?>>>(3,new Tuple.Chain<>("s", null));
-        assertFalse("islast", t2.isLast());
-        assertTrue("islast", t2.next().isLast());
+        assertTrue("hasnext", t2.hasNext());
+        assertFalse("hasnext", t2.next().hasNext());
     }
 
     public void testChainValue() throws Exception {
@@ -119,9 +119,9 @@ public class TupleTest extends TestCase {
         assertEquals("size",2,t2.size());
     }
 
-    public void testPairIsLast() throws Exception {
+    public void testPairHasNext() throws Exception {
         Tuple<Integer,? extends Tuple<String,? extends Tuple<?,?>>> t2 = new Tuple.Pair<Integer,String>(3,"s");
-        assertFalse("islast", t2.isLast());
+        assertTrue("hasnext", t2.hasNext());
     }
 
     public void testPairValue() throws Exception {
@@ -153,9 +153,9 @@ public class TupleTest extends TestCase {
         assertEquals("size",1,t1.size());
     }
 
-    public void testSingleIsLast() throws Exception {
+    public void testSingleHasNext() throws Exception {
         Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Single<Integer>(3);
-        assertTrue("islast", t1.isLast());
+        assertFalse("hasnext", t1.hasNext());
    }
 
     public void testSingleValue() throws Exception {

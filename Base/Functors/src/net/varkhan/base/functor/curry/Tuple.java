@@ -2,6 +2,7 @@ package net.varkhan.base.functor.curry;
 
 import net.varkhan.base.functor.__;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -17,7 +18,7 @@ import java.util.function.Function;
  */
 public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
 
-    public default int size() { return isLast() ? 1 : next().size()+1; }
+    public default int size() { return !hasNext() ? 1 : next().size()+1; }
 
     @SuppressWarnings("unchecked")
     public default <U> U value(int i) {
@@ -38,7 +39,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      */
     public V value();
 
-    public default boolean isLast() { return next() == null; }
+    public default boolean hasNext() { return next() != null; }
 
     /**
      * The Tuple containing the remaining (right of the left-most) values of the Tuple.
@@ -61,28 +62,29 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      * @param <_T> the type definition of the trailing Tuple
      */
     public static class Vector<V,_T extends __<?,?>> implements Tuple<V,_T> {
+        protected final int start;
         protected final Object[] values;
 
-        public Vector(__<V,? super _T> t) { this.values = t.values(); }
-        public Vector(V v, Object... values) { this.values = uncurry(v, values); }
-        protected Vector(Object[] values) { this.values = values; }
+        public Vector(__<V,? super _T> t) { this.start = 0; this.values = t.values(); }
+        public Vector(V v, Object... values) { this.start = 0; this.values = uncurry(v, values); }
+        protected Vector(int start, Object[] values) { this.start = start; this.values = values; }
 
-        @Override public int size() { return values.length; }
+        @Override public int size() { return values.length-start; }
 
         @SuppressWarnings("unchecked")
         @Override
         public <U> U value(int i) {
-            if(i>=values.length) throw new IndexOutOfBoundsException("Member index "+i+" is larger than this tuple size");
-            return (U) values[i];
+            if(start+i>=values.length) throw new IndexOutOfBoundsException("Member index "+i+" is larger than this tuple size");
+            return (U) values[start+i];
         }
 
-        @Override public boolean isLast() { return values.length<=1; }
+        @Override public boolean hasNext() { return values.length - start > 1; }
 
         @SuppressWarnings("unchecked")
-        public V value() { return (V) values[0]; }
+        public V value() { return (V) values[start]; }
         @SuppressWarnings("unchecked")
-        public _T next() { return (values==null||values.length<=1)?null:(_T) new Vector<>(rcurry(values)); }
-        public Object[] values() { return values; }
+        public _T next() { return (values==null||values.length-start<=1)?null:(_T) new Vector<>(start+1,values); }
+        public Object[] values() { return Arrays.copyOfRange(values,start,values.length-start); }
 
 
         protected static <L> Object[] uncurry(L l, Object[] values) {
@@ -152,8 +154,8 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      * @param <_T> the type definition of the trailing Tuple
      */
     public static class Chain<V, _T extends __<?,?>> implements Tuple<V, _T> {
-        private final V val;
-        private final _T next;
+        protected final V val;
+        protected final _T next;
 
         public Chain(V val, _T next) {
             this.val = val;
@@ -182,7 +184,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
 
         @Override public V value() { return val; }
         @Override public _T next() { return next; }
-        @Override public boolean isLast() { return next==null; }
+        @Override public boolean hasNext() { return next != null; }
 
         @Override
         public Object[] values() {
@@ -295,11 +297,13 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
         @SuppressWarnings("unchecked")
         @Override public <U> U value(int i) {
             if(i>0) throw new IndexOutOfBoundsException("Member index "+i+" is larger than this tuple size");
-            return (U) value();
+            return (U) val;
         }
 
         @Override public Void next() { return null; }
-        @Override public boolean isLast() { return true; }
+        @Override public boolean hasNext() { return false; }
+        @Override public Object[] values() { return new Object[] { val }; }
+
 
         public static <A,R> Function<Tuple<A,Void>,R> wrapA(Function<A,R> fn) {
             return t -> fn.apply(t.value());
@@ -333,7 +337,8 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
         @Override public java.lang.Void value() { return null; }
         @Override public <U> U value(int i) { throw new IndexOutOfBoundsException("Member index "+i+" is larger than this tuple size"); }
         @Override public Void next() { return null; }
-        @Override public boolean isLast() { return false; }
+        @Override public boolean hasNext() { return false; }
+        @Override public Object[] values() { return new Object[0]; }
     }
 
     /**
