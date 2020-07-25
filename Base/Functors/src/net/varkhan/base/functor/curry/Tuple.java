@@ -49,11 +49,22 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
 
     public Object[] values();
 
-    public static class Vector<L,_T extends __<?,?>> implements Tuple<L,_T> {
+
+    /**********************************************************************************
+     ** Vector Tuple
+     **/
+
+    /**
+     * <b>An n-ary Tuple implementation based on an array of members.</b>
+     *
+     * @param <V> the type of the first member
+     * @param <_T> the type definition of the trailing Tuple
+     */
+    public static class Vector<V,_T extends __<?,?>> implements Tuple<V,_T> {
         protected final Object[] values;
 
-        public Vector(__<L,? extends _T> t) { this.values = t.values(); }
-        public Vector(L l, Object... values) { this.values = uncurry(l, values); }
+        public Vector(__<V,? super _T> t) { this.values = t.values(); }
+        public Vector(V v, Object... values) { this.values = uncurry(v, values); }
         protected Vector(Object[] values) { this.values = values; }
 
         @Override public int size() { return values.length; }
@@ -68,7 +79,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
         @Override public boolean isLast() { return values.length<=1; }
 
         @SuppressWarnings("unchecked")
-        public L value() { return (L) values[0]; }
+        public V value() { return (V) values[0]; }
         @SuppressWarnings("unchecked")
         public _T next() { return (values==null||values.length<=1)?null:(_T) new Vector<>(rcurry(values)); }
         public Object[] values() { return values; }
@@ -135,7 +146,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      **/
 
     /**
-     * An n-ary Tuple implementation based on member recursion
+     * <b>An n-ary Tuple implementation based on member recursion.</b>
      *
      * @param <V> the type of the first member
      * @param <_T> the type definition of the trailing Tuple
@@ -255,7 +266,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
     }
 
     /**
-     * A pair Tuple implementation
+     * A pair Tuple implementation.
      *
      * @param <V> the type of the first member
      * @param <U> the type of the second (and last) member
@@ -271,7 +282,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      **/
 
     /**
-     * A singleton Tuple implementation
+     * <b>A singleton Tuple implementation.</b>
      *
      * @param <V> the type of the only member
      */
@@ -294,7 +305,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
             return t -> fn.apply(t.value());
         }
         public static <A,R> Function<A,Tuple<R,Void>> wrapR(Function<A,R> fn) {
-            return t -> new Single<R>(fn.apply(t));
+            return t -> new Single<>(fn.apply(t));
         }
         public static <A,R> Function<Tuple<A,?>,Tuple<R,Void>> wrapAR(Function<A,R> fn) {
             return t -> new Single<>(fn.apply(t.value()));
@@ -311,15 +322,16 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
     }
 
     /**
-     * A marker class for the terminal Tuple with no members
+     * <b>A marker class for the terminal Tuple with no members.</b>
+     * <br/>
+     * This class has no public constructor, and cannot be instantiated,
+     * as any and all values of this marker are expected to be {@literal null}.
      */
     public static final class Void extends Single<java.lang.Void> {
         private Void() { super((java.lang.Void) null); }
         @Override public int size() { return 0; }
         @Override public java.lang.Void value() { return null; }
-        @Override public <U> U value(int i) {
-            throw new IllegalArgumentException("Member index "+i+" is larger than this tuple size");
-        }
+        @Override public <U> U value(int i) { throw new IndexOutOfBoundsException("Member index "+i+" is larger than this tuple size"); }
         @Override public Void next() { return null; }
         @Override public boolean isLast() { return false; }
     }
