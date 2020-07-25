@@ -36,7 +36,7 @@ public class TupleTest extends TestCase {
     }
 
     public void testVectorNext() throws Exception {
-        Tuple<Integer,Tuple<String,Tuple<?,?>>> t1 = new Tuple.Vector<Integer,Tuple<String,Tuple<?,?>>>(3);
+        Tuple<Integer,? extends Tuple<String,Tuple<?,?>>> t1 = new Tuple.Vector<Integer,Tuple<String,Tuple<?,?>>>(3);
         assertNull("next", t1.next());
         Tuple<Integer,? extends Tuple<String,? extends Tuple<?,?>>> t2 = new Tuple.Vector<Integer,Tuple<String,Tuple<?,?>>>(3,"s");
         assertNotNull("next", t2.next());
@@ -86,7 +86,7 @@ public class TupleTest extends TestCase {
     }
 
     public void testChainNext() throws Exception {
-        Tuple<Integer,Tuple<String,Tuple<?,?>>> t1 = new Tuple.Chain<Integer,Tuple<String,Tuple<?,?>>>(3, null);
+        Tuple<Integer,? extends Tuple<String,Tuple<?,?>>> t1 = new Tuple.Chain<Integer,Tuple<String,Tuple<?,?>>>(3, null);
         assertNull("next", t1.next());
         Tuple<Integer,? extends Tuple<String,? extends Tuple<?,?>>> t2 = new Tuple.Chain<Integer,Tuple<String,Tuple<?,?>>>(3,new Tuple.Chain<>("s", null));
         assertNotNull("next", t2.next());
