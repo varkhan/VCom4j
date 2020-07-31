@@ -7,7 +7,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/.bld/classes/src" />
     <output-test url="file://$MODULE_DIR$/.bld/classes/tst" />
     <exclude-output />

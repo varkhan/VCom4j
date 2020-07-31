@@ -1,4 +1,4 @@
-package net.varkhan.base.functor.curry;
+package net.varkhan.base.extensions.type;
 
 import junit.framework.TestCase;
 

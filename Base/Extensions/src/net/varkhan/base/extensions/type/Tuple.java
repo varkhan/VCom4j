@@ -1,6 +1,6 @@
-package net.varkhan.base.functor.curry;
+package net.varkhan.base.extensions.type;
 
-import net.varkhan.base.functor.__;
+import net.varkhan.base.extensions.__;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -274,8 +274,9 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      * @param <U> the type of the second (and last) member
      */
     public static class Pair<V,U> extends Chain<V, Single<U>> {
-        public Pair(V val, Single<U> next) { super(val, next); }
         public Pair(V val, U next) { super(val, new Single<>(next)); }
+        public Pair(V val, Single<U> next) { super(val, next); }
+        public Pair(__<V,? extends __<U,?>> t) { super(t.value(), new Single<U>(t.next())); }
     }
 
 

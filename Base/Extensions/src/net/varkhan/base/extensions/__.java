@@ -1,4 +1,4 @@
-package net.varkhan.base.functor;
+package net.varkhan.base.extensions;
 
 /**
  * <b>A class parametrized by an arbitrary type sequence</b>.
