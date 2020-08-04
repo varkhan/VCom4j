@@ -43,7 +43,7 @@ public interface Kind<T> extends Named {
      *
      * @param from the kind to cast from
      * @param <F> the underlying Java storage of the kind to cast from
-     * @return {@literal true} iff instances of the {@param from} data kind can be cast to this data kind.
+     * @return {@literal true} iff instances of the {@param from} Kind can be cast to this Kind.
      */
     public <F> boolean isAssignableFrom(Kind<F> from);
 
@@ -58,7 +58,7 @@ public interface Kind<T> extends Named {
     public <F> Caster<F,T> assignFrom(Kind<F> from);
 
     /**
-     * A function able to cast the underlying Java storage of one data kind into another.
+     * A function able to cast the underlying Java storage of one Kind into another.
      *
      * @param <F>  the underlying Java storage of the kind to cast from
      * @param <T>  the underlying Java storage of the kind to cast into
@@ -83,20 +83,20 @@ public interface Kind<T> extends Named {
         public T apply(F from);
     }
 
-    /* ###########
-      Base kind implementations
-     */
+    /************************
+     ** Base kind implementations
+     **/
 
 
     /**
-     * A non-nullable abstract implementation of a data kind.
+     * A non-nullable abstract implementation of a Kind.
      *
      * To obtain a non-nullable kind, it is recommended to subclass {@link BaseKind}&lt;T&gt;
      * and implement the {@link #isAssignableFrom(Kind)} method.
      * To obtain a nullable kind, it is recommended to wrap an instance of a subclass of {@link BaseKind <T>}&lt;T&gt;
      * with an instance of {@link Nullable}&lt;T&gt;, using the {@link #nullable(Kind)} method.
      *
-     * @param <T> the Java kind this logical kind can be stored as
+     * @param <T> the Java type this logical kind can be stored as
      */
     public abstract class BaseKind<T> extends Named.Base implements Kind<T> {
         protected BaseKind(String name) { super(name); }
@@ -120,6 +120,12 @@ public interface Kind<T> extends Named {
 
     }
 
+    /**
+     * An abstract implementation of a Caster.
+     *
+     * @param <F> the type to cast from
+     * @param <T> the type to cast into
+     */
     public abstract class BaseCaster<F,T> implements Caster<F,T> {
 
         private final Kind<F> ft;
@@ -143,14 +149,14 @@ public interface Kind<T> extends Named {
     }
 
     /**
-     * A nullable wrapper around a data kind.
+     * A nullable wrapper around a Kind.
      *
      * This class is not directly instantiable, use the {@link #nullable(Kind)} method instead.
      *
      * To obtain a nullable kind, it is recommended to wrap a concrete subclass of {@link BaseKind}&lt;T&gt;
      * with an instance of this class, using the {@link #nullable(Kind)} method.
      *
-     * @param <T> the Java kind this logical kind can be stored as
+     * @param <T> the Java type this logical kind can be stored as
      */
     public final class Nullable<T> extends Named.Base implements Kind<T> {
         private final Kind<T> kind;
@@ -223,10 +229,10 @@ public interface Kind<T> extends Named {
     }
 
     /**
-     * Wraps an instance of a {@link Kind <T>} as a {@link Nullable<T>} data kind.
+     * Wraps an instance of a {@link Kind <T>} as a {@link Nullable<T>} Kind.
      *
      * @param kind the kind to wrap
-     * @param <T> the Java kind this logical kind can be stored as
+     * @param <T> the Java type this logical kind can be stored as
      *
      * @return the {@param kind} argument if it is Nullable, or a Nullable version of this logical kind
      */
@@ -236,17 +242,17 @@ public interface Kind<T> extends Named {
     }
 
 
-    /* ###########
-      ValueKind kind implementations
-     */
+    /************************
+     ** Value kind implementations
+     **/
 
     /**
-     * A simple data kind representing an atomic value.
+     * A simple Kind representing an atomic value.
      *
      * This kind assumes that such value can be canonically and equivalently represented
-     * by a given Java kind, identified by its Class.
+     * by a given Java type, identified by its Class.
      *
-     * @param <T> the canonical Java kind this atomic value is stored and represented by
+     * @param <T> the canonical Java type this atomic value is stored and represented by
      */
     public static abstract class ValueKind<T> extends BaseKind<T> {
 
@@ -260,7 +266,7 @@ public interface Kind<T> extends Named {
         /**
          * The Class of the representing Java object.
          *
-         * @return the Class of the Java kind this logical kind is canonically represented as
+         * @return the Class of the Java type this logical kind is canonically represented as
          */
         public Class<T> javaClass() { return klass; }
 
@@ -296,6 +302,11 @@ public interface Kind<T> extends Named {
         public String toString() { return name(); }
     }
 
+    /**
+     * A Kind representing Java primitives
+     * 
+     * @param <T> the Java type of the primitive
+     */
     public static abstract class Primitive<T> extends ValueKind<T> {
 
         protected Primitive(String name, Class<T> klass) {
@@ -304,9 +315,14 @@ public interface Kind<T> extends Named {
 
     }
 
-    public static abstract class StringKind<T extends CharSequence> extends ValueKind<T> {
+    /**
+     * A Kind representing character sequences
+     *
+     * @param <T> the CharSequence subtype to use as storage
+     */
+    public static abstract class CharsKind<T extends CharSequence> extends ValueKind<T> {
 
-        protected StringKind(String name, Class<T> klass) {
+        protected CharsKind(String name, Class<T> klass) {
             super(name, klass);
         }
 
@@ -320,25 +336,36 @@ public interface Kind<T> extends Named {
         @Override
         public <F> Caster<F, T> assignFrom(Kind<F> from) {
             try {
-                Constructor<T> c = klass.getConstructor(String.class);
-                return new CharSequenceCaster<>(from, this, s -> {
-                    try { return c.newInstance(s); } catch (ReflectiveOperationException ignored) {
-                        throw new ClassCastException("Cannot cast "+s.getClass().getCanonicalName()+" to "+klass.getCanonicalName());
-                    }
-                });
+                Constructor<T> cons = klass.getConstructor(String.class);
+                return new CharSequenceCaster<F, T>(from, this, cons);
             }
-            // ignore and return a dumb StringKind converter
+            // ignore and return a dumb String caster
             catch (NoSuchMethodException ignored) { }
             return new StringCaster<F, T>(from, this) { };
         }
 
     }
 
+    /**
+     * A CharSequence caster using an explicit constructor for the destination type.
+     *
+     * @param <F> the kind to cast from
+     * @param <T> the type of CharSequence to cast into using the constructor
+     */
     public static class CharSequenceCaster<F,T extends CharSequence> extends BaseCaster<F, T> {
 
         protected final Function<String, T> cons;
 
-        public CharSequenceCaster(Kind<F> from, StringKind<T> into, Function<String,T> cons) {
+        public CharSequenceCaster(Kind<F> from, CharsKind<T> into, Constructor<T> cons) {
+            super(from, into);
+            this.cons = s -> {
+                try { return cons.newInstance(s); } catch (ReflectiveOperationException ignored) {
+                    throw new ClassCastException("Cannot cast "+s.getClass().getCanonicalName()+" to "+cons.getDeclaringClass().getCanonicalName());
+                }
+            };
+        }
+
+        public CharSequenceCaster(Kind<F> from, CharsKind<T> into, Function<String,T> cons) {
             super(from, into);
             this.cons = cons;
         }
@@ -346,7 +373,7 @@ public interface Kind<T> extends Named {
         @SuppressWarnings("unchecked")
         @Override
         public T apply(F from) {
-            StringKind<T> into = (StringKind<T>) into();
+            CharsKind<T> into = (CharsKind<T>) into();
             Class<? extends CharSequence> klass = into.javaClass();
             if(from==null)
                 throw new ClassCastException("Cannot cast null to "+into.name());
@@ -361,31 +388,43 @@ public interface Kind<T> extends Named {
         }
     }
 
+    /**
+     * A simple String caster, using {@link Object#toString()} to cast.
+     *
+     * @param <F> the type to cast from
+     * @param <T> the type of char sequence to cast into
+     */
     public static class StringCaster<F,T extends CharSequence> extends BaseCaster<F, T> {
 
-        public StringCaster(Kind<F> from, StringKind<T> into) {
+        public StringCaster(Kind<F> from, CharsKind<T> into) {
             super(from, into);
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public T apply(F from) {
-            StringKind<T> into = (StringKind<T>) into();
+            CharsKind<T> into = (CharsKind<T>) into();
             Class<? extends CharSequence> klass = into.javaClass();
             if(from==null) throw new ClassCastException("Cannot cast null to "+into.name());
             // No copies if we can avoid it
             if(klass.isAssignableFrom(from.getClass())) return (T) from;
-            // Assign the toString value directly
-            if(klass.isAssignableFrom(String.class)) return (T) from.toString();
-            // We have no valid converter for this
-            throw new ClassCastException("Cannot cast null to "+into.name());
+            // Convert to String value directly
+            return (T) from.toString();
         }
     }
 
-    /* ###########
-      Container types implementations
-     */
 
+    /************************
+     ** Container kinds implementations
+     **/
+
+    /**
+     * The Kind representing Array types (ordered, immutable, fixed-length sequences).
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <E> the kind of the array element
+     */
     public static abstract class ArrayKind<E> extends BaseKind<E[]> {
         protected final Kind<E> et;
 
@@ -430,6 +469,17 @@ public interface Kind<T> extends Named {
 
     }
 
+    /**
+     * A Caster into Array types.
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     * @param <E> the element kind of the Array to cast into
+     */
     public static class ArrayCaster<F, E> extends BaseCaster<F, E[]> {
         protected final Caster<Object, E> caster;
         private final Class<E> elclass;
@@ -469,6 +519,13 @@ public interface Kind<T> extends Named {
 
     }
 
+    /**
+     * The Kind representing {@link List} types (ordered, mutable, dynamic-length sequences).
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <E> the kind of the List element
+     */
     public static abstract class ListKind<E> extends BaseKind<List<E>> {
         protected final Kind<E> et;
 
@@ -513,6 +570,17 @@ public interface Kind<T> extends Named {
 
     }
 
+    /**
+     * A Caster into {@link List} types.
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     * @param <E> the element kind of the List to cast into
+     */
     public static class ListCaster<F, E> extends BaseCaster<F, List<E>> {
         protected final Caster<Object, E> caster;
 
@@ -545,10 +613,18 @@ public interface Kind<T> extends Named {
     }
 
 
-    /* ###########
-      Map kind implementation
-     */
+    /************************
+     ** Map kind implementation
+     **/
 
+    /**
+     * The Kind representing {@link Map} types.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <K> the kind of the map keys (which must be a {@link ValueKind})
+     * @param <E> the kind of the map elements (values)
+     */
     public static abstract class MapKind<K, E> extends BaseKind<Map<K, E>> {
         protected final ValueKind<K> kt;
         protected final Kind<E> et;
@@ -603,23 +679,32 @@ public interface Kind<T> extends Named {
 
     }
 
-    public static class MapCaster<F, K, V> extends BaseCaster<F, java.util.Map<K,V>> {
+    /**
+     * A caster into {@link Map} kinds.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     * @param <K> the kind of the map keys (which must be a {@link ValueKind})
+     * @param <E> the kind of the map elements (values)
+     */
+    public static class MapCaster<F, K, E> extends BaseCaster<F, java.util.Map<K, E>> {
 
         protected final Caster<Object, K> kcaster;
-        protected final Caster<Object, V> ecaster;
+        protected final Caster<Object, E> ecaster;
 
         @SuppressWarnings("unchecked")
-        public MapCaster(Kind<F> from, MapKind<K, V> into,
-                         Caster<?, K> keyCaster, Caster<?, V> elementCaster) {
+        public MapCaster(Kind<F> from, MapKind<K, E> into,
+                         Caster<?, K> keyCaster, Caster<?, E> elementCaster) {
             super(from, into);
             this.kcaster = (Caster<Object, K>) keyCaster;
-            this.ecaster = (Caster<Object, V>) elementCaster;
+            this.ecaster = (Caster<Object, E>) elementCaster;
         }
 
-        public java.util.Map<K,V> apply(Object from) {
+        public java.util.Map<K, E> apply(Object from) {
             if(!(from instanceof java.util.Map))
                 throw new ClassCastException("Cannot cast "+from.getClass().getCanonicalName()+" to "+into().name());
-            java.util.Map<K,V> m = new LinkedHashMap<>();
+            java.util.Map<K, E> m = new LinkedHashMap<>();
             for (java.util.Map.Entry<?,?> e: ((java.util.Map<?,?>)from).entrySet()) {
                 m.put(kcaster.apply(e.getKey()),ecaster.apply(e.getValue()));
             }
@@ -628,9 +713,9 @@ public interface Kind<T> extends Named {
     }
 
 
-    /* ###########
-      Kind definition constants
-     */
+    /************************
+     ** Kind definition constants
+     **/
 
     public static final Primitive<Boolean>      BOOL =      new Primitive<Boolean>("bool", Boolean.class) { };
     public static final Primitive<Byte>         BYTE =      new Primitive<Byte>("byte", Byte.class) { };
@@ -640,9 +725,20 @@ public interface Kind<T> extends Named {
     public static final Primitive<Long>         LONG =      new Primitive<Long>("long", Long.class) { };
     public static final Primitive<Float>        FLOAT =     new Primitive<Float>("float", Float.class) { };
     public static final Primitive<Double>       DOUBLE =    new Primitive<Double>("double", Double.class) { };
-    public static final StringKind<String>      STRING =    new StringKind<String>("string", String.class) { };
+    public static final CharsKind<String>       STRING =    new CharsKind<String>("string", String.class) { };
     public static final ValueKind<Date>         DATE =      new ValueKind<Date>("date", Date.class) { };
     public static final ValueKind<BigDecimal>   DECIMAL =   new ValueKind<BigDecimal>("decimal", BigDecimal.class) { };
 
+    public static List<Kind<?>> all() {
+        return Collections.unmodifiableList(Arrays.asList(
+                BOOL, BYTE, SHORT, CHAR, INT, LONG, FLOAT, DOUBLE, STRING, DATE, DECIMAL
+        ));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Kind<T> of(String name) {
+        for(Kind<?> k: all()) if(k.name().equalsIgnoreCase(name)) return (Kind<T>) k;
+        return null;
+    }
 
 }
