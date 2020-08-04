@@ -25,7 +25,7 @@ public class Base64Encoder<C> extends AbstractEncoder<CharSequence,C> implements
     public static final Base64Encoder<?> URL =new Base64Encoder<Object>(Base64Decoder.CHARMAP_URL, Base64Decoder.NO_PADDING);
     public static final Base64Encoder<?> XML =new Base64Encoder<Object>(Base64Decoder.CHARMAP_XML, Base64Decoder.NO_PADDING);
 
-    protected final char[] map;
+//    protected final char[] map;
     protected final byte[] pam;
     protected final char   pad;
 
@@ -38,12 +38,12 @@ public class Base64Encoder<C> extends AbstractEncoder<CharSequence,C> implements
     }
 
     public Base64Encoder(char[] map, char pad) {
-        this.map=map;
+//        this.map=map;
         this.pad=pad;
         this.pam=_mapping(map);
     }
 
-    public char[] getCharacterMap() { return map.clone(); }
+//    public char[] getCharacterMap() { return map.clone(); }
 
     public long encode(CharSequence obj, OutputStream stm, C ctx) { return _encode(pam, pad, obj, stm); }
 
