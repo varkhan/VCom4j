@@ -19,6 +19,8 @@ public class AsciiEncoderTest extends TestCase {
     public void testEncode() throws Exception {
         verifyEncode("Foo bar baz", "Foo bar baz");
         verifyEncode("Foo bar $$~", "Foo bar $$\u00fe");
+        verifyEncode("Foo bar $$~", "Foo bar $$\u01fe");
+        verifyEncode("Foo bar $$~", "Foo bar $$\u11fe");
     }
 
     public void verifyEncode(String expected, String encode) {

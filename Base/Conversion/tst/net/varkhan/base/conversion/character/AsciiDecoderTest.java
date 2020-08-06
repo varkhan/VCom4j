@@ -1,6 +1,7 @@
 package net.varkhan.base.conversion.character;
 
 import junit.framework.TestCase;
+import net.varkhan.base.conversion.serializer.DecodingException;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
@@ -19,13 +20,16 @@ public class AsciiDecoderTest extends TestCase {
     public void testDecode() throws Exception {
         verifyDecode("Foo bar baz", "Foo bar baz", true);
         byte[] buf ="Foo bar $$$".getBytes(Charset.forName("ASCII"));
+        buf[buf.length-1] = (byte)0x7E;
+        verifyDecode("Foo bar $$~", buf, true);
+        verifyDecode("Foo bar $$~", buf, false);
         buf[buf.length-1] = (byte)0xFE;
         verifyDecode("Foo bar $$~", buf, true);
         try {
             verifyDecode("Foo bar $$~", buf, false);
             fail("No squash on >07F");
         }
-        catch(Exception e) {
+        catch(DecodingException e) {
             // success
         }
     }

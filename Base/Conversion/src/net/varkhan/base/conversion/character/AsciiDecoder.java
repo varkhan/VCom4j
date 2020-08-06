@@ -88,7 +88,7 @@ public class AsciiDecoder<C> extends AbstractDecoder<String,C> implements Decode
     public static <A extends Appendable> A _decode(A out, ByteBuffer buf, boolean squash) throws IOException {
         while(buf.position()<buf.limit()) {
             try {
-                int b=buf.get();
+                int b=0xFF&buf.get();
                 if(squash) out.append((char) (b&0x7F));
                 else if(b<0x80) out.append((char) (b&0x7F));
                 else throw new DecodingException("Invalid ASCII character");
@@ -107,7 +107,7 @@ public class AsciiDecoder<C> extends AbstractDecoder<String,C> implements Decode
         int p = (int)pos;
         while(p<len) {
             try {
-                int b=dat[p++];
+                int b=0xFF&dat[p++];
                 if(squash) out.append((char) (b&0x7F));
                 else if(b<0x80) out.append((char) (b&0x7F));
                 else throw new DecodingException("Invalid ASCII character");
