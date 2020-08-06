@@ -106,10 +106,11 @@ public class Base64Encoder<C> extends AbstractEncoder<CharSequence,C> implements
 
     public static long _encode(final byte[] pam, char pad, CharSequence obj, ByteBuffer buf) {
         try {
+            final int l = obj.length();
             long len=0;
             byte b0=0, b1=0, b2=0;
             int i=0;
-            while(i<obj.length()) {
+            while(i<l) {
                 char c=obj.charAt(i);
                 // If we have padding characters, exit loop
                 if(pad!=Base64Decoder.NO_PADDING&&c==pad) break;
@@ -157,10 +158,11 @@ public class Base64Encoder<C> extends AbstractEncoder<CharSequence,C> implements
 
     public static long _encode(final byte[] pam, char pad, CharSequence obj, byte[] dat, long pos, long len) {
         try {
+            final int l = obj.length();
             int p=(int) pos;
             byte b0=0, b1=0, b2=0;
             int i=0;
-            while(i<obj.length() && p<pos+len) {
+            while(i<l && p<pos+len) {
                 char c=obj.charAt(i);
                 // If we have padding characters, exit loop
                 if(pad!=Base64Decoder.NO_PADDING&&c==pad) break;
@@ -201,13 +203,17 @@ public class Base64Encoder<C> extends AbstractEncoder<CharSequence,C> implements
     }
 
     public static long _length(CharSequence obj, char pad) {
-        final int len = obj.length();
-        int p = 0;
-        if(pad!=Base64Decoder.NO_PADDING) {
-            if(len>1 && obj.charAt(len-1)==pad) p++;
-            if(len>2 && obj.charAt(len-2)==pad) p++;
+        final int l = obj.length();
+        int i=0;
+        int len=0;
+        while(i<l) {
+            char c=obj.charAt(i);
+            // If we have padding characters, exit loop
+            if(pad!=Base64Decoder.NO_PADDING&&c==pad) break;
+            if(i%4 > 0) len++;
+            i++;
         }
-        return (len*3-p)/4;
+        return len;
     }
 
     public static byte[] _mapping(char[] map) {
