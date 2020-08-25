@@ -267,8 +267,12 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
         }
     }
 
+    /**********************************************************************************
+     ** Pair, Single and Void Tuple
+     **/
+
     /**
-     * A pair Tuple implementation.
+     * <b>A pair Tuple implementation.</b>
      *
      * @param <V> the type of the first member
      * @param <U> the type of the second (and last) member
@@ -279,10 +283,6 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
         public Pair(__<V,? extends __<U,?>> t) { super(t.value(), new Single<U>(t.next())); }
     }
 
-
-    /**********************************************************************************
-     ** Single and Void Tuple
-     **/
 
     /**
      * <b>A singleton Tuple implementation.</b>
@@ -343,7 +343,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
     }
 
     /**
-     * The only allowed concrete value of the terminal Tuple
+     * <b>The only allowed concrete value of the terminal Tuple.</b>
      */
     public static final Void VOID = null; //new Void();
 
