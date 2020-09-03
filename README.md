@@ -12,20 +12,21 @@ VCom4j provides dedicated datastructures, frameworks and constructs to facilitat
 ## Packages
  
 * **Base**   General purpose datastructures and constructs (no cross or external dependencies)
- * **Containers**   Container-type datastructures (lists, sets, maps, trees, tries, queues)
- * **Conversion**   Format conversion, (en/de)coding and (de)serialization
- * **Functors**     Functional primitives and frameworks
- * **Management**   Configuration, logging and monitoring constructs
+   * **Containers**   Container-type datastructures (lists, sets, maps, trees, tries, queues)
+   * **Conversion**   Format conversion, (en/de)coding and (de)serialization
+   * **Extensions**   Language extensions, typing and syntactic tools
+   * **Functors**     Functional primitives and frameworks
+   * **Management**   Configuration, logging and monitoring constructs
 
 * **Core**   Extended functions on specific data types or environments (depends on base modules)
- * **Concurrent**   Thread-safe datastructures
- * **Geometry**     Geometry data representation, search and storage
- * **Presentation** Visual rendering primitives and frameworks
+   * **Concurrent**   Thread-safe datastructures
+   * **Geometry**     Geometry data representation, search and storage
+   * **Presentation** Visual rendering primitives and frameworks
 
 * **Data**   Data-storage and data-processing frameworks (depends on base modules)
- * **Learning**     Machine-learning primitives and algorithms
- * **Linguistics**  NLP and character data analysis structures
- * **VisualDiff**   Change detection and comparison algorithms
+   * **Learning**     Machine-learning primitives and algorithms
+   * **Linguistics**  NLP and character data analysis structures
+   * **VisualDiff**   Change detection and comparison algorithms
 
 * **Serv**   Serving and monitoring frameworks (depends on base and core modules and external libraries)
 
