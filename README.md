@@ -1,33 +1,34 @@
 # ![VCom4j](title.png)
 
 ### _Varkhan_ Commons for Java
-### High performance Java datastructures for very large datasets.
+### High performance Java constructs and datastructures for very large datasets.
 
 
 ## Mission
 
-VCom4j provides dedicated datastructures, frameworks and constructs to facilitate in-memory processing of very large datasets (Gb to Tb per node), that combine an optimized memory footprint, low latency and high throughput.
+VCom4j provides dedicated datastructures, frameworks and constructs to facilitate in-memory processing of very large datasets (Gbs to Tbs per node), that combine an optimized memory footprint, low latency and high throughput.
 
 
 ## Packages
  
-* **Base**   General purpose datastructures and constructs (no cross or external dependencies)
- * **Containers**   Container-type datastructures (lists, sets, maps, trees, tries, queues)
- * **Conversion**   Format conversion, (en/de)coding and (de)serialization
- * **Functors**     Functional primitives and frameworks
- * **Management**   Configuration, logging and monitoring constructs
+* [**Base**](Base)   General purpose datastructures and constructs (no cross or external dependencies)
+   * [**Containers**](Base/Containers)      Container-type datastructures (lists, sets, maps, trees, tries, queues)
+   * [**Conversion**](Base/Conversion)      Format conversion, (en/de)coding and (de)serialization
+   * [**Extensions**](Base/Extensions)      Language extensions, typing and syntactic tools
+   * [**Functors**](Base/Functors)          Functional primitives and frameworks
+   * [**Management**](Base/Management)      Configuration, logging and monitoring constructs
 
-* **Core**   Extended functions on specific data types or environments (depends on base modules)
- * **Concurrent**   Thread-safe datastructures
- * **Geometry**     Geometry data representation, search and storage
- * **Presentation** Visual rendering primitives and frameworks
+* [**Core**](Core)   Extended functions on specific data types or environments (depends only on **Base** modules)
+   * [**Concurrent**](Core/Concurrent)      Thread-safe datastructures
+   * [**Geometry**](Core/Geometry)          Geometry data representation, search and storage
+   * [**Presentation**](Core/Presentation)  Visual rendering primitives and frameworks
 
-* **Data**   Data-storage and data-processing frameworks (depends on base modules)
- * **Learning**     Machine-learning primitives and algorithms
- * **Linguistics**  NLP and character data analysis structures
- * **VisualDiff**   Change detection and comparison algorithms
+* [**Data**](Data)   Data-storage and data-processing frameworks (depends on **Base** and **Core** modules)
+   * [**Learning**](Data/Learning)          Machine-learning primitives and algorithms
+   * [**Linguistics**](Data/Linguistics)    NLP and character data analysis structures
+   * [**VisualDiff**](Data/VisualDiff)      Change detection and comparison algorithms
 
-* **Serv**   Serving and monitoring frameworks (depends on base and core modules and external libraries)
+* **Serv**   Serving and monitoring frameworks (depends on **Base** and **Core** modules and external libraries)
 
 
 ## Building
