@@ -26,7 +26,7 @@ import java.util.Map;
  * @date May 12, 2009
  * @time 9:06:44 PM
  */
-public abstract class Enumerated<Base extends Enumerated<Base>> implements Serializable, Comparable<Enumerated<Base>> {
+public abstract class Enumerated<Base extends Enumerated<Base>> implements Serializable, Label<Base>, Comparable<Enumerated<Base>> {
 
     private static final long serialVersionUID = 1L;
 

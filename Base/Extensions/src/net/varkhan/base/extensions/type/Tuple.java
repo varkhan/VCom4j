@@ -95,13 +95,6 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
             return v;
         }
 
-        protected static Object[] rcurry(Object[] values) {
-            if(values==null||values.length<=1) return new Object[0];
-            Object[] v = new Object[values.length-1];
-            System.arraycopy(values,1,v,0,values.length-1);
-            return v;
-        }
-
         @Override
         public boolean equals(Object o) {
             if(this==o) return true;

@@ -218,6 +218,11 @@ public interface Kind<T> extends Named {
         }
 
         @Override
+        public int hashCode() {
+            return kind.hashCode();
+        }
+
+        @Override
         public boolean equals(Object obj) {
             if(!(obj instanceof Kind)) return false;
             if(!((Kind<?>) obj).isNullable()) return false;
@@ -290,6 +295,11 @@ public interface Kind<T> extends Named {
                     return ((T) from);
                 }
             };
+        }
+
+        @Override
+        public int hashCode() {
+            return klass.hashCode();
         }
 
         @Override
@@ -459,6 +469,11 @@ public interface Kind<T> extends Named {
         }
 
         @Override
+        public int hashCode() {
+            return 0x5 & 31*et.hashCode();
+        }
+
+        @Override
         public boolean equals(Object obj) {
             if(!(obj instanceof Kind.ArrayKind)) return false;
             return et.equals(((ArrayKind<?>) obj).et);
@@ -557,6 +572,11 @@ public interface Kind<T> extends Named {
             final Caster<?,E> c = et.assignFrom(f);
             if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
             return new ListCaster<F, E>(from, this, c) { };
+        }
+
+        @Override
+        public int hashCode() {
+            return 0x9 & 31*et.hashCode();
         }
 
         @Override
@@ -666,6 +686,11 @@ public interface Kind<T> extends Named {
             if (kc==null) throw new ClassCastException("Cannot cast keys "+kf.name()+" to "+kt.name());
             if (ec==null) throw new ClassCastException("Cannot cast elements "+ef.name()+" to "+et.name());
             return new MapCaster<>(from, this, kc, ec);
+        }
+
+        @Override
+        public int hashCode() {
+            return 0x11 & 31*et.hashCode() & 61*kt.hashCode();
         }
 
         @Override
