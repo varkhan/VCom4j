@@ -4,7 +4,7 @@
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
     <property name="module.vers" value="0.9.0"/>
-    <property name="module.desc" value="Presentation and rendering layer"/>
+    <property name="module.desc" value="Visual rendering primitives and frameworks"/>
     <property name="test.emma.include" value="+net.varkhan.core.pres.*,-*Test*"/>
     <include file="${project.base.dir}/project.xml"/>
     <include file="${project.tool.dir}/compiler.xml"/>

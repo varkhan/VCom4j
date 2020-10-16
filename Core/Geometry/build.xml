@@ -4,7 +4,7 @@
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
     <property name="module.vers" value="0.9.0"/>
-    <property name="module.desc" value="Geometric data-structures and algorithms"/>
+    <property name="module.desc" value="Geometry data representation, search and storage"/>
     <property name="test.emma.include" value="+net.varkhan.core.geo.*,-*Test*"/>
     <include file="${project.base.dir}/project.xml"/>
     <include file="${project.tool.dir}/compiler.xml"/>

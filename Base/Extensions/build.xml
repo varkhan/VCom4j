@@ -4,7 +4,7 @@
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
     <property name="module.vers" value="0.9.0"/>
-    <property name="module.desc" value="Data and formats conversion, encoding and decoding"/>
+    <property name="module.desc" value="Language extensions, typing and syntactic tools"/>
     <include file="${project.base.dir}/project.xml"/>
     <include file="${project.tool.dir}/compiler.xml"/>
     <import file="${project.tool.dir}/module.xml"/>
