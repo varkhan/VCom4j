@@ -9,6 +9,7 @@
         <artifact name="VCom4j-Core-Components" ext="pom" type="pom"/>
     </publications>
     <dependencies>
+        <dependency org="net.varkhan" name="VCom4j-Base-Extensions" rev="[0.8.*,)"/>
         <dependency org="net.varkhan" name="VCom4j-Base-Management" rev="[0.8.*,)"/>
     </dependencies>
 </ivy-module>

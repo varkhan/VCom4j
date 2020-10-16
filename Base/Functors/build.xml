@@ -3,7 +3,7 @@
     <dirname property="module.base.dir" file="${ant.file.VCom4j-Base-Functors}"/>
     <property name="project.base.dir" value="${module.base.dir}/../../"/>
     <property name="module.name" value="${ant.project.name}"/>
-    <property name="module.vers" value="0.8.0"/>
+    <property name="module.vers" value="0.9.0"/>
     <property name="module.desc" value="Functors and lambda-calculus tools"/>
     <include file="${project.base.dir}/project.xml"/>
     <include file="${project.tool.dir}/compiler.xml"/>
