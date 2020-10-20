@@ -1,5 +1,10 @@
 package net.varkhan.base.extensions;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * <b>A named marker object that indicates the validity of a predicate within a certain category.</b>.
  * <p/>
@@ -62,4 +67,16 @@ public interface Label<L extends Label<L>> {
         @Override public boolean equals(Object that) { return this==that; }
         @Override public int hashCode() { return super.hashCode(); }
     }
+
+    /**
+     * Creates an immutable set with the provided labels.
+     *
+     * @param labels the labels to form a set of
+     * @param <L> the label category
+     * @return an unmodifiable set containing the specified labels
+     */
+    public static <L extends Label<L>> Set<L> setOf(L... labels) {
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(labels)));
+    }
+
 }

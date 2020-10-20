@@ -1,8 +1,5 @@
 package net.varkhan.base.extensions;
 
-
-import org.omg.CORBA.Object;
-
 import java.util.Objects;
 
 /**
@@ -18,27 +15,28 @@ import java.util.Objects;
 public interface Valued<T> {
 
     /**
+     * The actual value contained in this wrapper.
+     *
      * @return the wrapped value
      */
     public T value();
 
 
     /**
-     * A base implementation of {@link Valued}
+     * <b>A default implementation of {@link Valued}.</b>
      *
      * @param <T> the type of the wrapped value
      */
     public abstract class Base<T> implements Valued<T> {
-        private final T value;
+        protected final T value;
 
-        public Base(T value) { this.value = value; }
+        protected Base(T value) { this.value = value; }
 
         @Override public T value() { return value; }
         @Override public String toString() { return Objects.toString(value()); }
         @Override public int hashCode() { return Objects.hashCode(value()); }
-        public boolean equals(Object obj) {
+        @Override public boolean equals(Object obj) {
             if (this == obj) return true;
-            if (obj == null) return false;
             if (obj instanceof Valued) return Objects.equals(value(), ((Valued<?>) obj).value());
             return Objects.equals(value(),obj);
         }
@@ -46,21 +44,20 @@ public interface Valued<T> {
     }
 
     /**
-     * A default implementation of a {@link net.varkhan.base.extensions.Named Named} {@link Valued Valued}
+     * <b>A default implementation of a {@link net.varkhan.base.extensions.Named Named} {@link Valued Valued}.</b>
      */
     public abstract class Named<T> extends net.varkhan.base.extensions.Named.Base implements Valued<T> {
-        private final T val;
+        protected final T value;
 
-        protected Named(String name, T val) {
+        protected Named(String name, T value) {
             super(name);
-            this.val = val;
+            this.value = value;
         }
 
-        @Override public T value() { return val; }
+        @Override public T value() { return value; }
         @Override public String toString() { return name() + "=" + value(); }
 
-        @Override
-        public boolean equals(java.lang.Object obj) {
+        @Override public boolean equals(Object obj) {
             if(!(obj instanceof Valued.Named)) return false;
             Named<?> that = (Named<?>) obj;
             return Objects.equals(this.name(),that.name()) && Objects.equals(this.value(), that.value());

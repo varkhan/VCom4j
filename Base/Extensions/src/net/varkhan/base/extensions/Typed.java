@@ -1,7 +1,7 @@
 package net.varkhan.base.extensions;
 
 /**
- * <b></b>.
+ * <b>An interface to denote "typed" objects possessing type information</b>.
  * <p/>
  *
  * @author varkhan
@@ -10,6 +10,23 @@ package net.varkhan.base.extensions;
  */
 public interface Typed<T> {
 
+    /**
+     * The objet's type information
+     *
+     * @return the object type
+     */
     public T type();
+
+
+    /**
+     * <b>A default implementation of {@link Typed}.</b>
+     *
+     * @param <T> the type of the type information
+     */
+    public abstract class Base<T> implements Typed<T> {
+        protected final T type;
+        protected Base(T type) { this.type = type; }
+        @Override public T type() { return type; }
+    }
 
 }
