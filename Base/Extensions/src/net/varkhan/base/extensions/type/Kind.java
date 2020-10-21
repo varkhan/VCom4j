@@ -277,9 +277,10 @@ public interface Kind<T> extends Named {
 
         @Override
         public <F> boolean isAssignableFrom(Kind<F> from) {
-            if(! (from instanceof Kind.ValueKind)) return false;
-            Class<?> k = ((ValueKind<?>) from).javaClass();
-            return klass.isAssignableFrom(k);
+            if(from instanceof ValueKind) {
+                return klass.isAssignableFrom(((ValueKind<?>) from).javaClass());
+            }
+            return false;
         }
 
         @Override
@@ -304,7 +305,7 @@ public interface Kind<T> extends Named {
 
         @Override
         public boolean equals(Object obj) {
-            if(!(obj instanceof Kind.ValueKind)) return false;
+            if(!(obj instanceof ValueKind)) return false;
             return klass.equals(((ValueKind<?>) obj).javaClass());
         }
 
@@ -319,10 +320,27 @@ public interface Kind<T> extends Named {
      */
     public static abstract class Primitive<T> extends ValueKind<T> {
 
-        protected Primitive(String name, Class<T> klass) {
+        protected final Class<T> prim;
+
+        protected Primitive(String name, Class<T> klass, Class<T> prim) {
             super(name, klass);
+            this.prim = prim;
         }
 
+        public Class<T> primClass() {
+            return prim;
+        }
+
+        @Override
+        public <F> boolean isAssignableFrom(Kind<F> from) {
+            if(from instanceof Primitive) {
+                return prim==((Primitive<F>) from).primClass();
+            }
+            if(from instanceof ValueKind) {
+                return klass.isAssignableFrom(((ValueKind<?>) from).javaClass());
+            }
+            return false;
+        }
     }
 
     /**
@@ -338,7 +356,7 @@ public interface Kind<T> extends Named {
 
         @Override
         public <F> boolean isAssignableFrom(Kind<F> from) {
-            if(! (from instanceof Kind.ValueKind)) return false;
+            if(! (from instanceof ValueKind)) return false;
             Class<?> k = ((ValueKind<?>) from).javaClass();
             return CharSequence.class.isAssignableFrom(k);
         }
@@ -401,8 +419,8 @@ public interface Kind<T> extends Named {
     /**
      * A simple String caster, using {@link Object#toString()} to cast.
      *
-     * @param <F> the type to cast from
-     * @param <T> the type of char sequence to cast into
+     * @param <F> the kind to cast from
+     * @param <T> the type of SharSequence to cast into
      */
     public static class StringCaster<F,T extends CharSequence> extends BaseCaster<F, T> {
 
@@ -433,18 +451,15 @@ public interface Kind<T> extends Named {
      * <br/>
      * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
      *
-     * @param <E> the kind of the array element
+     * @param <E> the Java type of the array element
+     * @param <A> the Java type of the array
      */
-    public static abstract class ArrayKind<E> extends BaseKind<E[]> {
+    static abstract class BaseArrayKind<E, A> extends BaseKind<A> {
         protected final Kind<E> et;
 
-        public ArrayKind(String name, Kind<E> et) {
+        public BaseArrayKind(String name, Kind<E> et) {
             super(name+"<" + et.name() + ">");
             this.et = et;
-        }
-
-        public ArrayKind(Kind<E> et) {
-            this("array",et);
         }
 
         public Kind<E> getElementType() {
@@ -452,20 +467,11 @@ public interface Kind<T> extends Named {
         }
 
         @Override
-        @SuppressWarnings("RedundantIfStatement")
         public <F> boolean isAssignableFrom(Kind<F> from) {
-            if (!(from instanceof Kind.ArrayKind)) return false;
-            if (!et.isAssignableFrom(((ArrayKind<?>) from).getElementType())) return false;
-            return true;
-        }
-
-        @Override
-        public <F> Caster<F, E[]> assignFrom(Kind<F> from) {
-            if (!(from instanceof Kind.ArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
-            Kind<E> f = ((ArrayKind<E>) from).getElementType();
-            final Caster<?,E> c = et.assignFrom(f);
-            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
-            return new ArrayCaster<F, E>(from, this, c) { };
+            if (from instanceof BaseArrayKind) {
+                return et.isAssignableFrom(((BaseArrayKind<?,?>) from).getElementType());
+            }
+            return false;
         }
 
         @Override
@@ -475,8 +481,8 @@ public interface Kind<T> extends Named {
 
         @Override
         public boolean equals(Object obj) {
-            if(!(obj instanceof Kind.ArrayKind)) return false;
-            return et.equals(((ArrayKind<?>) obj).et);
+            if(!(obj instanceof BaseArrayKind)) return false;
+            return et.equals(((BaseArrayKind<?,?>) obj).et);
         }
 
         @Override
@@ -493,43 +499,421 @@ public interface Kind<T> extends Named {
      * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
      *
      * @param <F> the kind to cast from
-     * @param <E> the element kind of the Array to cast into
+     * @param <E> the element kind of the array to cast into
+     * @param <A> the Java type of the array to cast into
      */
-    public static class ArrayCaster<F, E> extends BaseCaster<F, E[]> {
+    static abstract class BaseArrayCaster<F, E, A> extends BaseCaster<F, A> {
         protected final Caster<Object, E> caster;
-        private final Class<E> elclass;
+        protected final Class<E> elclass;
 
         @SuppressWarnings("unchecked")
-        public ArrayCaster(Kind<F> from, ArrayKind<E> into, Caster<?, E> caster) {
+        public BaseArrayCaster(Kind<F> from, BaseArrayKind<E,A> into, Caster<?, E> caster, Class<E> elclass) {
             super(from, into);
             this.caster = (Caster<Object, E>) caster;
-            Kind<E> to = caster.into();
-            if(to instanceof Kind.ValueKind<?>) this.elclass = ((ValueKind<E>) to).javaClass();
-            else this.elclass = (Class<E>) Object.class;
+            this.elclass = elclass;
         }
 
         @SuppressWarnings("unchecked")
-        public E[] apply(Object from) {
+        public A apply(Object from) {
             if(from.getClass().isArray()) {
                 int l = java.lang.reflect.Array.getLength(from);
-                E[] a = (E[]) java.lang.reflect.Array.newInstance(elclass,l);
+                A a = (A) java.lang.reflect.Array.newInstance(elclass, l);
                 for(int i=0; i<l; i++) {
                     Object e = java.lang.reflect.Array.get(from, i);
-                    a[i] = caster.apply(e);
+                    java.lang.reflect.Array.set(a,i,caster.apply(e));
                 }
                 return a;
             }
             if(from instanceof List) {
                 int l = ((List<?>) from).size();
-                E[] a = (E[]) java.lang.reflect.Array.newInstance(elclass,l);
+                A a = (A) java.lang.reflect.Array.newInstance(elclass, l);
                 Iterator<?> it = ((List<?>) from).iterator();
                 for(int i=0; i<l && it.hasNext(); i++) {
                     Object e = it.next();
-                    a[i] = caster.apply(e);
+                    java.lang.reflect.Array.set(a,i,caster.apply(e));
                 }
                 return a;
             }
             throw new ClassCastException("Cannot cast "+from.getClass().getCanonicalName()+" to "+into().name());
+        }
+
+    }
+
+    /**
+     * The Kind representing Array types (ordered, immutable, fixed-length sequences).
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <E> the Java type of the array element
+     */
+    public static abstract class ArrayKind<E> extends BaseArrayKind<E,E[]> {
+        public ArrayKind(String name, Kind<E> et) {
+            super(name, et);
+        }
+
+        public ArrayKind(Kind<E> et) {
+            this("array",et);
+        }
+
+        @Override
+        public <F> Caster<F, E[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<E> f = ((BaseArrayKind<E,?>) from).getElementType();
+            final Caster<?,E> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new ArrayCaster<F, E>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into Array types.
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     * @param <E> the element kind of the array to cast into
+     */
+    public static class ArrayCaster<F, E> extends BaseArrayCaster<F, E, E[]> {
+
+        @SuppressWarnings("unchecked")
+        public ArrayCaster(Kind<F> from, ArrayKind<E> into, Caster<?, E> caster) {
+            super(from, into, caster,
+                    (into.getElementType() instanceof ValueKind<?>)
+                            ? ((ValueKind<E>) into.getElementType()).javaClass()
+                            : (Class<E>) Object.class
+            );
+        }
+
+    }
+
+    /**
+     * The Kind representing boolean[].
+     */
+    public static class BoolArrayKind extends BaseArrayKind<Boolean,boolean[]> {
+        public BoolArrayKind(String name) {
+            super(name, BOOL);
+        }
+
+        public BoolArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, boolean[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Boolean> f = ((BaseArrayKind<Boolean,?>) from).getElementType();
+            final Caster<?,Boolean> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new BoolArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into boolean[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class BoolArrayCaster<F> extends BaseArrayCaster<F, Boolean, boolean[]> {
+
+        public BoolArrayCaster(Kind<F> from, BoolArrayKind into, Caster<?, Boolean> caster) {
+            super(from, into, caster,boolean.class);
+        }
+
+    }
+
+    /**
+     * The Kind representing byte[].
+     */
+    public static class ByteArrayKind extends BaseArrayKind<Byte,byte[]> {
+        public ByteArrayKind(String name) {
+            super(name, BYTE);
+        }
+
+        public ByteArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, byte[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Byte> f = ((BaseArrayKind<Byte,?>) from).getElementType();
+            final Caster<?,Byte> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new ByteArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into byte[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class ByteArrayCaster<F> extends BaseArrayCaster<F, Byte, byte[]> {
+
+        public ByteArrayCaster(Kind<F> from, ByteArrayKind into, Caster<?, Byte> caster) {
+            super(from, into, caster,byte.class);
+        }
+
+    }
+
+    /**
+     * The Kind representing short[].
+     */
+    public static class ShortArrayKind extends BaseArrayKind<Short,short[]> {
+        public ShortArrayKind(String name) {
+            super(name, SHORT);
+        }
+
+        public ShortArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, short[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Short> f = ((BaseArrayKind<Short,?>) from).getElementType();
+            final Caster<?,Short> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new ShortArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into short[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class ShortArrayCaster<F> extends BaseArrayCaster<F, Short, short[]> {
+
+        public ShortArrayCaster(Kind<F> from, ShortArrayKind into, Caster<?, Short> caster) {
+            super(from, into, caster,short.class);
+        }
+
+    }
+
+    /**
+     * The Kind representing Int[].
+     */
+    public static class IntArrayKind extends BaseArrayKind<Integer,int[]> {
+        public IntArrayKind(String name) {
+            super(name, INT);
+        }
+
+        public IntArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, int[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Integer> f = ((BaseArrayKind<Integer,?>) from).getElementType();
+            final Caster<?,Integer> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new IntArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into Int[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class IntArrayCaster<F> extends BaseArrayCaster<F, Integer, int[]> {
+
+        public IntArrayCaster(Kind<F> from, IntArrayKind into, Caster<?, Integer> caster) {
+            super(from, into, caster, int.class);
+        }
+
+    }
+
+    /**
+     * The Kind representing long[].
+     */
+    public static class LongArrayKind extends BaseArrayKind<Long,long[]> {
+        public LongArrayKind(String name) {
+            super(name, LONG);
+        }
+
+        public LongArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, long[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Long> f = ((BaseArrayKind<Long,?>) from).getElementType();
+            final Caster<?,Long> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new LongArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into long[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class LongArrayCaster<F> extends BaseArrayCaster<F, Long, long[]> {
+
+        public LongArrayCaster(Kind<F> from, LongArrayKind into, Caster<?, Long> caster) {
+            super(from, into, caster,long.class);
+        }
+
+    }
+
+    /**
+     * The Kind representing float[].
+     */
+    public static class FloatArrayKind extends BaseArrayKind<Float,float[]> {
+        public FloatArrayKind(String name) {
+            super(name, FLOAT);
+        }
+
+        public FloatArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, float[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Float> f = ((BaseArrayKind<Float,?>) from).getElementType();
+            final Caster<?,Float> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new FloatArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into float[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class FloatArrayCaster<F> extends BaseArrayCaster<F, Float, float[]> {
+
+        public FloatArrayCaster(Kind<F> from, FloatArrayKind into, Caster<?, Float> caster) {
+            super(from, into, caster,float.class);
+        }
+
+    }
+
+    /**
+     * The Kind representing double[].
+     */
+    public static class DoubleArrayKind extends BaseArrayKind<Double,double[]> {
+        public DoubleArrayKind(String name) {
+            super(name, DOUBLE);
+        }
+
+        public DoubleArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, double[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Double> f = ((BaseArrayKind<Double,?>) from).getElementType();
+            final Caster<?,Double> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new DoubleArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into double[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class DoubleArrayCaster<F> extends BaseArrayCaster<F, Double, double[]> {
+
+        public DoubleArrayCaster(Kind<F> from, DoubleArrayKind into, Caster<?, Double> caster) {
+            super(from, into, caster,double.class);
+        }
+
+    }
+
+    /**
+     * The Kind representing char[].
+     */
+    public static class CharArrayKind extends BaseArrayKind<Character,char[]> {
+        public CharArrayKind(String name) {
+            super(name, CHAR);
+        }
+
+        public CharArrayKind() {
+            this("array");
+        }
+
+        @Override
+        public <F> Caster<F, char[]> assignFrom(Kind<F> from) {
+            if (!(from instanceof BaseArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            Kind<Character> f = ((BaseArrayKind<Character,?>) from).getElementType();
+            final Caster<?,Character> c = et.assignFrom(f);
+            if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
+            return new CharArrayCaster<F>(from, this, c) { };
+        }
+
+    }
+
+    /**
+     * A Caster into char[].
+     * <br/>
+     * Actual storage types to cast from may be any List or Array with castable element types,
+     * regardless of the type defined by the {@link #from()} kind.
+     * <br/>
+     * This class is abstract to ensure the proper materialization of generic type parameters when instantiated.
+     *
+     * @param <F> the kind to cast from
+     */
+    public static class CharArrayCaster<F> extends BaseArrayCaster<F, Character, char[]> {
+
+        public CharArrayCaster(Kind<F> from, CharArrayKind into, Caster<?, Character> caster) {
+            super(from, into, caster, char.class);
         }
 
     }
@@ -560,14 +944,14 @@ public interface Kind<T> extends Named {
         @Override
         @SuppressWarnings("RedundantIfStatement")
         public <F> boolean isAssignableFrom(Kind<F> from) {
-            if (!(from instanceof Kind.ListKind)) return false;
+            if (!(from instanceof ListKind)) return false;
             if (!et.isAssignableFrom(((ListKind<?>) from).getElementType())) return false;
             return true;
         }
 
         @Override
         public <F> Caster<F, List<E>> assignFrom(Kind<F> from) {
-            if (!(from instanceof Kind.ListKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            if (!(from instanceof ListKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
             Kind<E> f = ((ListKind<E>) from).getElementType();
             final Caster<?,E> c = et.assignFrom(f);
             if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
@@ -581,7 +965,7 @@ public interface Kind<T> extends Named {
 
         @Override
         public boolean equals(Object obj) {
-            if(!(obj instanceof Kind.ListKind)) return false;
+            if(!(obj instanceof ListKind)) return false;
             return et.equals(((ListKind<?>) obj).et);
         }
 
@@ -670,7 +1054,7 @@ public interface Kind<T> extends Named {
         @Override
         @SuppressWarnings("RedundantIfStatement")
         public <F> boolean isAssignableFrom(Kind<F> from) {
-            if (!(from instanceof Kind.MapKind)) return false;
+            if (!(from instanceof MapKind)) return false;
             if (!kt.isAssignableFrom(((MapKind<?, ?>) from).getKeyType())) return false;
             if (!et.isAssignableFrom(((MapKind<?, ?>) from).getElementType())) return false;
             return true;
@@ -678,7 +1062,7 @@ public interface Kind<T> extends Named {
 
         @Override
         public <F> Caster<F, java.util.Map<K, E>> assignFrom(Kind<F> from) {
-            if (!(from instanceof Kind.MapKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
+            if (!(from instanceof MapKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
             Kind<?> kf = ((MapKind<?, ?>) from).getKeyType();
             Kind<?> ef = ((MapKind<?, ?>) from).getElementType();
             Caster<?, K> kc = kt.assignFrom(kf);
@@ -695,7 +1079,7 @@ public interface Kind<T> extends Named {
 
         @Override
         public boolean equals(Object obj) {
-            if(!(obj instanceof Kind.MapKind)) return false;
+            if(!(obj instanceof MapKind)) return false;
             return kt.equals(((MapKind<?, ?>) obj).kt) && et.equals(((MapKind<?, ?>) obj).et);
         }
 
@@ -742,14 +1126,14 @@ public interface Kind<T> extends Named {
      ** Kind definition constants
      **/
 
-    public static final Primitive<Boolean>      BOOL =      new Primitive<Boolean>("bool", Boolean.class) { };
-    public static final Primitive<Byte>         BYTE =      new Primitive<Byte>("byte", Byte.class) { };
-    public static final Primitive<Short>        SHORT =     new Primitive<Short>("short", Short.class) { };
-    public static final Primitive<Character>    CHAR =      new Primitive<Character>("char", Character.class) { };
-    public static final Primitive<Integer>      INT =       new Primitive<Integer>("int", Integer.class) { };
-    public static final Primitive<Long>         LONG =      new Primitive<Long>("long", Long.class) { };
-    public static final Primitive<Float>        FLOAT =     new Primitive<Float>("float", Float.class) { };
-    public static final Primitive<Double>       DOUBLE =    new Primitive<Double>("double", Double.class) { };
+    public static final Primitive<Boolean>      BOOL =      new Primitive<Boolean>("bool", Boolean.class, boolean.class) { };
+    public static final Primitive<Byte>         BYTE =      new Primitive<Byte>("byte", Byte.class, byte.class) { };
+    public static final Primitive<Short>        SHORT =     new Primitive<Short>("short", Short.class, short.class) { };
+    public static final Primitive<Character>    CHAR =      new Primitive<Character>("char", Character.class, char.class) { };
+    public static final Primitive<Integer>      INT =       new Primitive<Integer>("int", Integer.class, int.class) { };
+    public static final Primitive<Long>         LONG =      new Primitive<Long>("long", Long.class, long.class) { };
+    public static final Primitive<Float>        FLOAT =     new Primitive<Float>("float", Float.class, float.class) { };
+    public static final Primitive<Double>       DOUBLE =    new Primitive<Double>("double", Double.class, double.class) { };
     public static final CharsKind<String>       STRING =    new CharsKind<String>("string", String.class) { };
     public static final ValueKind<Date>         DATE =      new ValueKind<Date>("date", Date.class) { };
     public static final ValueKind<BigDecimal>   DECIMAL =   new ValueKind<BigDecimal>("decimal", BigDecimal.class) { };

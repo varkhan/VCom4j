@@ -29,6 +29,8 @@ import java.util.Map;
 public abstract class Enumerated<Base extends Enumerated<Base>> implements Serializable, Label<Base>, Comparable<Enumerated<Base>> {
 
     private static final long serialVersionUID = 1L;
+    private static final Class<?> BASE = Enumerated.class;
+    private static final String BASE_NAME = BASE.getSimpleName();
 
     /**********************************************************************************
      **  @Constant annotation
@@ -175,12 +177,12 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
          */
         @SuppressWarnings("unchecked")
         private void addConstant(Enum cons) {
-            if(cons == null) throw new NullPointerException(Enumerated.class.getSimpleName()+" constant is null");
+            if(cons == null) throw new NullPointerException(BASE_NAME+" constant is null");
             synchronized(this) {
                 // First initialization for this class
                 if(values==null) {
                     Class<Enumerated> parnt = (Class<Enumerated>) type.getSuperclass();
-                    if(parnt != Enumerated.class) {
+                    if(parnt != BASE) {
                     	Type<Base,?> inst = (Type<Base,?>) instanceMap.get(parnt);
                     	if(inst!=null) values = inst.values;
                     }
@@ -195,7 +197,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
                 // Add to an already initialized class
                 for(Enumerated c: values) if (c.name.equals(cons.name))
                     throw new InitializationError(type,
-                            Enumerated.class.getSimpleName()+" type "+type+" has already a constant named "+cons.name
+                            BASE_NAME+" type "+type+" has already a constant named "+cons.name
                     );
                 int valnum = values.length;
                 cons.ordinal = valnum;
@@ -221,7 +223,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
          */
         private static <E extends Enumerated<? super E>> boolean isSubClass(E cons, Class<E> type) {
             Class<?> klass = cons.getClass();
-            while(klass!=Enumerated.class) {
+            while(klass!=BASE) {
                 if(klass==type) return true;
                 klass = klass.getSuperclass();
             }
@@ -241,19 +243,19 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
             synchronized(instanceMap) {
                 if(instanceMap.get(type)!=null)
                     throw new InitializationError(type,
-                            Enumerated.class.getSimpleName()+" type "+type+" has already been initialized"
+                            BASE_NAME+" type "+type+" has already been initialized"
                     );
                 this.type = type;
                 instanceMap.put(type,this);
                 Class<? extends Enumerated> parnt = (Class<? extends Enumerated>) type.getSuperclass();
-                if(parnt == Enumerated.class) {
+                if(parnt == BASE) {
                 	this.values = new Enumerated[0];
                     this.base = (Class<Base>) type;
                 }
                 else {
                 	Type<Base,?> inst = (Type<Base,?>) instanceMap.get(parnt);
                     if(inst==null) throw new InitializationError(type,
-                            type+" does not extend a properly initialized "+Enumerated.class.getSimpleName()+" type"
+                            type+" does not extend a properly initialized "+BASE_NAME+" type"
                     );
                     this.values = inst.values;
                 	this.base = inst.base;
@@ -276,7 +278,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
                                         // Check if the constant extends this type at a given level
                                         if(!isSubClass(cons,type))
                                             throw new InitializationError(type,
-                                                    Enumerated.class.getSimpleName()+" constant "+type+"."+f.getName()+" does not extend "+type
+                                                    BASE_NAME+" constant "+type+"."+f.getName()+" does not extend "+type
                                             );
                                     // Initialize constant and adds it
                                     cons.type = type;
@@ -286,7 +288,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
                             }
                             catch(IllegalAccessException e) {
                                 throw new InitializationError(type,
-                                        Enumerated.class.getSimpleName()+" constant "+type+"."+f.getName()+" is declared private"
+                                        BASE_NAME+" constant "+type+"."+f.getName()+" is declared private"
                                 );
                             }
                         }
@@ -318,9 +320,9 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
          */
         public Enumerated<? extends Base> valueOf(String name) {
             if(name==null)
-                throw new NullPointerException(Enumerated.class.getSimpleName()+" name is null");
+                throw new NullPointerException(BASE_NAME +" name is null");
             if(name.length()==0)
-                throw new IllegalArgumentException(Enumerated.class.getSimpleName()+" name is empty");
+                throw new IllegalArgumentException(BASE_NAME+" name is empty");
             if(valuemap==null) synchronized(this) {
             	// Lazy initialization
                 valuemap = new HashMap<String, Enumerated<? extends Base>>(values.length);
@@ -329,7 +331,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
                 }
             }
             Enumerated<? extends Base> cons = valuemap.get(name);
-            if(cons==null) throw new IllegalArgumentException(Enumerated.class.getSimpleName()+" const not found "+type +"."+name);
+            if(cons==null) throw new IllegalArgumentException(BASE_NAME+" const not found "+type +"."+name);
             return cons;
         }
 
@@ -417,7 +419,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
     @SuppressWarnings("unchecked")
     public final Class<? extends Enumerated<Base>> getBaseType() {
         Class<? extends Enumerated<Base>> thisclass = type;
-        while(thisclass != null && thisclass.getSuperclass()!=Enumerated.class) {
+        while(thisclass != null && thisclass.getSuperclass() != BASE) {
             thisclass = (Class<? extends Enumerated<Base>>) thisclass.getSuperclass();
         }
         return thisclass;
@@ -434,7 +436,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
     @SuppressWarnings({"unchecked"})
     public final boolean isSubType(Class<? super Enumerated<Base>> thatclass) {
         Class<? extends Enumerated<Base>> thisclass = this.getEnumType();
-        while(thisclass != null && thisclass != Enumerated.class) {
+        while(thisclass != null && thisclass != BASE) {
             if(thisclass == thatclass) return true;
             thisclass = (Class<? extends Enumerated<Base>>) thisclass.getSuperclass();
         }
@@ -451,7 +453,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
      */
     @SuppressWarnings({"unchecked"})
     public final boolean isSuperType(Class<? extends Enumerated<Base>> thatclass) {
-        while(thatclass != null && thatclass != Enumerated.class) {
+        while(thatclass != null && thatclass != BASE) {
             if(thatclass == this.getEnumType()) return true;
             thatclass = (Class<? extends Enumerated<Base>>) thatclass.getSuperclass();
         }
@@ -468,9 +470,9 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
      */
     @SuppressWarnings({"unchecked"})
     public final Class<? extends Enumerated<Base>> getCommonSuperType(Class<? extends Enumerated<Base>> thatclass) {
-        while(thatclass!= Enumerated.class) {
+        while(thatclass != BASE) {
             Class<? extends Enumerated<Base>> superclass = this.getEnumType();
-            while(superclass != Enumerated.class) {
+            while(superclass != BASE) {
                 if(superclass == thatclass) return thatclass;
                 superclass = (Class<? extends Enumerated<Base>>) superclass.getSuperclass();
             }
@@ -523,7 +525,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
         	return this.ordinal-that.ordinal;
         // If no direct inheritance relation exists, these classes are incompatible
         throw new ClassCastException(
-        		Enumerated.class.getSimpleName()+" types "+
+        		BASE_NAME+" types "+
         		this.type.getSimpleName()+" and "+that.type.getSimpleName()+
         		" are not comparable"
         );
@@ -608,7 +610,7 @@ public abstract class Enumerated<Base extends Enumerated<Base>> implements Seria
     	Type<?,?extends Enumerated<?>> inst = Type.instanceMap.get(type);
     	if(inst==null || inst.values==null || ordinal<0 || ordinal>= inst.values.length) {
     		throw new InvalidObjectException(
-    				Enumerated.class.getSimpleName()+" class "+ type +" has no constant with ordinal "+ordinal
+    				BASE_NAME+" class "+ type +" has no constant with ordinal "+ordinal
     		);
     	}
         return inst.values[ordinal];
