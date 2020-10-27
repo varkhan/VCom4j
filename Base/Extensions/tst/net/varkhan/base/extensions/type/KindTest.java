@@ -153,7 +153,7 @@ public class KindTest extends TestCase {
         assertEquals("stringbuilder.assign('1')","1",kind.assignFrom(kind2).apply(new StringBuilder("1")));
     }
 
-    public void testArray() {
+    public void testObjectArray() {
         Kind.CharsKind<String> elKind = new Kind.CharsKind<String>("string", String.class) {};
         Kind<String[]> kind = new Kind.ArrayKind<String>(elKind) {};
         assertEquals("ArrayKind<StringKind>","array<string>",kind.toString());
@@ -162,7 +162,7 @@ public class KindTest extends TestCase {
         assertArrayEquals("string.assign(['0','1'])",new String[] {"0", "1"},kind.assignFrom(kind).apply(new String[] {"0", "1"}));
     }
 
-    public void testBoolArray() {
+    public void testPrimitiveArray() {
         Kind<boolean[]> kind = new Kind.BoolArrayKind() {};
         assertEquals("ArrayKind<StringKind>","array<bool>",kind.toString());
         assertArrayEquals("string.assign([])",new boolean[]{},kind.assignFrom(kind).apply(new boolean[]{}));

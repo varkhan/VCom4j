@@ -98,7 +98,7 @@ public interface Kind<T> extends Named {
      *
      * @param <T> the Java type this logical kind can be stored as
      */
-    public abstract class BaseKind<T> extends Named.Base implements Kind<T> {
+    public static abstract class BaseKind<T> extends Named.Base implements Kind<T> {
         protected BaseKind(String name) { super(name); }
 
         /**
@@ -126,7 +126,7 @@ public interface Kind<T> extends Named {
      * @param <F> the type to cast from
      * @param <T> the type to cast into
      */
-    public abstract class BaseCaster<F,T> implements Caster<F,T> {
+    public static abstract class BaseCaster<F,T> implements Caster<F,T> {
 
         private final Kind<F> ft;
         private final Kind<T> tt;
@@ -158,7 +158,7 @@ public interface Kind<T> extends Named {
      *
      * @param <T> the Java type this logical kind can be stored as
      */
-    public final class Nullable<T> extends Named.Base implements Kind<T> {
+    public static final class Nullable<T> extends Named.Base implements Kind<T> {
         private final Kind<T> kind;
 
         private Nullable(Kind<T> kind) {
@@ -454,10 +454,10 @@ public interface Kind<T> extends Named {
      * @param <E> the Java type of the array element
      * @param <A> the Java type of the array
      */
-    static abstract class BaseArrayKind<E, A> extends BaseKind<A> {
+    public static abstract class BaseArrayKind<E, A> extends BaseKind<A> {
         protected final Kind<E> et;
 
-        public BaseArrayKind(String name, Kind<E> et) {
+        protected BaseArrayKind(String name, Kind<E> et) {
             super(name+"<" + et.name() + ">");
             this.et = et;
         }
@@ -478,6 +478,9 @@ public interface Kind<T> extends Named {
         public int hashCode() {
             return 0x5 & 31*et.hashCode();
         }
+
+        @Override
+        public abstract <F> Caster<F, A> assignFrom(Kind<F> from);
 
         @Override
         public boolean equals(Object obj) {
@@ -502,12 +505,12 @@ public interface Kind<T> extends Named {
      * @param <E> the element kind of the array to cast into
      * @param <A> the Java type of the array to cast into
      */
-    static abstract class BaseArrayCaster<F, E, A> extends BaseCaster<F, A> {
+    public static abstract class BaseArrayCaster<F, E, A> extends BaseCaster<F, A> {
         protected final Caster<Object, E> caster;
         protected final Class<E> elclass;
 
         @SuppressWarnings("unchecked")
-        public BaseArrayCaster(Kind<F> from, BaseArrayKind<E,A> into, Caster<?, E> caster, Class<E> elclass) {
+        protected BaseArrayCaster(Kind<F> from, BaseArrayKind<E,A> into, Caster<?, E> caster, Class<E> elclass) {
             super(from, into);
             this.caster = (Caster<Object, E>) caster;
             this.elclass = elclass;
