@@ -163,7 +163,7 @@ public class KindTest extends TestCase {
     }
 
     public void testPrimitiveArray() {
-        Kind<boolean[]> kind = new Kind.PrimitiveArrayKind<Boolean,boolean[]>("array",Kind.BOOL);
+        Kind<boolean[]> kind = new Kind.PrimitiveArrayKind<Boolean,boolean[]>(Kind.BOOL);
         assertEquals("PrimitiveArrayKind<Boolean,boolean[]>","array<bool>",kind.toString());
         assertArrayEquals("array.assign([])",new boolean[]{},kind.assignFrom(kind).apply(new boolean[]{}));
         assertArrayEquals("array.assign([true])",new boolean[]{true},kind.assignFrom(kind).apply(new boolean[]{true}));

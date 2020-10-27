@@ -161,6 +161,11 @@ public interface Kind<T> extends Named {
     public static final class Nullable<T> extends Named.Base implements Kind<T> {
         private final Kind<T> kind;
 
+        protected Nullable(String name, Kind<T> kind) {
+            super(name);
+            this.kind = kind;
+        }
+
         private Nullable(Kind<T> kind) {
             super("nullable<"+ kind.name()+">");
             this.kind = kind;
@@ -458,8 +463,12 @@ public interface Kind<T> extends Named {
         protected final Kind<E> et;
 
         protected ArrayKind(String name, Kind<E> et) {
-            super(name+"<" + et.name() + ">");
+            super(name);
             this.et = et;
+        }
+
+        protected ArrayKind(Kind<E> et) {
+            this("array<" + et.name() + ">", et);
         }
 
         public Kind<E> getElementType() {
@@ -555,7 +564,7 @@ public interface Kind<T> extends Named {
         }
 
         public ObjectArrayKind(Kind<E> et) {
-            this("array",et);
+            this("array<"+et.name()+">",et);
         }
 
         @Override
@@ -602,6 +611,10 @@ public interface Kind<T> extends Named {
             super(name, et);
         }
 
+        public PrimitiveArrayKind(Primitive<E> et) {
+            this("array<"+et.name()+">", et);
+        }
+
         @Override
         public <F> Caster<F, A> assignFrom(Kind<F> from) {
             if (!(from instanceof Kind.ArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
@@ -624,12 +637,12 @@ public interface Kind<T> extends Named {
         protected final Kind<E> et;
 
         public ListKind(String name, Kind<E> et) {
-            super(name+"<" + et.name() + ">");
+            super(name);
             this.et = et;
         }
 
         public ListKind(Kind<E> et) {
-            this("list",et);
+            this("list<" + et.name() + ">",et);
         }
 
         public Kind<E> getElementType() {
@@ -729,13 +742,13 @@ public interface Kind<T> extends Named {
         protected final Kind<E> et;
 
         public MapKind(String name, ValueKind<K> kt, Kind<E> et) {
-            super(name + "<" + kt.name() + "," + et.name() + ">");
+            super(name);
             this.kt = kt;
             this.et = et;
         }
 
         public MapKind(ValueKind<K> kt, Kind<E> et) {
-            this("map", kt, et);
+            this("map<" + kt.name() + "," + et.name() + ">", kt, et);
         }
 
         public Kind<K> getKeyType() {
@@ -832,14 +845,14 @@ public interface Kind<T> extends Named {
     public static final CharsKind<String>               STRING =        new CharsKind<String>("string", String.class) { };
     public static final ValueKind<Date>                 DATE =          new ValueKind<Date>("date", Date.class) { };
     public static final ValueKind<BigDecimal>           DECIMAL =       new ValueKind<BigDecimal>("decimal", BigDecimal.class) { };
-    public static final ArrayKind<Boolean,boolean[]>    ARRAY_BOOL =    new PrimitiveArrayKind<>("array",Kind.BOOL);
-    public static final ArrayKind<Byte,byte[]>          ARRAY_BYTE =    new PrimitiveArrayKind<>("array",Kind.BYTE);
-    public static final ArrayKind<Short,short[]>        ARRAY_SHORT =   new PrimitiveArrayKind<>("array",Kind.SHORT);
-    public static final ArrayKind<Character,char[]>     ARRAY_CHAR =    new PrimitiveArrayKind<>("array",Kind.CHAR);
-    public static final ArrayKind<Integer,int[]>        ARRAY_INT =     new PrimitiveArrayKind<>("array",Kind.INT);
-    public static final ArrayKind<Long,long[]>          ARRAY_LONG =    new PrimitiveArrayKind<>("array",Kind.LONG);
-    public static final ArrayKind<Float,int[]>          ARRAY_FLOAT =   new PrimitiveArrayKind<>("array",Kind.FLOAT);
-    public static final ArrayKind<Double,long[]>        ARRAY_DOUBLE =  new PrimitiveArrayKind<>("array",Kind.DOUBLE);
+    public static final ArrayKind<Boolean,boolean[]>    ARRAY_BOOL =    new PrimitiveArrayKind<>("array<bool>",Kind.BOOL);
+    public static final ArrayKind<Byte,byte[]>          ARRAY_BYTE =    new PrimitiveArrayKind<>("array<byte>",Kind.BYTE);
+    public static final ArrayKind<Short,short[]>        ARRAY_SHORT =   new PrimitiveArrayKind<>("array<short>",Kind.SHORT);
+    public static final ArrayKind<Character,char[]>     ARRAY_CHAR =    new PrimitiveArrayKind<>("array<char>",Kind.CHAR);
+    public static final ArrayKind<Integer,int[]>        ARRAY_INT =     new PrimitiveArrayKind<>("array<int>",Kind.INT);
+    public static final ArrayKind<Long,long[]>          ARRAY_LONG =    new PrimitiveArrayKind<>("array<long>",Kind.LONG);
+    public static final ArrayKind<Float,int[]>          ARRAY_FLOAT =   new PrimitiveArrayKind<>("array<float>",Kind.FLOAT);
+    public static final ArrayKind<Double,long[]>        ARRAY_DOUBLE =  new PrimitiveArrayKind<>("array<double>",Kind.DOUBLE);
 
     public static List<Kind<?>> all() {
         return Collections.unmodifiableList(Arrays.asList(
