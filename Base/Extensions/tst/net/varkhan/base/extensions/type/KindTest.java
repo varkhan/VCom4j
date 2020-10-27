@@ -43,8 +43,7 @@ public class KindTest extends TestCase {
     }
 
     public void testBoolean() {
-        Kind.Primitive<Boolean> kind = new Kind.Primitive<Boolean>("bool", Boolean.class, boolean.class) {
-        };
+        Kind.Primitive<Boolean> kind = new Kind.Primitive<Boolean>("bool", Boolean.class, boolean.class) {};
         assertTrue("bool.isAssignableFrom(bool)", kind.isAssignableFrom(kind));
         assertTrue("bool.assign(true)", kind.assignFrom(kind).apply(true));
         assertFalse("bool.assign(false)", kind.assignFrom(kind).apply(false));
@@ -163,11 +162,18 @@ public class KindTest extends TestCase {
     }
 
     public void testPrimitiveArray() {
-        Kind<boolean[]> kind = new Kind.PrimitiveArrayKind<Boolean,boolean[]>(Kind.BOOL);
-        assertEquals("PrimitiveArrayKind<Boolean,boolean[]>","array<bool>",kind.toString());
+        Kind.Primitive<Boolean> elKind = new Kind.Primitive<Boolean>("boolean", Boolean.class, boolean.class) {};
+        Kind<boolean[]> kind = new Kind.PrimitiveArrayKind<Boolean,boolean[]>(elKind);
+        assertEquals("PrimitiveArrayKind<Boolean,boolean[]>","array<boolean>",kind.toString());
         assertArrayEquals("array.assign([])",new boolean[]{},kind.assignFrom(kind).apply(new boolean[]{}));
         assertArrayEquals("array.assign([true])",new boolean[]{true},kind.assignFrom(kind).apply(new boolean[]{true}));
         assertArrayEquals("array.assign([true,false])",new boolean[]{true,false},kind.assignFrom(kind).apply(new boolean[]{true,false}));
+        Kind.Primitive<Long> elKind2 = new Kind.Primitive<Long>("long", Long.class, long.class) {};
+        Kind<long[]> kind2 = new Kind.PrimitiveArrayKind<Long,long[]>(elKind2);
+        assertEquals("PrimitiveArrayKind<Long,long[]>","array<long>",kind2.toString());
+        assertArrayEquals("array.assign([])",new long[]{},kind2.assignFrom(kind2).apply(new long[]{}));
+        assertArrayEquals("array.assign([0])",new long[]{0},kind2.assignFrom(kind2).apply(new long[]{0}));
+        assertArrayEquals("array.assign([0,1])",new long[]{0,1},kind2.assignFrom(kind2).apply(new long[]{0,1}));
     }
 
     public void testList() {
@@ -192,6 +198,15 @@ public class KindTest extends TestCase {
         }
     }
 
+    private static void assertArrayEquals(String message, long[] expected, long[] actual) {
+        if (expected != null || actual != null) {
+            if (expected == null || !Arrays.equals(expected, actual)) {
+                String cleanMessage = message == null ? "" : message;
+                throw new ComparisonFailure(cleanMessage, Arrays.toString(expected), Arrays.toString(actual));
+            }
+        }
+    }
+
     private static void assertArrayEquals(String message, boolean[] expected, boolean[] actual) {
         if (expected != null || actual != null) {
             if (expected == null || !Arrays.equals(expected, actual)) {
@@ -199,7 +214,6 @@ public class KindTest extends TestCase {
                 throw new ComparisonFailure(cleanMessage, Arrays.toString(expected), Arrays.toString(actual));
             }
         }
-
     }
 
 }

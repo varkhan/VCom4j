@@ -845,14 +845,14 @@ public interface Kind<T> extends Named {
     public static final CharsKind<String>               STRING =        new CharsKind<String>("string", String.class) { };
     public static final ValueKind<Date>                 DATE =          new ValueKind<Date>("date", Date.class) { };
     public static final ValueKind<BigDecimal>           DECIMAL =       new ValueKind<BigDecimal>("decimal", BigDecimal.class) { };
-    public static final ArrayKind<Boolean,boolean[]>    ARRAY_BOOL =    new PrimitiveArrayKind<>("array<bool>",Kind.BOOL);
-    public static final ArrayKind<Byte,byte[]>          ARRAY_BYTE =    new PrimitiveArrayKind<>("array<byte>",Kind.BYTE);
-    public static final ArrayKind<Short,short[]>        ARRAY_SHORT =   new PrimitiveArrayKind<>("array<short>",Kind.SHORT);
-    public static final ArrayKind<Character,char[]>     ARRAY_CHAR =    new PrimitiveArrayKind<>("array<char>",Kind.CHAR);
-    public static final ArrayKind<Integer,int[]>        ARRAY_INT =     new PrimitiveArrayKind<>("array<int>",Kind.INT);
-    public static final ArrayKind<Long,long[]>          ARRAY_LONG =    new PrimitiveArrayKind<>("array<long>",Kind.LONG);
-    public static final ArrayKind<Float,int[]>          ARRAY_FLOAT =   new PrimitiveArrayKind<>("array<float>",Kind.FLOAT);
-    public static final ArrayKind<Double,long[]>        ARRAY_DOUBLE =  new PrimitiveArrayKind<>("array<double>",Kind.DOUBLE);
+    public static final ArrayKind<Boolean,boolean[]>    ARRAY_BOOL =    new PrimitiveArrayKind<Boolean, boolean[]>("array<bool>",Kind.BOOL);
+    public static final ArrayKind<Byte,byte[]>          ARRAY_BYTE =    new PrimitiveArrayKind<Byte, byte[]>("array<byte>",Kind.BYTE);
+    public static final ArrayKind<Short,short[]>        ARRAY_SHORT =   new PrimitiveArrayKind<Short, short[]>("array<short>",Kind.SHORT);
+    public static final ArrayKind<Character,char[]>     ARRAY_CHAR =    new PrimitiveArrayKind<Character, char[]>("array<char>",Kind.CHAR);
+    public static final ArrayKind<Integer,int[]>        ARRAY_INT =     new PrimitiveArrayKind<Integer, int[]>("array<int>",Kind.INT);
+    public static final ArrayKind<Long,long[]>          ARRAY_LONG =    new PrimitiveArrayKind<Long, long[]>("array<long>",Kind.LONG);
+    public static final ArrayKind<Float,int[]>          ARRAY_FLOAT =   new PrimitiveArrayKind<Float, int[]>("array<float>",Kind.FLOAT);
+    public static final ArrayKind<Double,long[]>        ARRAY_DOUBLE =  new PrimitiveArrayKind<Double, long[]>("array<double>",Kind.DOUBLE);
 
     public static List<Kind<?>> all() {
         return Collections.unmodifiableList(Arrays.asList(
