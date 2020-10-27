@@ -155,19 +155,19 @@ public class KindTest extends TestCase {
 
     public void testObjectArray() {
         Kind.CharsKind<String> elKind = new Kind.CharsKind<String>("string", String.class) {};
-        Kind<String[]> kind = new Kind.ArrayKind<String>(elKind) {};
-        assertEquals("ArrayKind<StringKind>","array<string>",kind.toString());
-        assertArrayEquals("string.assign([])",new String[]{},kind.assignFrom(kind).apply(new String[] {}));
-        assertArrayEquals("string.assign([''])",new String[] {""},kind.assignFrom(kind).apply(new String[] {""}));
-        assertArrayEquals("string.assign(['0','1'])",new String[] {"0", "1"},kind.assignFrom(kind).apply(new String[] {"0", "1"}));
+        Kind<String[]> kind = new Kind.ObjectArrayKind<String>(elKind) {};
+        assertEquals("ObjectArrayKind<StringKind>","array<string>",kind.toString());
+        assertArrayEquals("array.assign([])",new String[]{},kind.assignFrom(kind).apply(new String[] {}));
+        assertArrayEquals("array.assign([''])",new String[] {""},kind.assignFrom(kind).apply(new String[] {""}));
+        assertArrayEquals("array.assign(['0','1'])",new String[] {"0", "1"},kind.assignFrom(kind).apply(new String[] {"0", "1"}));
     }
 
     public void testPrimitiveArray() {
-        Kind<boolean[]> kind = new Kind.BoolArrayKind() {};
-        assertEquals("ArrayKind<StringKind>","array<bool>",kind.toString());
-        assertArrayEquals("string.assign([])",new boolean[]{},kind.assignFrom(kind).apply(new boolean[]{}));
-        assertArrayEquals("string.assign([true])",new boolean[]{true},kind.assignFrom(kind).apply(new boolean[]{true}));
-        assertArrayEquals("string.assign([true,false])",new boolean[]{true,false},kind.assignFrom(kind).apply(new boolean[]{true,false}));
+        Kind<boolean[]> kind = new Kind.PrimitiveArrayKind<Boolean,boolean[]>("array",Kind.BOOL);
+        assertEquals("PrimitiveArrayKind<Boolean,boolean[]>","array<bool>",kind.toString());
+        assertArrayEquals("array.assign([])",new boolean[]{},kind.assignFrom(kind).apply(new boolean[]{}));
+        assertArrayEquals("array.assign([true])",new boolean[]{true},kind.assignFrom(kind).apply(new boolean[]{true}));
+        assertArrayEquals("array.assign([true,false])",new boolean[]{true,false},kind.assignFrom(kind).apply(new boolean[]{true,false}));
     }
 
     public void testList() {
