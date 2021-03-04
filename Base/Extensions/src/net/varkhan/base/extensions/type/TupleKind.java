@@ -62,7 +62,7 @@ public class TupleKind<V, _T extends Tuple<?,?>> extends Tuple.Chain<Kind<V>,Tup
             return new BaseCaster<F, Tuple<V, _T>>(from, this) {
                 @Override
                 public Tuple<V, _T> apply(F f) {
-                    return (Tuple<V, _T>) new Tuple.Single<V>(thisCast.apply(f));
+                    return (Tuple<V, _T>) new Tuple.Atom<V>(thisCast.apply(f));
                 }
             };
         }
@@ -95,13 +95,16 @@ public class TupleKind<V, _T extends Tuple<?,?>> extends Tuple.Chain<Kind<V>,Tup
      * @param <V> the type of the first member
      * @param <U> the type of the second (and last) member
      */
-    public static class Pair<V, U> extends TupleKind<V, Tuple.Single<U>> {
-        public Pair(String name, Kind<V> kind, Single<U> nextKind) {
+    public static class Pair<V, U> extends TupleKind<V, Tuple.Atom<U>> {
+        public Pair(String name, Kind<V> kind, Atom<U> nextKind) {
             super(name, kind, nextKind);
         }
 
         public Pair(String name, Kind<V> kind, Kind<U> lastKind) {
-            this(name, kind, new TupleKind.Single<U>("",lastKind));
+            this(name, kind, new Atom<U>(lastKind));
+        }
+        public Pair(Kind<V> kind, Kind<U> lastKind) {
+            this("", kind, new Atom<U>(lastKind));
         }
     }
 
@@ -110,9 +113,12 @@ public class TupleKind<V, _T extends Tuple<?,?>> extends Tuple.Chain<Kind<V>,Tup
      *
      * @param <V> the type of the only member
      */
-    public static class Single<V> extends TupleKind<V, Tuple.Void> {
-        public Single(String name, Kind<V> kind) {
+    public static class Atom<V> extends TupleKind<V, Tuple.Void> {
+        public Atom(String name, Kind<V> kind) {
             super(name, kind, null);
+        }
+        public Atom(Kind<V> kind) {
+            super("", kind, null);
         }
     }
 
@@ -121,7 +127,7 @@ public class TupleKind<V, _T extends Tuple<?,?>> extends Tuple.Chain<Kind<V>,Tup
      * <br/>
      * This class has no public constructor, and has only one instance.
      */
-    public static final class Void extends TupleKind.Single<Tuple.Void> {
+    public static final class Void extends Atom<Tuple.Void> {
         protected Void() { super("void",null); }
 
         /**

@@ -148,34 +148,34 @@ public class TupleTest extends TestCase {
 
 
 
-    public void testSingleSize() throws Exception {
-        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Single<Integer>(3);
+    public void testAtomSize() throws Exception {
+        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Atom<Integer>(3);
         assertEquals("size",1,t1.size());
     }
 
-    public void testSingleHasNext() throws Exception {
-        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Single<Integer>(3);
+    public void testAtomHasNext() throws Exception {
+        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Atom<Integer>(3);
         assertFalse("hasnext", t1.hasNext());
    }
 
-    public void testSingleValue() throws Exception {
-        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Single<Integer>(3);
+    public void testAtomValue() throws Exception {
+        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Atom<Integer>(3);
         assertEquals("value",(Object)3,t1.value());
     }
 
-    public void testSingleNext() throws Exception {
-        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Single<Integer>(3);
+    public void testAtomNext() throws Exception {
+        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Atom<Integer>(3);
         assertNull("next", t1.next());
     }
 
-    public void testSingleValues() throws Exception {
-        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Single<Integer>(3);
+    public void testAtomValues() throws Exception {
+        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Atom<Integer>(3);
         assertEquals("values",1,t1.values().length);
         assertEquals("values",3,t1.values()[0]);
     }
 
-    public void testSingleToString() throws Exception {
-        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Single<Integer>(3);
+    public void testAtomToString() throws Exception {
+        Tuple<Integer,? extends Tuple<?,?>> t1 = new Tuple.Atom<Integer>(3);
         assertEquals("toString","(3)",t1.toString());
     }
 

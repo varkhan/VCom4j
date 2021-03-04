@@ -270,10 +270,10 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      * @param <V> the type of the first member
      * @param <U> the type of the second (and last) member
      */
-    public static class Pair<V,U> extends Chain<V, Single<U>> {
-        public Pair(V val, U next) { super(val, new Single<>(next)); }
-        public Pair(V val, Single<U> next) { super(val, next); }
-        public Pair(__<V,? extends __<U,?>> t) { super(t.value(), new Single<U>(t.next())); }
+    public static class Pair<V,U> extends Chain<V, Atom<U>> {
+        public Pair(V val, U next) { super(val, new Atom<>(next)); }
+        public Pair(V val, Atom<U> next) { super(val, next); }
+        public Pair(__<V,? extends __<U,?>> t) { super(t.value(), new Atom<U>(t.next())); }
     }
 
 
@@ -282,9 +282,9 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      *
      * @param <V> the type of the only member
      */
-    public static class Single<V> extends Chain<V,Void> {
-        public Single(V val) { super(val,null); }
-        public Single(__<V,? extends __<?,?>> t) { this(t.value()); }
+    public static class Atom<V> extends Chain<V,Void> {
+        public Atom(V val) { super(val,null); }
+        public Atom(__<V,? extends __<?,?>> t) { this(t.value()); }
 
         @Override public int size() { return 1; }
 
@@ -303,19 +303,19 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
             return t -> fn.apply(t.value());
         }
         public static <A,R> Function<A,Tuple<R,Void>> wrapR(Function<A,R> fn) {
-            return t -> new Single<>(fn.apply(t));
+            return t -> new Atom<>(fn.apply(t));
         }
         public static <A,R> Function<Tuple<A,?>,Tuple<R,Void>> wrapAR(Function<A,R> fn) {
-            return t -> new Single<>(fn.apply(t.value()));
+            return t -> new Atom<>(fn.apply(t.value()));
         }
         public static <A,R> Function<A,R> unwrapA(Function<Tuple<A,Void>,R> fn) {
-            return t -> fn.apply(new Single<>(t));
+            return t -> fn.apply(new Atom<>(t));
         }
         public static <A,R> Function<A,R> unwrapR(Function<A,Tuple<R,Void>> fn) {
             return t -> fn.apply(t).value();
         }
         public static <A,R> Function<A,R> unwrapAR(Function<Tuple<A,Void>,Tuple<R,Void>> fn) {
-            return t -> fn.apply(new Single<>(t)).value();
+            return t -> fn.apply(new Atom<>(t)).value();
         }
     }
 
@@ -325,7 +325,7 @@ public interface Tuple<V, _T extends __<?,?>> extends __<V,_T> {
      * This class has no public constructor, and cannot be instantiated,
      * as any and all values of this marker are expected to be {@literal null}.
      */
-    public static final class Void extends Single<java.lang.Void> {
+    public static final class Void extends Atom<java.lang.Void> {
         private Void() { super((java.lang.Void) null); }
         @Override public int size() { return 0; }
         @Override public java.lang.Void value() { return null; }
