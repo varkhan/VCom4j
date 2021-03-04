@@ -831,9 +831,33 @@ public interface Kind<T> extends Named {
 
 
     /************************
+     ** Wildcard kind implementation
+     **/
+
+    /**
+     * A Kind representing the Object type, i.e. any type.
+     */
+    public static abstract class AnyKind extends BaseKind<Object> {
+
+        public AnyKind(String name) { super(name); }
+
+        @Override
+        public <F> boolean isAssignableFrom(Kind<F> from) { return true; }
+
+        @Override
+        public <F> Caster<F, Object> assignFrom(Kind<F> from) {
+            return new BaseCaster<F, Object>(from, this) {
+                @Override public Object apply(F from) { return from; }
+            };
+        }
+    }
+
+
+    /************************
      ** Kind definition constants
      **/
 
+    public static final Kind<Object>                    ANY =           new AnyKind("*") {};
     public static final Primitive<Boolean>              BOOL =          new Primitive<Boolean>("bool", Boolean.class, boolean.class) { };
     public static final Primitive<Byte>                 BYTE =          new Primitive<Byte>("byte", Byte.class, byte.class) { };
     public static final Primitive<Short>                SHORT =         new Primitive<Short>("short", Short.class, short.class) { };

@@ -189,6 +189,19 @@ public class KindTest extends TestCase {
         assertEquals("MapKind<StringKind,Integer>","map<string,int>",et.toString());
     }
 
+    public void testAny() {
+        Kind<Object> anyKind = new Kind.AnyKind("*") {};
+        assertEquals("*",anyKind.toString());
+        assertTrue("isAssignable(any)",anyKind.isAssignableFrom(Kind.ANY));
+        assertTrue("isAssignable(char)",anyKind.isAssignableFrom(Kind.CHAR));
+        assertTrue("isAssignable(int)",anyKind.isAssignableFrom(Kind.INT));
+        assertTrue("isAssignable(string)",anyKind.isAssignableFrom(Kind.CHAR));
+        assertTrue("isAssignable(double[])",anyKind.isAssignableFrom(Kind.ARRAY_DOUBLE));
+        Object o = new Object();
+        assertEquals("assignFrom(o)=o",o,anyKind.assignFrom(Kind.ANY).apply(o));
+        assertEquals("assignFrom(o)=o","foo",anyKind.assignFrom(Kind.STRING).apply("foo"));
+    }
+
     private static <T> void assertArrayEquals(String message, T[] expected, T[] actual) {
         if (expected != null || actual != null) {
             if (expected == null || !Arrays.equals(expected, actual)) {
