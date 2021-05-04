@@ -3,7 +3,7 @@ package net.varkhan.base.extensions;
 import java.util.*;
 
 /**
- * <b>A named marker object that indicates the validity of a predicate within a certain category.</b>.
+ * <b>A named marker object that indicates the validity of a predicate within a certain category</b>.
  * <p/>
  * Labels belongs to a certain category, defined by the top-most non-parametrized subclass of this interface
  * present in their inheritance hierarchy (i.e. the value of the L type parameter).
@@ -72,6 +72,7 @@ public interface Label<L extends Label<L>> {
      * @param <L> the label category
      * @return an unmodifiable set containing the specified labels
      */
+    @SafeVarargs
     public static <L extends Label<L>> Set<L> setOf(L... labels) {
         return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(labels)));
     }

@@ -3,7 +3,7 @@ package net.varkhan.base.extensions;
 import java.util.Objects;
 
 /**
- * <b>An interface to denote "wrapped" values with added semantics.</b>
+ * <b>An interface to denote "wrapped" values with added semantics</b>
  * <br/>
  *
  * @param <T> the type of the wrapped value

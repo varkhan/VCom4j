@@ -1,7 +1,7 @@
 package net.varkhan.base.extensions;
 
 /**
- * <b>An interface to denote "unique" objects possessing a canonical name.</b>.
+ * <b>An interface to denote "unique" objects possessing a canonical name</b>.
  * <p/>
  *
  * @author varkhan

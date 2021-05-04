@@ -1,5 +1,6 @@
 package net.varkhan.base.extensions.type;
 
+import net.varkhan.base.extensions.Mapper;
 import net.varkhan.base.extensions.Named;
 
 import java.lang.reflect.Constructor;
@@ -8,7 +9,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * <b>A representation of a unique logical type.</b>
+ * <b>A representation of a unique logical type</b>.
  * <br/>
  * While each type is expected to be abe to be stored as a definite Java class,
  * more than one type may be stored by a single Java class.
@@ -63,7 +64,7 @@ public interface Kind<T> extends Named {
      * @param <F>  the underlying Java storage of the kind to cast from
      * @param <T>  the underlying Java storage of the kind to cast into
      */
-    public interface Caster<F,T> extends Function<F, T> {
+    public interface Caster<F,T> extends Mapper<F,T> {
 
         /**
          * The kind to cast from
@@ -166,7 +167,7 @@ public interface Kind<T> extends Named {
             this.kind = kind;
         }
 
-        private Nullable(Kind<T> kind) {
+        protected Nullable(Kind<T> kind) {
             super("nullable<"+ kind.name()+">");
             this.kind = kind;
         }
@@ -471,14 +472,12 @@ public interface Kind<T> extends Named {
             this("array<" + et.name() + ">", et);
         }
 
-        public Kind<E> getElementType() {
-            return et;
-        }
+        public Kind<E> element() { return et; }
 
         @Override
         public <F> boolean isAssignableFrom(Kind<F> from) {
             if (from instanceof Kind.ArrayKind) {
-                return et.isAssignableFrom(((ArrayKind<?,?>) from).getElementType());
+                return et.isAssignableFrom(((ArrayKind<?,?>) from).element());
             }
             return false;
         }
@@ -570,7 +569,7 @@ public interface Kind<T> extends Named {
         @Override
         public <F> Caster<F, E[]> assignFrom(Kind<F> from) {
             if (!(from instanceof Kind.ArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
-            Kind<E> f = ((ArrayKind<E,?>) from).getElementType();
+            Kind<E> f = ((ArrayKind<E,?>) from).element();
             final Caster<?,E> c = et.assignFrom(f);
             if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
             return new ObjectArrayCaster<F, E>(from, this, c) { };
@@ -594,8 +593,8 @@ public interface Kind<T> extends Named {
         @SuppressWarnings("unchecked")
         public ObjectArrayCaster(Kind<F> from, ObjectArrayKind<E> into, Caster<?, E> caster) {
             super(from, into, caster,
-                    (into.getElementType() instanceof ValueKind<?>)
-                            ? ((ValueKind<E>) into.getElementType()).javaClass()
+                    (into.element() instanceof ValueKind<?>)
+                            ? ((ValueKind<E>) into.element()).javaClass()
                             : (Class<E>) Object.class
             );
         }
@@ -616,9 +615,12 @@ public interface Kind<T> extends Named {
         }
 
         @Override
+        public Primitive<E> element() { return (Primitive<E>) et; }
+
+        @Override
         public <F> Caster<F, A> assignFrom(Kind<F> from) {
             if (!(from instanceof Kind.ArrayKind)) throw new ClassCastException("Cannot cast "+from.name()+" to "+name);
-            Kind<Boolean> f = ((ArrayKind<Boolean,?>) from).getElementType();
+            Kind<Boolean> f = ((ArrayKind<Boolean,?>) from).element();
             final Caster<?,E> c = et.assignFrom(f);
             if (c==null) throw new ClassCastException("Cannot cast elements "+f.name()+" to "+et.name());
             return new ArrayCaster<F,E,A>(from, this, c, ((Primitive<E>)et).primClass()) { };
@@ -890,5 +892,72 @@ public interface Kind<T> extends Named {
         for(Kind<?> k: all()) if(k.name().equalsIgnoreCase(name)) return (Kind<T>) k;
         return null;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Kind<T> of(Class<T> type) {
+        if(type==null) return null;
+
+        if(Object.class.equals(type)) return (Kind<T>) Kind.ANY;
+
+        if(type.isPrimitive()) {
+            if(type.equals(Boolean.TYPE)) return (Kind<T>) Kind.BOOL;
+            if(type.equals(Byte.TYPE)) return (Kind<T>) Kind.BYTE;
+            if(type.equals(Short.TYPE)) return (Kind<T>) Kind.SHORT;
+            if(type.equals(Character.TYPE)) return (Kind<T>) Kind.CHAR;
+            if(type.equals(Integer.TYPE)) return (Kind<T>) Kind.INT;
+            if(type.equals(Long.TYPE)) return (Kind<T>) Kind.LONG;
+            if(type.equals(Float.TYPE)) return (Kind<T>) Kind.FLOAT;
+            if(type.equals(Double.TYPE)) return (Kind<T>) Kind.DOUBLE;
+            // Other primitive types should not occur...
+            return null;
+        }
+        if(type.equals(Boolean.class)) return (Kind<T>) Kind.nullable(Kind.BOOL);
+        if(type.equals(Byte.class)) return (Kind<T>) Kind.nullable(Kind.BYTE);
+        if(type.equals(Short.class)) return (Kind<T>) Kind.nullable(Kind.SHORT);
+        if(type.equals(Character.class)) return (Kind<T>) Kind.nullable(Kind.CHAR);
+        if(type.equals(Integer.class)) return (Kind<T>) Kind.nullable(Kind.INT);
+        if(type.equals(Long.class)) return (Kind<T>) Kind.nullable(Kind.LONG);
+        if(type.equals(Float.class)) return (Kind<T>) Kind.nullable(Kind.FLOAT);
+        if(type.equals(Double.class)) return (Kind<T>) Kind.nullable(Kind.DOUBLE);
+
+        if(Number.class.isAssignableFrom(type)) return (Kind<T>) Kind.nullable(Kind.DOUBLE);
+
+        if(CharSequence.class.isAssignableFrom(type)) return (Kind<T>) Kind.nullable(Kind.STRING);
+
+        if(type.isArray()) {
+            if(type.getComponentType().isPrimitive()) {
+                if(type.equals(Boolean.TYPE)) return (Kind<T>) Kind.BOOL;
+                if(type.equals(Byte.TYPE)) return (Kind<T>) Kind.BYTE;
+                if(type.equals(Short.TYPE)) return (Kind<T>) Kind.SHORT;
+                if(type.equals(Character.TYPE)) return (Kind<T>) Kind.CHAR;
+                if(type.equals(Integer.TYPE)) return (Kind<T>) Kind.INT;
+                if(type.equals(Long.TYPE)) return (Kind<T>) Kind.LONG;
+                if(type.equals(Float.TYPE)) return (Kind<T>) Kind.FLOAT;
+                if(type.equals(Double.TYPE)) return (Kind<T>) Kind.DOUBLE;
+                // Other primitive types should not occur...
+                return null;
+            }
+            Kind<?> et = of(type.getComponentType());
+            if(et == null) return null;
+            return (Kind<T>) new Kind.ObjectArrayKind<Object>((Kind<Object>) et){};
+        }
+
+        if(List.class.isAssignableFrom(type)) {
+            Kind<Object> et = of(Generics.getIterableElementClass((Class<Iterable<Object>>) type));
+            if(et == null) return null;
+            return (Kind<T>) new Kind.ListKind<Object>(et) { };
+        }
+
+        if(Map.class.isAssignableFrom(type)) {
+            Kind<?> kt = of(Generics.getMapKeyClass((Class<Map<?,?>>) type));
+            Kind<Object> vt = of(Generics.getMapValClass((Class<Map<?,?>>) type));
+            if(kt instanceof Kind.Nullable) kt = ((Kind.Nullable<?>) kt).kind();
+            if(!(kt instanceof Kind.ValueKind) || vt == null) return null;
+            return (Kind<T>) new Kind.MapKind<Object, Object>((Kind.ValueKind<Object>) kt, vt) {};
+        }
+
+        return null;
+    }
+
 
 }

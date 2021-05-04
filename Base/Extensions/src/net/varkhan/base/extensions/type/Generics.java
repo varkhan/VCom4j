@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * <b>Reflection tools.</b>
@@ -38,6 +39,23 @@ public final class Generics {
      */
     public static <T> Type[] getGenericParameters(Class<? extends T> klass, Class<T> target) {
         return getGenericParameters(klass, target, null);
+    }
+
+    /**
+     * Extract the (potentially parameterized) n-th positional type parameter of a generic type
+     *
+     * @param klass     the parametrized generic class
+     * @param target    the top-level parameterizable class
+     * @param index     the index of the desired parameter
+     * @param <T>       the target generic type
+     * @return  the Type for the generic parameter at position {@param index},
+     * or {@literal null} if either the provided class is not a generic of this {@param target},
+     * or there is no generic type for that {@param index}
+     */
+    public static <T> Type getGenericParameter(Class<? extends T> klass, Class<T> target, int index) {
+        Type[] params = getGenericParameters(klass, target);
+        if(params!=null && 0<=index && index<params.length) return params[index];
+        return null;
     }
 
     /**
@@ -116,7 +134,7 @@ public final class Generics {
     /**
      * Return a type's base class (i.e. raw type), resolving through parametrized and array types.
      *
-     * @param type the type to get a concrete class for
+     * @param type the type to get a base class for
      * @param <P> the target Object type the type is expected to resolve to
      * @return the direct class the specified type is a generic parametrization of
      * or {@literal null} if the Type has no defined base type (e.g. is a wildcard or a type variable).
@@ -132,6 +150,74 @@ public final class Generics {
         // but only bounds that may not resolve to any existing class, or resolve to multiple classes
         // if(type instanceof WildcardType || type instanceof TypeVariable) return null;
         return null;
+    }
+
+    /**
+     * Return the base classes for an array of types, resolving through parametrized and array types
+     *
+     * @param types the type to get a base class for
+     * @return the most specific base (raw) Class (interface or implementation) each type can be resolved to,
+     * or {@literal null} if the Type has no defined base type (e.g. is a wildcard or a type variable.
+     */
+    public static Class<?>[] getBaseClasses(Type[] types) {
+        if(types==null) return null;
+        Class<?>[] classes = new Class[types.length];
+        for(int i=0; i<types.length; i++) classes[i] = getBaseClass(types[i]);
+        return classes;
+    }
+
+    /**
+     * Extract the base Classes for the type parameters of a generic Type
+     *
+     * @param klass     the parametrized generic class
+     * @param target    the top-level parameterizable class
+     * @param <T>       the target generic type
+     * @return  an array of resolved Classes for each generic parameter,
+     * or null if the provided class is not a generic of this {@param target}
+     */
+    public static <T> Class<?>[] getGenericParameterClasses(Class<? extends T> klass, Class<T> target) {
+        return getBaseClasses(getGenericParameters(klass, target));
+    }
+
+    /**
+     * Extract the base Class for the n-th positional type parameter of a generic type
+     *
+     * @param klass     the parametrized generic class
+     * @param target    the top-level parameterizable class
+     * @param index     the index of the desired parameter
+     * @param <T>       the target generic type
+     * @param <P>       the expected parameter type
+     * @return  the resolved Class for the generic parameter at position {@param index},
+     * or {@literal null} if either the provided class is not a generic of this {@param target}, or there is no generic type for that index
+     */
+    public static <T,P> Class<P> getGenericParameterClass(Class<? extends T> klass, Class<T> target, int index) {
+        return getBaseClass(getGenericParameter(klass, target, index));
+    }
+
+
+
+    /**********************************************************************************
+     ** Generic parameter extractors for specific Java constructs
+     **/
+
+    public static <T> Class<T> getFunctionInputClass(Class<? extends Function<?,?>> c) {
+        return getGenericParameterClass(c, Function.class, 0);
+    }
+
+    public static <R> Class<R> getFunctionResultClass(Class<? extends Function<?,?>> c) {
+        return getGenericParameterClass(c, Function.class, 1);
+    }
+
+    public static <V> Class<V> getIterableElementClass(Class<? extends Iterable<?>> c) {
+        return getGenericParameterClass(c, Iterable.class, 0);
+    }
+
+    public static <K> Class<K> getMapKeyClass(Class<? extends Map<?,?>> c) {
+        return getGenericParameterClass(c, Map.class, 0);
+    }
+
+    public static <V> Class<V> getMapValClass(Class<? extends Map<?,?>> c) {
+        return getGenericParameterClass(c, Map.class, 1);
     }
 
 }
